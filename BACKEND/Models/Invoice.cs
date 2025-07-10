@@ -15,6 +15,8 @@ namespace BACKEND.Models
         [Key]
         public int InvoiceID { get; set; }
 
+        public string InvoiceCode { get; set; }
+
         public DateTime CreateAt { get; set; } = DateTime.Now;
 
         [Required]
@@ -28,10 +30,16 @@ namespace BACKEND.Models
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
+        public decimal ExtraCosts { get; set; } = 0;
+
+        [Required]
+        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalAmount { get; set; }
 
         [ForeignKey(nameof(Contract))]
         public Nullable<int> ContractID { get; set; }
+
+        public string? Description { get; set; }
 
         public virtual Contract Contract { get; set; }
         public virtual ICollection<InvoiceDetail> InvoiceDetail { get; set; }

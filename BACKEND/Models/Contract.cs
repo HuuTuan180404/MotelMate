@@ -22,8 +22,11 @@ namespace BACKEND.Models
             this.ContractDetail = new HashSet<ContractDetail>();
             this.Invoice = new HashSet<Invoice>();
         }
+
         [Key]
         public int ContractID { get; set; }
+
+        public string ContractCode { get; set; }
 
         [Required]
         public DateOnly StartDate { get; set; }
@@ -41,7 +44,7 @@ namespace BACKEND.Models
 
         [Required]
         public EContractStatus Status { get; set; }
-        
+
         public string? Description { get; set; }
 
         [ForeignKey(nameof(Room))]

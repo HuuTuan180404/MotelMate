@@ -15,6 +15,8 @@ namespace BACKEND.Models
         [Key]
         public int BuildingID { get; set; }
 
+        public string BuildingCode { get; set; }
+
         [Required]
         [StringLength(255)]
         public string Name { get; set; }

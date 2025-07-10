@@ -17,6 +17,11 @@ namespace BACKEND.Models
         [Required]
         public string? Content { get; set; }
 
+        public string? Image { get; set; }
+
+        [Required]
+        public ERequestType Type { get; set; }
+
         public DateTime CreateAt { get; set; } = DateTime.Now;
 
         [Required]

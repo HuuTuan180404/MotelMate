@@ -12,6 +12,8 @@ namespace BACKEND.Data
 
         public DbSet<Account> Account { get; set; }
         public DbSet<Asset> Asset { get; set; }
+
+        public DbSet<AuditLog> AuditLog { get; set; }
         public DbSet<Building> Building { get; set; }
         public DbSet<Contract> Contract { get; set; }
         public DbSet<ContractDetail> ContractDetail { get; set; }
@@ -35,6 +37,8 @@ namespace BACKEND.Data
             modelBuilder.Entity<Account>().Property(e => e.Status).HasConversion<string>();
 
             modelBuilder.Entity<Asset>().Property(e => e.Type).HasConversion<string>();
+
+            modelBuilder.Entity<AuditLog>().Property(e => e.Action).HasConversion<string>();
 
             modelBuilder.Entity<Contract>().Property(e => e.Status).HasConversion<string>();
 
