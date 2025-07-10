@@ -19,6 +19,9 @@ namespace BACKEND.Models
         public int RoomID { get; set; }
 
         [Required]
+        public string RoomNumber { get; set; }
+
+        [Required]
         public double Area { get; set; }
 
         [Required]
