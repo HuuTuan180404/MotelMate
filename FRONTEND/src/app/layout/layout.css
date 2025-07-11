@@ -1,13 +1,6 @@
-@import "../../styles/fonts.css";
-@import "../../styles/colors.css";
-
-* {
-  font-family: var(--font-base);
-}
-
 body {
   min-height: 100vh;
-  background-color: var(--bg-color);
+  background-color: #ffffff;
 }
 
 .sidebar {
@@ -31,7 +24,7 @@ body {
   height: 20%;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 8px;
 }
 
 .sidebar-header img {
@@ -47,7 +40,7 @@ body {
   scrollbar-width: none;
 }
 
-.sidebar-links h4 {
+.sidebar-links h3 {
   color: #000000;
   font-weight: 500;
   margin: 10px 0;
