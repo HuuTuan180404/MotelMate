@@ -19,9 +19,12 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/assets"
             ],
             "styles": [
+              "src/styles/fonts.css",
+              "src/styles/colors.css",
               "src/styles.css"
             ],
             "server": "src/main.server.ts",
@@ -77,14 +80,20 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              }
+              },
+              "src/assets"
             ],
             "styles": [
+              "src/styles/colors.css",
+              "src/styles/fonts.css",
               "src/styles.css"
             ]
           }
         }
       }
     }
+  },
+  "cli": {
+    "analytics": "5519bdf6-45cf-4d4b-9ec4-4c21dba5728c"
   }
 }
