@@ -1,6 +1,4 @@
-/* src/styles/colors.css */
-
-:host {
+:root {
   --primary-color: #45a9ea;
   --secondary-color: #ff9800;
   --success-color: #4caf50;
