@@ -1,0 +1,71 @@
+@import "../../styles/fonts.css";
+@import "../../styles/colors.css";
+
+* {
+  font-family: var(--font-base);
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 105px;
+  background: #ffffff;
+  padding: 25px 20px;
+  transition: all 0.4s ease;
+}
+
+.sidebar:hover {
+  width: 260px;
+  transition: all 0.4s ease;
+}
+
+.sidebar-header {
+  display: flex;
+  height: 20%;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.sidebar-header img {
+  width: 80%;
+  border-radius: 10%;
+}
+
+.sidebar-links {
+  list-style: none;
+  margin-top: 23px;
+  height: 80%;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.sidebar-links h4 {
+  color: #000000;
+  font-weight: 500;
+  margin: 10px 0;
+}
+
+.sidebar-links li a {
+  display: flex;
+  gap: 0 20px;
+  align-items: center;
+  color: var(--text-color);
+  font-weight: 500;
+  padding: 15px 20px;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.sidebar-links li a:hover {
+  background: var(--primary-color);
+  border-radius: 4px;
+  color: #ffffff;
+}
