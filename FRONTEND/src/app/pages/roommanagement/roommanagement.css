@@ -1,0 +1,42 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.room-management {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: var(--padding-margin);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 6%;
+  padding: var(--padding-margin);
+  background-color: antiquewhite;
+  border-radius: var(--border-radius);
+}
+
+.title {
+  padding: 10px;
+}
+
+.right-section {
+  margin-right: 10px;
+}
+
+.rooms {
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(20%, 1fr));
+  gap: var(--padding-margin);
+  margin-top: var(--padding-margin);
+  padding-bottom: 16px;
+}
+
+.rooms::-webkit-scrollbar {
+  display: none;
+}
