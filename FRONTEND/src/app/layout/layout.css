@@ -1,16 +1,36 @@
 .layout-container {
+  height: calc(100vh - 8px);
   display: flex;
+  margin: var(--padding-margin);
+}
+
+app-sidebar {
+  margin-bottom: var(--padding-margin);
 }
 
 .main-area {
-  height: 100vh;
-  width: 100vw;
-  margin: 0px 8px;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-left: var(--padding-margin);
+}
+
+app-header {
+  height: 6vh;
+  margin-bottom: var(--padding-margin);
 }
 
 .page-content {
-  margin: 8px 0px;
-  padding: 8px;
-  height: 100vh;
-  background-color: brown;
+  height: 100%;
+  /* margin: var(--padding-margin) 0px; */
+  margin-top: 16px;
+  margin-bottom: var(--padding-margin);
+  overflow-y: auto;
+  background-color: aquamarine;
+  border-radius: var(--border-radius);
+}
+
+.page-content::-webkit-scrollbar {
+  display: none;
 }

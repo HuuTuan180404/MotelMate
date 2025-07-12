@@ -1,8 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
 * {
   font-family: var(--font-base);
 }
 
 body {
   background-color: var(--bg-color);
+}
+
+html,
+body {
+  overflow: hidden;
+  margin: 0px;
 }

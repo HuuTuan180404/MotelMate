@@ -1,8 +1,58 @@
 .header {
-  /* display: block; */
-  background-color: aqua;
-  /* width: 100vw; */
-  height: 8vh;
-  border-radius: 10px;
-  padding: 8px;
+  background-color: #ffffff;
+  height: 100%;
+  border-radius: var(--border-radius);
+  padding: var(--padding-margin);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.left-section {
+  display: flex;
+  align-items: center;
+  padding-left: 60px;
+  gap: 10px;
+}
+
+.right-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  margin-right: 60px;
+  gap: 20px;
+}
+
+.notification-icon {
+  position: relative;
+  display: inline-block;
+  font-size: 24px;
+  color: #333;
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  background-color: red;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.avatar img {
+  width: 32px;
+  height: 32px;
+}
+
+.avatar img {
+  border-radius: 50%;
 }
