@@ -8,13 +8,11 @@ import { Component, EventEmitter, Output } from '@angular/core';
   styleUrl: './sidebar.css',
 })
 export class Sidebar {
-  @Output() toggle = new EventEmitter<void>();
-
   mainMenu = [
     { icon: 'dashboard', label: 'Dashboard', route: '#' },
     { icon: 'bed', label: 'Room', route: 'rooms' },
     { icon: 'apartment', label: 'Building', route: '#' },
-    { icon: 'contract', label: 'Contract', route: '#' },
+    { icon: 'contract', label: 'Contract', route: 'contracts' },
     { icon: 'receipt', label: 'Invoice', route: 'invoices' },
     { icon: 'inventory_2', label: 'Asset', route: '#' },
   ];
@@ -23,8 +21,4 @@ export class Sidebar {
     { icon: 'settings', label: 'Setting', route: '#' },
     { icon: 'exit_to_app', label: 'Logout', route: '#' },
   ];
-
-  toggleSidebar() {
-    this.toggle.emit();
-  }
 }
