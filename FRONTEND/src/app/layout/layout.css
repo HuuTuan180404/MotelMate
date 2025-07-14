@@ -6,12 +6,7 @@
 .layout-container {
   height: calc(100vh - 8px);
   display: flex;
-  margin: var(--padding-margin);
   overflow: hidden;
-}
-
-app-sidebar {
-  margin-bottom: var(--padding-margin);
 }
 
 .main-area {
@@ -19,18 +14,15 @@ app-sidebar {
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-left: var(--padding-margin);
 }
 
 app-header {
   height: 6vh;
-  margin-bottom: var(--padding-margin);
 }
 
 .page-content {
   flex: 1;
   margin-top: 16px;
-  margin-bottom: var(--padding-margin);
   background-color: var(--bg-color);
   border-radius: var(--border-radius);
   overflow: hidden;
