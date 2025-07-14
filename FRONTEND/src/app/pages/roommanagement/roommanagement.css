@@ -16,7 +16,7 @@
   align-items: center;
   height: 6%;
   padding: var(--padding-margin);
-  background-color: antiquewhite;
+  background-color: #fff;
   border-radius: var(--border-radius);
 }
 
@@ -39,4 +39,31 @@
 
 .rooms::-webkit-scrollbar {
   display: none;
+}
+
+.status-available,
+.status-occupied,
+.status-maintenance {
+  display: flex;
+  align-items: center;
+  gap: 0 5px;
+}
+
+.status {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  background-color: black;
+}
+
+.status-Available {
+  background-color: #16c09861;
+}
+
+.status-Occupied {
+  background-color: #b5b7c0;
+}
+
+.status-Maintenance {
+  background-color: #ffc5c5;
 }

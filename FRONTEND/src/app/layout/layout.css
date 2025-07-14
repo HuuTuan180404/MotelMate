@@ -31,7 +31,7 @@ app-header {
   flex: 1;
   margin-top: 16px;
   margin-bottom: var(--padding-margin);
-  background-color: #ffffff;
+  background-color: var(--bg-color);
   border-radius: var(--border-radius);
   overflow: hidden;
 }
