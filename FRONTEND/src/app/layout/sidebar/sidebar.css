@@ -1,12 +1,16 @@
 .sidebar {
-  top: 0;
-  left: 0;
-  height: 100vh;
+  height: 100%;
   width: 95px;
   background: #ffffff;
-  padding: 25px 20px;
+  padding: 25px 5px;
   transition: all 0.4s ease;
-  border-radius: 10px;
+  border-radius: var(--border-radius);
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+ul {
+  padding-left: 18px;
 }
 
 .sidebar:hover {
@@ -19,7 +23,7 @@
   height: 5%;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
 }
 
 .sidebar-links {
@@ -27,6 +31,9 @@
   height: 95%;
   overflow-y: auto;
   scrollbar-width: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .sidebar:hover .sidebar-header {
@@ -41,26 +48,26 @@
 
 .sidebar-header img {
   width: 80%;
-  border-radius: 10%;
+  border-radius: var(--border-radius);
 }
 
-.sidebar-links h3 span {
+.sidebar-links h3 {
   color: #000000;
   font-weight: 500;
-  margin: 10px 0;
-  opacity: 0;
+  margin: 5px 0;
+  display: none;
 }
 
-.sidebar:hover .sidebar-links h3 span {
-  opacity: 1;
+.sidebar:hover .sidebar-links h3 {
+  display: inline;
 }
 
 .sidebar-links li a {
   display: flex;
-  gap: 0 20px;
+  gap: 0px 35px;
   align-items: center;
   color: var(--text-color);
-  font-weight: 500;
+  font-weight: 400;
   padding: 15px 10px;
   white-space: nowrap;
   text-decoration: none;
