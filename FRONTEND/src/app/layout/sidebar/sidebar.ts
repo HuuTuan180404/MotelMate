@@ -12,10 +12,10 @@ export class Sidebar {
 
   mainMenu = [
     { icon: 'dashboard', label: 'Dashboard', route: '#' },
-    { icon: 'bed', label: 'Room', route: '#' },
+    { icon: 'bed', label: 'Room', route: 'rooms' },
     { icon: 'apartment', label: 'Building', route: '#' },
     { icon: 'contract', label: 'Contract', route: '#' },
-    { icon: 'receipt', label: 'Payment', route: '#' },
+    { icon: 'receipt', label: 'Invoice', route: 'invoices' },
     { icon: 'inventory_2', label: 'Asset', route: '#' },
   ];
 
