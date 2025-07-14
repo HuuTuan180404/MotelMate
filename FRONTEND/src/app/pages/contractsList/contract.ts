@@ -20,8 +20,8 @@ interface contract {
 
 @Component({
   selector: 'app-contract',
-  templateUrl: './contract.component.html',
-  styleUrls: ['./contract.component.css'],
+  templateUrl: './contract.html',
+  styleUrls: ['./contract.css'],
   standalone: true,
   imports: [
     CommonModule,
