@@ -3,17 +3,13 @@
 
 * {
   font-family: var(--font-base);
-}
-
-body {
-  background-color: var(--bg-color);
+  margin: 0;
+  padding: 0;
 }
 
 html,
 body {
   overflow: hidden;
-  margin: 0px;
+  height: 100%;
+  background-color: var(--bg-color);
 }
-
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

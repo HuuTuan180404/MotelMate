@@ -3,7 +3,28 @@
     <div class="title">
       <h2>Room Management</h2>
     </div>
-    <div class="right-section">dad</div>
+    <div class="right-section">
+      <div class="select-building">
+        <mat-form-field>
+          <mat-label>Building</mat-label>
+          <mat-select [(value)]="buildingCode" canSelectNullableOptions>
+            @for (option of options; track option) {
+            <mat-option [value]="option.code">{{ option.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+      <div class="search-box">
+        <mat-form-field appearance="outline">
+          <mat-label id="search-label">Search</mat-label>
+          <input
+            matInput
+            [(ngModel)]="searchText"
+            placeholder="Nhập từ khóa..."
+          />
+        </mat-form-field>
+      </div>
+    </div>
   </header>
 
   <div class="rooms">
