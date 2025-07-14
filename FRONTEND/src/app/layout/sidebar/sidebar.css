@@ -4,7 +4,6 @@
   background: #ffffff;
   padding: 25px 5px;
   transition: all 0.4s ease;
-  border-radius: var(--border-radius);
   box-sizing: border-box;
   flex-shrink: 0;
 }

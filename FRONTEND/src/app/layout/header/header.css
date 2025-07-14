@@ -1,7 +1,8 @@
 .header {
   background-color: #ffffff;
   height: 100%;
-  border-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
+  border-top-right-radius: var(--border-radius);
   padding: var(--padding-margin);
   display: flex;
   align-items: center;

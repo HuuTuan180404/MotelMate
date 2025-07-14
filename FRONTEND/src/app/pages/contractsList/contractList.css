@@ -18,6 +18,7 @@
   align-items: center;
   padding: 0 1rem;
   background-color: #ffffff;
+  margin: var(--padding-margin) ;
 }
 
 .page-title {
@@ -78,7 +79,9 @@
 
 /* Table Container */
 .table-container {
-  margin: 1rem 2rem 15vh 2rem;
+  margin-left: var(--border-radius);
+  margin-right: var(--border-radius);
+  margin-bottom: 10vh;
   background: white;
   border-spacing: 0;
   border-radius: var(--border-radius);
