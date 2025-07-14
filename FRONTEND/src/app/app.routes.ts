@@ -3,7 +3,7 @@ import { Listinvoice } from './pages/listinvoice/listinvoice';
 import { RoomManagement } from './pages/roommanagement/roommanagement';
 import { Layout } from './layout/layout';
 import { Login } from './pages/login/login';
-import { contractComponent } from './pages/contractsList/contract';
+import { contractComponent } from './pages/contractsList/contractList';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
