@@ -1,14 +1,38 @@
 import { Component } from '@angular/core';
 import { Room } from './room/room';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatFormFieldModule } from '@angular/material/form-field';
 
 @Component({
   selector: 'app-roommanagement',
-  imports: [Room, CommonModule],
+  imports: [
+    Room,
+    CommonModule,
+    MatInputModule,
+    MatSelectModule,
+    FormsModule,
+    MatFormFieldModule,
+  ],
   templateUrl: './roommanagement.html',
   styleUrl: './roommanagement.css',
 })
 export class RoomManagement {
+  options = [
+    { name: 'All', code: -1 },
+    { name: 'One', code: 1 },
+    { name: 'Two', code: 2 },
+    { name: 'Three', code: 3 },
+  ];
+  buildingCode: any = null;
+  searchText: string = '';
+
+  ngOnInit() {
+    this.buildingCode = this.options[0].code;
+  }
+
   rooms = [
     {
       images: [],

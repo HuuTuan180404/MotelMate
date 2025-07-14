@@ -20,6 +20,37 @@
   border-radius: var(--border-radius);
 }
 
+.right-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+::ng-deep .mdc-line-ripple::before,
+::ng-deep .mdc-line-ripple::after {
+  display: none !important;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  border-radius: 20px !important;
+}
+
+::ng-deep .mdc-text-field {
+  padding-left: 30px !important;
+}
+
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+::ng-deep .mat-mdc-form-field-icon-prefix {
+  padding-left: 16px !important;
+}
+
+#search-label {
+  margin-left: 30px;
+}
+
 .title {
   padding: 10px;
 }
