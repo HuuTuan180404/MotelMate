@@ -8,6 +8,7 @@
   flex-direction: column;
   height: 100%;
   background-color: #ffffff;
+  box-shadow: var(--box-shadow);
   border-radius: var(--border-radius);
 }
 
@@ -40,7 +41,12 @@
 
 .groupPrice {
   display: flex;
-  justify-content: right;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.section-price {
+  display: flex;
 }
 
 .groupMaxguest {
@@ -51,6 +57,12 @@
 
 .avatars {
   flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.avatars .imgs {
   display: flex;
   align-items: center;
 }
@@ -64,6 +76,18 @@
   transition: all 0.3s ease;
 }
 
+.room-status {
+  display: flex;
+  align-items: center;
+  gap: 0 5px;
+}
+
+.icon-status {
+  height: 10px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+}
+
 .avatars img:hover {
   height: 60px;
   aspect-ratio: 1 / 1;
@@ -75,13 +99,13 @@
 }
 
 .status-Available {
-  background-color: #28a745;
+  background-color: #16c09861;
 }
 
 .status-Occupied {
-  background-color: rgb(167, 161, 161);
+  background-color: #b5b7c0;
 }
 
 .status-Maintenance {
-  background-color: #dc3545;
+  background-color: #ffc5c5;
 }

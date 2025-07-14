@@ -1,18 +1,11 @@
-<div
-  class="card"
-  [ngClass]="{
-    'status-Available': room.status === 'Available',
-    'status-Occupied': room.status === 'Occupied',
-    'status-Maintenance': room.status === 'Maintenance'
-  }"
->
+<div class="card">
   <div class="image">
     <img src="assets/images/roomtest.jpg" alt="" />
   </div>
 
   <div class="info">
     <div class="section1">
-      <h4 class="roomID">{{room.name}}</h4>
+      <h4 class="roomID">Code: {{room.name}}</h4>
 
       <div class="groupMaxguest">
         <span class="material-symbols-outlined">groups_2</span>
@@ -21,12 +14,33 @@
     </div>
 
     <div class="groupPrice">
-      <span class="material-symbols-outlined"> money_bag </span>
-      <label class="price">{{room.price}}</label>
+      <h4 class="buildingID">Building code: {{room.buildingID}}</h4>
+      <div class="section-price">
+        <span class="material-symbols-outlined"> money_bag </span>
+        <label class="price">{{room.price}}</label>
+      </div>
     </div>
 
     <div class="avatars">
-      <img *ngFor="let item of room.avatars" [src]="item.url" alt="item.alt" />
+      <div class="imgs">
+        <img
+          *ngFor="let item of room.avatars"
+          [src]="item.url"
+          alt="item.alt"
+        />
+      </div>
+
+      <div class="room-status">
+        <span
+          class="icon-status"
+          [ngClass]="{
+                      'status-Available': room.status === 'Available',
+                      'status-Occupied': room.status === 'Occupied',
+                      'status-Maintenance': room.status === 'Maintenance'
+                    }"
+        ></span>
+        <label>{{room.status}}</label>
+      </div>
     </div>
   </div>
 </div>
