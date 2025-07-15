@@ -3,8 +3,9 @@ import { Listinvoice } from './pages/listinvoice/listinvoice';
 import { RoomManagement } from './pages/roommanagement/roommanagement';
 import { Layout } from './layout/layout';
 import { Login } from './pages/login/login';
-import { contractComponent } from './pages/contractsList/contractList';
 import { Buildingmanagement } from './pages/buildingmanagement/buildingmanagement';
+import { ContractComponent } from './pages/contractsList/contractList';
+import { TenantManagement } from './pages/tenantmanagement/tenantmanagement';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -15,8 +16,9 @@ export const routes: Routes = [
     children: [
       { path: 'invoices', component: Listinvoice },
       { path: 'rooms', component: RoomManagement },
-      { path: 'contracts', component: contractComponent },
       { path: 'buildings', component: Buildingmanagement },
+      { path: 'contracts', component: ContractComponent },
+      { path: 'tenants', component: TenantManagement },
     ],
   },
 ];

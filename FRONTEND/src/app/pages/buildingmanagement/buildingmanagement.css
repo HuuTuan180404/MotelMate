@@ -2,7 +2,7 @@
   height: 100%;
   width: 100%;
   margin: 0px;
-  padding: 0px;
+  /* padding-bottom: var(--padding-margin); */
 }
 
 /* Page Container with Scroll */
@@ -83,7 +83,7 @@
 .table-container {
   margin-left: var(--border-radius);
   margin-right: var(--border-radius);
-  margin-bottom: 10vh;
+  margin-bottom: 20vh;
   background: white;
   border-spacing: 0;
   border-radius: var(--border-radius);

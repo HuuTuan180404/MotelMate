@@ -1,3 +1,22 @@
+::ng-deep .mat-mdc-form-field-flex {
+  height: 100%;
+  align-items: center !important;
+}
+::ng-deep .filters-row .mat-mdc-text-field-wrapper{
+  height: 5.5vh !important;
+}
+
+::ng-deep .search-field .mat-mdc-text-field-wrapper {
+  height: 2rem;
+  padding: 0 0.5rem;
+}
+
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+.mat-label{
+  position: relative;
+}
 /* Page Container with Scroll */
 :host {
   display: flex;
@@ -16,7 +35,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 1rem;
+  padding:0.5rem 1rem;
   background-color: #ffffff;
   margin: var(--padding-margin) ;
 }
@@ -43,7 +62,6 @@
 
 /* Filters Row */
 .filters-row {
-  display: flex;
   align-items: center;
   gap: 1rem;
   padding: 1rem;
@@ -51,20 +69,18 @@
   margin-top: 0.5rem;
 }
 
-.filter-label {
-  font-weight: 500;
-  color: #6b7280;
-  min-width: 50px;
-}
-
 .filters-container {
   display: flex;
   gap: 1rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  width: 100%;
 }
 
 .filter-field {
-  min-width: 150px;
+  flex: 1 1 0;
+  min-width: 0;
+  max-width: none;
+  box-sizing: border-box;
 }
 
 .filter-field .mat-mdc-form-field-subscript-wrapper {
@@ -98,7 +114,6 @@
 
 /* Table Headers */
 .contracts-table .mat-mdc-header-cell {
-  border-radius: 20px 20px 0 0;
   background-color: #f8fafc;
   color: #374151;
   font-weight: 600;

@@ -1,12 +1,20 @@
-import { Component, OnInit } from '@angular/core';
 import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableModule } from '@angular/material/table';
-import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import {
+  Component,
+  OnInit,
+  AfterViewInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
+import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { MatSort, Sort, MatSortModule } from '@angular/material/sort';
 
 interface BuildingInfo {
   code: string;
@@ -27,6 +35,7 @@ interface BuildingInfo {
     MatFormFieldModule,
     MatSelectModule,
     MatTableModule,
+    MatSortModule,
     MatPaginatorModule,
     MatInputModule,
     MatIconModule,
@@ -34,16 +43,16 @@ interface BuildingInfo {
   templateUrl: './buildingmanagement.html',
   styleUrl: './buildingmanagement.css',
 })
-export class Buildingmanagement implements OnInit {
+export class Buildingmanagement implements OnInit, AfterViewInit {
   BUILDINGS: BuildingInfo[] = [
     {
-      code: 'B001',
-      building: 'Sunshine Tower',
-      address: '123 Nguyễn Văn Cừ, Q.5, TP.HCM',
-      tenants: 12,
-      rooms: 20,
-      available: 5,
-      occupied: 14,
+      code: 'B003',
+      building: 'Greenland Building',
+      address: '78 Lê Lợi, Q.3, TP.HCM',
+      tenants: 10,
+      rooms: 15,
+      available: 4,
+      occupied: 10,
       maintenance: 1,
     },
     {
@@ -55,6 +64,58 @@ export class Buildingmanagement implements OnInit {
       rooms: 30,
       available: 8,
       occupied: 21,
+      maintenance: 1,
+    },
+    {
+      code: 'B003',
+      building: 'Greenland Building',
+      address: '78 Lê Lợi, Q.3, TP.HCM',
+      tenants: 10,
+      rooms: 15,
+      available: 4,
+      occupied: 10,
+      maintenance: 1,
+    },
+    {
+      code: 'B002',
+      building: 'Riverside Complex',
+      address:
+        '8 Trường Sa, Thiện Đức Bắc, Hoài Hương, Hoài Nhơn, Bình Định, Việt Nam',
+      tenants: 20,
+      rooms: 30,
+      available: 8,
+      occupied: 21,
+      maintenance: 1,
+    },
+    {
+      code: 'B003',
+      building: 'Greenland Building',
+      address: '78 Lê Lợi, Q.3, TP.HCM',
+      tenants: 10,
+      rooms: 15,
+      available: 4,
+      occupied: 10,
+      maintenance: 1,
+    },
+    {
+      code: 'B002',
+      building: 'Riverside Complex',
+      address:
+        '8 Trường Sa, Thiện Đức Bắc, Hoài Hương, Hoài Nhơn, Bình Định, Việt Nam',
+      tenants: 20,
+      rooms: 30,
+      available: 8,
+      occupied: 21,
+      maintenance: 1,
+    },
+    {
+      code: 'B003',
+      building: 'Greenland Building',
+      address: '78 Lê Lợi, Q.3, TP.HCM',
+      tenants: 10,
+      rooms: 15,
+      available: 4,
+      occupied: 10,
       maintenance: 1,
     },
     {
@@ -145,5 +206,33 @@ export class Buildingmanagement implements OnInit {
     }
 
     return pages;
+  }
+
+  // ================
+  private _liveAnnouncer = inject(LiveAnnouncer);
+  displayedColumns: string[] = [
+    'code',
+    'building',
+    'address',
+    'tenants',
+    'rooms',
+    'available',
+    'occupied',
+    'maintenance',
+  ];
+
+  dataSource = new MatTableDataSource(this.BUILDINGS);
+
+  @ViewChild(MatSort) sort!: MatSort;
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
+  }
+
+  announceSortChange(sortState: Sort) {
+    if (sortState.direction) {
+      this._liveAnnouncer.announce(`Sorted ${sortState.direction}ending`);
+    } else {
+      this._liveAnnouncer.announce('Sorting cleared');
+    }
   }
 }
