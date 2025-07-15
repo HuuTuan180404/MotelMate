@@ -123,28 +123,31 @@ export class ContractComponent implements OnInit, AfterViewInit  {
         (!this.filters.building || inv.building === this.filters.building) &&
         (!this.filters.room || inv.room.toString() === this.filters.room) &&
         (!this.filters.status || inv.status === this.filters.status);
-
+      
       return searchMatch && filterMatch;
     });
 
     // Reset to first page when filters change
     this.pageIndex = 0;
-    this.dataSource.data = this.filteredcontracts;
+    this.dataSource.data = this.filteredcontracts.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
   }
 
   onPageChange(event: PageEvent) {
     this.pageSize = event.pageSize;
     this.pageIndex = event.pageIndex;
+    this.dataSource.data = this.filteredcontracts.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
   }
 
   onPageSizeChange() {
     this.pageIndex = 0; // Reset to first page when page size changes
+    this.dataSource.data = this.filteredcontracts.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
   }
 
   goToPage(pageIndex: number) {
     if (pageIndex >= 0 && pageIndex < this.getTotalPages()) {
       this.pageIndex = pageIndex;
     }
+    this.dataSource.data = this.filteredcontracts.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
   }
 
   getTotalPages(): number {
