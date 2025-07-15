@@ -1,3 +1,6 @@
+td, th {
+  width: 10%;
+}
 ::ng-deep .mat-mdc-form-field-flex {
   height: 100%;
   align-items: center !important;
@@ -10,12 +13,15 @@
   height: 2rem;
   padding: 0 0.5rem;
 }
-
+::ng-deep .mdc-floating-label{
+  overflow: visible !important;
+}
 ::ng-deep .mat-mdc-form-field-subscript-wrapper {
   display: none;
 }
-.mat-label{
-  position: relative;
+mat-label{
+  position:relative;
+  top: -12px;
 }
 /* Page Container with Scroll */
 :host {
