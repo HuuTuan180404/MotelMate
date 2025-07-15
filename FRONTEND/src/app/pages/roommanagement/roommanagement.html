@@ -1,7 +1,7 @@
 <div class="room-management">
   <header class="header">
     <div class="title">
-      <h2>Room Management</h2>
+      <h2>ROOM MANAGEMENT</h2>
     </div>
     <div class="right-section">
       <div class="select-building">
@@ -15,13 +15,25 @@
         </mat-form-field>
       </div>
       <div class="search-box">
-        <mat-form-field appearance="outline">
-          <mat-label id="search-label">Search</mat-label>
+        <mat-form-field class="example-form-field">
+          <mat-label>Search</mat-label>
           <input
+            placeholder="..."
             matInput
+            type="text"
             [(ngModel)]="searchText"
-            placeholder="Nhập từ khóa..."
           />
+          @if (searchText) {
+          <button
+            id="icon-search"
+            matSuffix
+            matIconButton
+            aria-label="btnSearch"
+            (click)="searchText=''"
+          >
+            <mat-icon>search</mat-icon>
+          </button>
+          }
         </mat-form-field>
       </div>
     </div>

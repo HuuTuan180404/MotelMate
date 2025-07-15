@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-roommanagement',
@@ -13,6 +14,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     CommonModule,
     MatInputModule,
     MatSelectModule,
+    MatIconModule,
     FormsModule,
     MatFormFieldModule,
   ],

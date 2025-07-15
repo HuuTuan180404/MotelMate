@@ -36,8 +36,10 @@
 }
 
 ::ng-deep .mdc-text-field {
-  padding-left: 30px !important;
+  padding: 0px 30px !important;
 }
+
+/* .mdc-text-field */
 
 ::ng-deep .mat-mdc-form-field-subscript-wrapper {
   display: none;
@@ -45,6 +47,13 @@
 
 ::ng-deep .mat-mdc-form-field-icon-prefix {
   padding-left: 16px !important;
+}
+
+#icon-search {
+  border: none;
+  background: none;
+  display: flex;
+  align-content: center;
 }
 
 #search-label {
