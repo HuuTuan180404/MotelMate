@@ -39,7 +39,10 @@ export class Listinvoice {
   invoices: invoice[] = [
     { building: 'ABCHome', room: 201, month: '6/2025', due: '10/7/2025', total: 2000000, status: 'Paid' },
     { building: 'ABCHome', room: 201, month: '7/2025', due: '10/8/2025', total: 4000000, status: 'Unpaid' },
-    { building: 'QHome', room: 301, month: '5/2025', due: '10/6/2025', total: 3000000, status: 'Overdue' }
+    { building: 'QHome', room: 301, month: '5/2025', due: '10/6/2025', total: 3000000, status: 'Overdue' },
+    { building: 'ABCHome', room: 101, month: '6/2025', due: '10/7/2025', total: 2000000, status: 'Paid' },
+    { building: 'ABCHome', room: 101, month: '7/2025', due: '10/8/2025', total: 4000000, status: 'Unpaid' },
+    { building: 'QHome', room: 101, month: '5/2025', due: '10/6/2025', total: 3000000, status: 'Overdue' }
   ];
 
   dataSource = new MatTableDataSource<invoice>();
@@ -91,5 +94,33 @@ export class Listinvoice {
     if (this.paginator) {
       this.paginator.firstPage();
     }
+  }
+  clearAllFilters() {
+    this.searchTerm = '';
+    this.filters = {
+      building: '',
+      room: '',
+      status: ''
+    };
+    this.applyFilters();
+  }
+
+  exportInvoices() {
+    const rows = this.dataSource.data;
+    const header = ['Building', 'Room', 'Month', 'Due', 'Total', 'Status'];
+    const csvRows = [
+      header.join(','),
+      ...rows.map(inv =>
+        [inv.building, inv.room, inv.month, inv.due, inv.total, inv.status].join(',')
+      )
+    ];
+    const csvContent = 'data:text/csv;charset=utf-8,' + csvRows.join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'invoices.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 }

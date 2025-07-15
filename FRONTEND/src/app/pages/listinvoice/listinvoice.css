@@ -49,10 +49,29 @@
   margin-top: 0.5rem;
 }
 
-.filter-label {
+/* .filter-label {
   font-weight: 500;
   color: #6b7280;
   min-width: 50px;
+} */
+.filter-label-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #f8fafc;
+  color: #374151;
+  font-weight: 500;
+  padding: 6px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  cursor: default;
+  font-size: 0.875rem;
+  height: 38px;
+}
+
+.filter-label-btn mat-icon {
+  font-size: 18px;
+  color: #6b7280;
 }
 
 .filters-container {
