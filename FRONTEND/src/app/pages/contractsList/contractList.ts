@@ -1,14 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 
-interface contract {
+interface Contract {
   building: string;
   room: number;
   start: string;
@@ -32,11 +33,33 @@ interface contract {
     MatPaginatorModule,
     MatInputModule,
     MatIconModule,
+    MatSortModule
   ],
 })
-export class contractComponent implements OnInit {
+export class ContractComponent implements OnInit, AfterViewInit  {
+  @ViewChild(MatSort) sort!: MatSort;
 
-  contracts: contract[] = [
+  contracts: Contract[] = [
+    { building: 'ABCHome', room: 201, start: '6/2025', end: '10/7/2025', deposit: 100000, total: 2000000, status: 'Active' },
+    { building: 'QHome', room: 310, start: '5/2025', end: '10/6/2025', deposit: 100000, total: 1100000, status: 'Expire' },
+    { building: 'QHome', room: 101, start: '7/2025', end: '10/8/2025', deposit: 100000, total: 3000000, status: 'Terminate' },
+    { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 200000, total: 3000000, status: 'Unsigned' },
+    { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 300000, total: 3000000, status:  'Terminate'},
+    { building: 'ABCHome', room: 201, start: '6/2025', end: '10/7/2025', deposit: 400000, total: 2000000, status: 'Active' },
+    { building: 'QHome', room: 310, start: '5/2025', end: '10/6/2025', deposit: 1500000, total: 1100000, status: 'Expire' },
+    { building: 'QHome', room: 101, start: '7/2025', end: '10/8/2025', deposit: 2500000, total: 3000000, status: 'Terminate' },
+    { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 3100000, total: 3000000, status: 'Unsigned' },
+    { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 3200000, total: 3000000, status: 'Terminate'},
+    { building: 'ABCHome', room: 201, start: '6/2025', end: '10/7/2025', deposit: 100000, total: 2000000, status: 'Active' },
+    { building: 'QHome', room: 310, start: '5/2025', end: '10/6/2025', deposit: 100000, total: 1100000, status: 'Expire' },
+    { building: 'QHome', room: 101, start: '7/2025', end: '10/8/2025', deposit: 100000, total: 3000000, status: 'Terminate' },
+    { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 200000, total: 3000000, status: 'Unsigned' },
+    { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 300000, total: 3000000, status:  'Terminate'},
+    { building: 'ABCHome', room: 201, start: '6/2025', end: '10/7/2025', deposit: 400000, total: 2000000, status: 'Active' },
+    { building: 'QHome', room: 310, start: '5/2025', end: '10/6/2025', deposit: 1500000, total: 1100000, status: 'Expire' },
+    { building: 'QHome', room: 101, start: '7/2025', end: '10/8/2025', deposit: 2500000, total: 3000000, status: 'Terminate' },
+    { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 3100000, total: 3000000, status: 'Unsigned' },
+    { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 3200000, total: 3000000, status: 'Terminate'},
     { building: 'ABCHome', room: 201, start: '6/2025', end: '10/7/2025', deposit: 100000, total: 2000000, status: 'Active' },
     { building: 'QHome', room: 310, start: '5/2025', end: '10/6/2025', deposit: 100000, total: 1100000, status: 'Expire' },
     { building: 'QHome', room: 101, start: '7/2025', end: '10/8/2025', deposit: 100000, total: 3000000, status: 'Terminate' },
@@ -59,10 +82,12 @@ export class contractComponent implements OnInit {
     { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 3200000, total: 3000000, status: 'Terminate'},
   ];
 
-  filteredcontracts: contract[] = [];
+  filteredcontracts: Contract[] = [];
   pageSize = 5;
   pageIndex = 0;
   searchTerm = '';
+  dataSource = new MatTableDataSource<Contract>();
+
 
   buildings = ['ABCHome', 'QHome'];
   rooms = [101, 102, 201, 310];
@@ -76,6 +101,9 @@ export class contractComponent implements OnInit {
 
   ngOnInit(): void {
     this.applyFilters();
+  }
+  ngAfterViewInit(): void {
+    this.dataSource.sort = this.sort;
   }
 
   applyFilters() {
@@ -101,6 +129,7 @@ export class contractComponent implements OnInit {
 
     // Reset to first page when filters change
     this.pageIndex = 0;
+    this.dataSource.data = this.filteredcontracts;
   }
 
   onPageChange(event: PageEvent) {
