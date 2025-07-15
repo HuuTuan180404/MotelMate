@@ -41,10 +41,10 @@ export class ContractComponent implements OnInit, AfterViewInit  {
 
   contracts: Contract[] = [
     { building: 'ABCHome', room: 201, start: '6/2025', end: '10/7/2025', deposit: 100000, total: 2000000, status: 'Active' },
-    { building: 'QHome', room: 310, start: '5/2025', end: '10/6/2025', deposit: 100000, total: 1100000, status: 'Expire' },
-    { building: 'QHome', room: 101, start: '7/2025', end: '10/8/2025', deposit: 100000, total: 3000000, status: 'Terminate' },
-    { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 200000, total: 3000000, status: 'Unsigned' },
-    { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 300000, total: 3000000, status:  'Terminate'},
+    { building: 'QHome', room: 310, start: '5/2025', end: '10/6/2025', deposit: 100000, total: 1100000, status: 'Active' },
+    { building: 'QHome', room: 101, start: '7/2025', end: '10/8/2025', deposit: 100000, total: 3000000, status: 'Active' },
+    { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 200000, total: 3000000, status: 'Active' },
+    { building: 'QHome', room: 102, start: '7/2025', end: '10/8/2025', deposit: 300000, total: 3000000, status:  'Active'},
     { building: 'ABCHome', room: 201, start: '6/2025', end: '10/7/2025', deposit: 400000, total: 2000000, status: 'Active' },
     { building: 'QHome', room: 310, start: '5/2025', end: '10/6/2025', deposit: 1500000, total: 1100000, status: 'Expire' },
     { building: 'QHome', room: 101, start: '7/2025', end: '10/8/2025', deposit: 2500000, total: 3000000, status: 'Terminate' },
