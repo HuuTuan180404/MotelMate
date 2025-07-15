@@ -1,11 +1,12 @@
-td, th {
+td,
+th {
   width: 10%;
 }
 ::ng-deep .mat-mdc-form-field-flex {
   height: 100%;
   align-items: center !important;
 }
-::ng-deep .filters-row .mat-mdc-text-field-wrapper{
+::ng-deep .filters-row .mat-mdc-text-field-wrapper {
   height: 5.5vh !important;
 }
 
@@ -13,14 +14,14 @@ td, th {
   height: 2rem;
   padding: 0 0.5rem;
 }
-::ng-deep .mdc-floating-label{
+::ng-deep .mdc-floating-label {
   overflow: visible !important;
 }
 ::ng-deep .mat-mdc-form-field-subscript-wrapper {
   display: none;
 }
-mat-label{
-  position:relative;
+mat-label {
+  position: relative;
   top: -12px;
 }
 /* Page Container with Scroll */
@@ -41,9 +42,9 @@ mat-label{
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding:0.5rem 1rem;
+  padding: 0.5rem 1rem;
   background-color: #ffffff;
-  margin: var(--padding-margin) ;
+  margin: var(--padding-margin);
 }
 
 .page-title {
@@ -208,7 +209,8 @@ mat-label{
   cursor: not-allowed;
 }
 
-.prev-btn, .next-btn {
+.prev-btn,
+.next-btn {
   font-size: 1.2rem;
   font-weight: bold;
 }
@@ -224,18 +226,19 @@ mat-label{
 }
 
 .status.active {
-  background-color: #4fd1c5;
+  background-color: var(--active-color);
 }
 .status.expire {
-  background-color: #f56565;
+  background-color: var(--expire-color);
 }
 .status.terminate {
-  background-color: #a0aec0;
+  background-color: var(--terminate-color);
 }
 .status.unsigned {
-  background-color: #ecc94b;
+  background-color: var(--unsigned-color);
   color: #333;
 }
+
 .status.unpaid {
   background-color: #a0aec0;
 }
