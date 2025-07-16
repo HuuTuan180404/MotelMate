@@ -5,11 +5,13 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 
 interface Tenant {
   avatar: string;
   name: string;
-  status: 'Active' | 'Terminate';
+  status: string;
   contact: string;
   room: string;
   bdate: Date;
@@ -18,17 +20,21 @@ interface Tenant {
 @Component({
   selector: 'app-tenantmanagement',
   imports: [
+    FormsModule,
     CommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
+    MatIconModule,
   ],
   templateUrl: './tenantmanagement.html',
   styleUrl: './tenantmanagement.css',
 })
 export class TenantManagement implements AfterViewInit {
+  searchText: string = '';
+
   displayedColumns: string[] = [
     'name',
     'bdate',
@@ -56,92 +62,140 @@ export class TenantManagement implements AfterViewInit {
       bdate: new Date('1990-07-20'),
     },
     {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
       avatar: 'https://randomuser.me/api/portraits/men/31.jpg',
       name: 'Lê Văn C',
-      status: 'Terminate',
+      status: 'Unsigned',
       contact: '0908123456',
       room: '201C',
       bdate: new Date('1988-12-01'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/women/41.jpg',
-      name: 'Phạm Thị D',
-      status: 'Terminate',
-      contact: '0934567890',
-      room: '310D',
-      bdate: new Date('1992-05-10'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/men/51.jpg',
-      name: 'Đỗ Văn E',
-      status: 'Active',
-      contact: '0977123456',
-      room: '105E',
-      bdate: new Date('1999-09-09'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/women/41.jpg',
-      name: 'Phạm Thị D',
-      status: 'Terminate',
-      contact: '0934567890',
-      room: '310D',
-      bdate: new Date('1992-05-10'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/men/51.jpg',
-      name: 'Đỗ Văn E',
-      status: 'Active',
-      contact: '0977123456',
-      room: '105E',
-      bdate: new Date('1999-09-09'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/women/41.jpg',
-      name: 'Phạm Thị D',
-      status: 'Terminate',
-      contact: '0934567890',
-      room: '310D',
-      bdate: new Date('1992-05-10'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/men/51.jpg',
-      name: 'Đỗ Văn E',
-      status: 'Active',
-      contact: '0977123456',
-      room: '105E',
-      bdate: new Date('1999-09-09'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/women/41.jpg',
-      name: 'Phạm Thị D',
-      status: 'Terminate',
-      contact: '0934567890',
-      room: '310D',
-      bdate: new Date('1992-05-10'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/men/51.jpg',
-      name: 'Đỗ Văn E',
-      status: 'Active',
-      contact: '0977123456',
-      room: '105E',
-      bdate: new Date('1999-09-09'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/women/41.jpg',
-      name: 'Phạm Thị D',
-      status: 'Terminate',
-      contact: '0934567890',
-      room: '310D',
-      bdate: new Date('1992-05-10'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/men/51.jpg',
-      name: 'Đỗ Văn E',
-      status: 'Active',
-      contact: '0977123456',
-      room: '105E',
-      bdate: new Date('1999-09-09'),
     },
     {
       avatar: 'https://randomuser.me/api/portraits/women/41.jpg',
@@ -171,6 +225,12 @@ export class TenantManagement implements AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
+  ngOnChanges() {
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -178,5 +238,7 @@ export class TenantManagement implements AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
   }
 }
