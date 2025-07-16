@@ -148,7 +148,10 @@ td, th {
   width: 100%;
   background: white;
 }
-
+.mat-cell{
+  padding-top: 1rem;
+  text-align: center;
+}
 /* Table Headers */
 .contracts-table .mat-mdc-header-cell {
   background-color: #f8fafc;

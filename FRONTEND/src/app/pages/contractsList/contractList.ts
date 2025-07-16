@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { PageEvent, MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
@@ -12,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { AddContractDialogComponent } from './contractDialog/contractDialog';
 
 interface Contract {
   building: string;
@@ -41,7 +43,8 @@ interface Contract {
     MatButtonModule,
     MatTooltipModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatDialogModule
   ],
 })
 export class ContractComponent implements OnInit, AfterViewInit  {
@@ -111,7 +114,7 @@ export class ContractComponent implements OnInit, AfterViewInit  {
     endDate: null
   };
 
-  constructor() { }
+  constructor(public dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.applyFilters();
@@ -125,7 +128,7 @@ export class ContractComponent implements OnInit, AfterViewInit  {
       this.dataSource.paginator.firstPage();
     }
   }
-  
+
   applyFilters() {
     this.filteredcontracts = this.contracts.filter(con => {
       // Apply search term filter
@@ -192,9 +195,18 @@ export class ContractComponent implements OnInit, AfterViewInit  {
     this.applyFilters();
   }
 
-  exportPDF() {
-    // Logic to export as PDF will be implemented here.
-    console.log('Exporting to PDF...');
+  openAddContractDialog(): void {
+    const dialogRef = this.dialog.open(AddContractDialogComponent, {
+      width: '800px',
+      data: { building: '', room: null, start: '', end: '', deposit: null, total: null, status: 'Unsigned' }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.contracts.push(result);
+        this.applyFilters();
+      }
+    });
   }
 }
 
