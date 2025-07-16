@@ -1,12 +1,30 @@
 <div class="main">
   <div class="header-container">
     <h2 class="title">TENANT MANAGEMENT</h2>
-    <input
-      type="text"
-      (keyup)="applyFilter($event)"
-      placeholder="Search..."
-      #input
-    />
+    <div class="search-box">
+      <mat-form-field class="example-form-field">
+        <mat-label>Search</mat-label>
+        <input
+          placeholder="..."
+          matInput
+          type="text"
+          [(ngModel)]="searchText"
+          #input
+          (keyup)="applyFilter($event)"
+        />
+        @if (searchText) {
+        <button
+          id="icon-search"
+          matSuffix
+          matIconButton
+          aria-label="btnSearch"
+          (click)="searchText=''"
+        >
+          <mat-icon>clear</mat-icon>
+        </button>
+        }
+      </mat-form-field>
+    </div>
   </div>
 
   <div class="table-container">

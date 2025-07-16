@@ -5,6 +5,8 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { FormsModule } from '@angular/forms';
 
 interface Tenant {
   avatar: string;
@@ -18,17 +20,21 @@ interface Tenant {
 @Component({
   selector: 'app-tenantmanagement',
   imports: [
+    FormsModule,
     CommonModule,
     MatFormFieldModule,
     MatInputModule,
     MatTableModule,
     MatSortModule,
     MatPaginatorModule,
+    MatIconModule,
   ],
   templateUrl: './tenantmanagement.html',
   styleUrl: './tenantmanagement.css',
 })
 export class TenantManagement implements AfterViewInit {
+  searchText: string = '';
+
   displayedColumns: string[] = [
     'name',
     'bdate',
