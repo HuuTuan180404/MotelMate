@@ -56,6 +56,134 @@ export class TenantManagement implements AfterViewInit {
       bdate: new Date('1990-07-20'),
     },
     {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
+      name: 'Nguyễn Văn A',
+      status: 'Active',
+      contact: '0987654321',
+      room: '101A',
+      bdate: new Date('1995-03-15'),
+    },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      contact: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    {
       avatar: 'https://randomuser.me/api/portraits/men/31.jpg',
       name: 'Lê Văn C',
       status: 'Terminate',
@@ -171,6 +299,12 @@ export class TenantManagement implements AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
+  ngOnChanges() {
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -178,5 +312,7 @@ export class TenantManagement implements AfterViewInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
   }
 }

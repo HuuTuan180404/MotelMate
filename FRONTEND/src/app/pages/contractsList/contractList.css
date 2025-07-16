@@ -6,8 +6,8 @@ th {
   height: 100%;
   align-items: center !important;
 }
-::ng-deep .filters-row .mat-mdc-text-field-wrapper {
-  height: 5.5vh !important;
+::ng-deep .filters-row .mat-mdc-text-field-wrapper{
+  height: 2.5rem !important;
 }
 
 ::ng-deep .search-field .mat-mdc-text-field-wrapper {
@@ -20,16 +20,23 @@ th {
 ::ng-deep .mat-mdc-form-field-subscript-wrapper {
   display: none;
 }
-mat-label {
-  position: relative;
+.search-field mat-label{
+  position:relative;
   top: -12px;
+}
+.filter-field mat-label{
+  position:relative;
+  top: -9px;
+}
+::ng-deep .mat-mdc-form-field-infix{
+  padding: 0 !important;
+  min-height: 0 !important;
 }
 /* Page Container with Scroll */
 :host {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  overflow: auto;
   background-color: var(--bg-color);
 }
 /* Custom Scrollbar for Table */
@@ -57,6 +64,24 @@ mat-label {
 .search-container {
   display: flex;
   align-items: center;
+  gap: 0.5rem;
+}
+
+
+.search-container button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  gap: 0.5rem;
+}
+
+.search-container button {
+  width: 4
 }
 
 .search-field {
@@ -79,7 +104,6 @@ mat-label {
 .filters-container {
   display: flex;
   gap: 1rem;
-  flex-wrap: nowrap;
   width: 100%;
 }
 
@@ -101,16 +125,23 @@ mat-label {
 }
 
 /* Table Container */
+/* .sticky-header {
+  position: sticky;
+  top: 4rem;
+  z-index: 0;
+} */
+
 .table-container {
   margin-left: var(--border-radius);
   margin-right: var(--border-radius);
   margin-bottom: 10vh;
+  overflow: auto;
   background: white;
   border-spacing: 0;
   border-radius: var(--border-radius);
-  overflow: auto;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
 }
+
 .table-container::-webkit-scrollbar {
   display: none;
 }
@@ -136,85 +167,6 @@ mat-label {
 .contracts-table .mat-mdc-row:hover {
   background-color: #f9fafb;
 }
-
-/* Custom Paginator */
-.custom-paginator {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background: white;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
-}
-
-/* Left side - Showing info */
-.paginator-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #6b7280;
-  font-size: 0.875rem;
-}
-
-.page-size-select {
-  padding: 0.25rem 0.5rem;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  background: white;
-  color: #374151;
-  font-size: 0.875rem;
-  cursor: pointer;
-}
-
-.page-size-select:focus {
-  outline: none;
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 1px #3b82f6;
-}
-
-/* Right side - Page numbers */
-.pagination-numbers {
-  display: flex;
-  gap: 2px;
-}
-
-.page-btn {
-  width: 32px;
-  height: 32px;
-  border: none;
-  background: #e0f2fe;
-  color: #0369a1;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.page-btn:hover:not(:disabled) {
-  background: #bae6fd;
-  color: #0c4a6e;
-}
-
-.page-btn.active {
-  background: #0369a1;
-  color: white;
-}
-
-.page-btn:disabled {
-  background: #f3f4f6;
-  color: #9ca3af;
-  cursor: not-allowed;
-}
-
-.prev-btn,
-.next-btn {
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
 /* Status Styles */
 .status {
   padding: 4px 10px;
