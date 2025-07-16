@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
-import { PageEvent, MatPaginatorModule } from '@angular/material/paginator';
+import { PageEvent, MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -37,6 +37,10 @@ interface Contract {
   ],
 })
 export class ContractComponent implements OnInit, AfterViewInit  {
+  displayedColumns: string[] = ['building', 'room', 'start', 'end', 'deposit', 'total', 'status'];
+  dataSource = new MatTableDataSource<Contract>;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   contracts: Contract[] = [
@@ -86,7 +90,6 @@ export class ContractComponent implements OnInit, AfterViewInit  {
   pageSize = 5;
   pageIndex = 0;
   searchTerm = '';
-  dataSource = new MatTableDataSource<Contract>();
 
 
   buildings = ['ABCHome', 'QHome'];
@@ -99,10 +102,14 @@ export class ContractComponent implements OnInit, AfterViewInit  {
     status: ''
   };
 
+  constructor() { }
+
   ngOnInit(): void {
+    this.dataSource = new MatTableDataSource(this.contracts);
     this.applyFilters();
   }
   ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
@@ -123,56 +130,15 @@ export class ContractComponent implements OnInit, AfterViewInit  {
         (!this.filters.building || inv.building === this.filters.building) &&
         (!this.filters.room || inv.room.toString() === this.filters.room) &&
         (!this.filters.status || inv.status === this.filters.status);
-      
+
       return searchMatch && filterMatch;
     });
 
     // Reset to first page when filters change
-    this.pageIndex = 0;
-    this.dataSource.data = this.filteredcontracts.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
-  }
-
-  onPageChange(event: PageEvent) {
-    this.pageSize = event.pageSize;
-    this.pageIndex = event.pageIndex;
-    this.dataSource.data = this.filteredcontracts.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
-  }
-
-  onPageSizeChange() {
-    this.pageIndex = 0; // Reset to first page when page size changes
-    this.dataSource.data = this.filteredcontracts.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
-  }
-
-  goToPage(pageIndex: number) {
-    if (pageIndex >= 0 && pageIndex < this.getTotalPages()) {
-      this.pageIndex = pageIndex;
+    this.dataSource.data = this.filteredcontracts;
+    if (this.paginator) {
+      this.paginator.firstPage();
     }
-    this.dataSource.data = this.filteredcontracts.slice(this.pageIndex * this.pageSize, (this.pageIndex + 1) * this.pageSize);
-  }
-
-  getTotalPages(): number {
-    return Math.ceil(this.filteredcontracts.length / this.pageSize);
-  }
-
-  getPageNumbers(): number[] {
-    const totalPages = this.getTotalPages();
-    const pages: number[] = [];
-
-    // Show maximum 5 page numbers
-    const maxPages = 5;
-    let startPage = Math.max(1, this.pageIndex + 1 - Math.floor(maxPages / 2));
-    let endPage = Math.min(totalPages, startPage + maxPages - 1);
-
-    // Adjust start page if we're near the end
-    if (endPage - startPage + 1 < maxPages) {
-      startPage = Math.max(1, endPage - maxPages + 1);
-    }
-
-    for (let i = startPage; i <= endPage; i++) {
-      pages.push(i);
-    }
-
-    return pages;
   }
 
 }
