@@ -2,6 +2,14 @@
 <div class="header-container">
   <h2 class="page-title">Invoice</h2>
   <div class="search-container">
+    <!-- Clear All button -->
+    <button mat-icon-button (click)="clearAllFilters()" matTooltip="Clear Filters">
+      <mat-icon>close</mat-icon>
+    </button>
+    <!-- Export button -->
+    <button mat-icon-button (click)="exportInvoices()" matTooltip="Export to csv">
+      <mat-icon>file_upload</mat-icon>
+    </button>
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Search</mat-label>
       <input
@@ -12,6 +20,9 @@
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
+    <button mat-flat-button class="create-btn" (click)="openCreateForm()" matTooltip="Create Invoice">
+      <mat-icon>add</mat-icon> Create
+  </button>
   </div>
 </div>
 
@@ -30,33 +41,23 @@
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="filter-field">
-        <mat-select [(ngModel)]="filters.room" (selectionChange)="applyFilters()" placeholder="Room">
-          <mat-option value="">Room</mat-option>
-          <mat-option *ngFor="let r of rooms" [value]="r">{{ r }}</mat-option>
-        </mat-select>
-        <mat-icon matSuffix>meeting_room</mat-icon>
-      </mat-form-field>
-
-      <mat-form-field appearance="outline" class="filter-field">
         <mat-select [(ngModel)]="filters.status" (selectionChange)="applyFilters()" placeholder="Status">
           <mat-option value="">Status</mat-option>
           <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
         </mat-select>
         <mat-icon matSuffix>info</mat-icon>
       </mat-form-field>
+
+      <mat-form-field appearance="outline" class="filter-field">
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [rangePicker]="picker">
+          <input matStartDate placeholder="Start date" [(ngModel)]="filters.startDate" (dateChange)="applyFilters()">
+          <input matEndDate placeholder="End date" [(ngModel)]="filters.endDate" (dateChange)="applyFilters()">
+        </mat-date-range-input>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+      </mat-form-field>
     </div>
-
-    <!-- Clear All button -->
-    <button class="clear-btn" (click)="clearAllFilters()">
-      <mat-icon>cancel</mat-icon>
-      Clear All
-    </button>
-
-    <!-- Export button -->
-    <button class="export-btn" (click)="exportInvoices()">
-      <mat-icon>file_upload</mat-icon>
-      Export
-    </button>
   </div>
 
   <!-- Table with sort -->
