@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltip } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-roommanagement',
@@ -17,6 +18,7 @@ import { MatIconModule } from '@angular/material/icon';
     MatIconModule,
     FormsModule,
     MatFormFieldModule,
+    MatTooltip,
   ],
   templateUrl: './roommanagement.html',
   styleUrl: './roommanagement.css',
@@ -33,6 +35,10 @@ export class RoomManagement {
 
   ngOnInit() {
     this.buildingCode = this.options[0].code;
+  }
+
+  onClick_btnCreate() {
+    console.log('onClick_btnCreate()');
   }
 
   rooms = [
