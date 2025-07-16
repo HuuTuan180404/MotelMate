@@ -77,3 +77,17 @@ ul {
   border-radius: 4px;
   color: #ffffff;
 }
+.dropdown-menu {
+  padding-left: 20px;
+  margin-top: 5px;
+  border-left: 2px solid #eee;
+}
+
+.dropdown-menu li a {
+  padding: 8px 15px;
+  font-size: 14px;
+}
+
+.dropdown-menu li a .material-symbols-outlined {
+  font-size: 18px;
+}

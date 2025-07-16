@@ -2,19 +2,46 @@
   <div class="sidebar-header">
     <img src="assets/images/logo.svg" alt="logo" />
   </div>
+  
   <ul class="sidebar-links">
     <h3><span>Main menu</span></h3>
+    
+    <!-- Các menu thường -->
     <li *ngFor="let item of mainMenu">
-      <a [href]="item.route">
-        <span class="material-symbols-outlined"> {{item.icon}} </span>
-        {{item.label}}
-      </a>
+      <ng-container *ngIf="!item.isDropdown">
+        <a [routerLink]="item.route" routerLinkActive="active">
+          <span class="material-symbols-outlined">{{item.icon}}</span>
+          {{item.label}}
+        </a>
+      </ng-container>
+      
+      <!-- Menu Requests có dropdown -->
+      <ng-container *ngIf="item.isDropdown">
+        <div class="dropdown-container">
+          <a (click)="toggleRequestMenu()" class="dropdown-toggle">
+            <span class="material-symbols-outlined">{{item.icon}}</span>
+            {{item.label}}
+            <span class="material-symbols-outlined dropdown-icon">
+              {{isRequestMenuOpen ? 'expand_less' : 'expand_more'}}
+            </span>
+          </a>
+          
+          <ul *ngIf="isRequestMenuOpen" class="dropdown-menu">
+            <li *ngFor="let child of item.children">
+              <a [routerLink]="child.route" routerLinkActive="active">
+                <span class="material-symbols-outlined">{{child.icon}}</span>
+                {{child.label}}
+              </a>
+            </li>
+          </ul>
+        </div>
+      </ng-container>
     </li>
 
     <h3><span>Account</span></h3>
     <li *ngFor="let item of accountMenu">
-      <a [href]="item.route">
-        <span class="material-symbols-outlined"> {{item.icon}} </span>
+      <a [routerLink]="item.route" routerLinkActive="active">
+        <span class="material-symbols-outlined">{{item.icon}}</span>
         {{item.label}}
       </a>
     </li>

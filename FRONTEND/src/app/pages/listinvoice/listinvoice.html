@@ -3,7 +3,13 @@
   <h2 class="page-title">Invoice</h2>
   <div class="search-container">
     <mat-form-field appearance="outline" class="search-field">
-      <input matInput [(ngModel)]="searchTerm" (input)="applyFilters()" placeholder="Search">
+      <mat-label>Search</mat-label>
+      <input
+        matInput
+        placeholder="Search..."
+        [(ngModel)]="searchTerm"
+        (input)="applyFilters()"
+      />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
   </div>
@@ -14,11 +20,6 @@
   <!-- Filters Row -->
   <div class="filters-row">
     <!-- <div class="filter-label">Filter</div> -->
-     <button class="filter-label-btn" disabled>
-        <mat-icon>filter_alt</mat-icon>
-        <span>Filter</span>
-      </button>
-
     <div class="filters-container">
       <mat-form-field appearance="outline" class="filter-field">
         <mat-select [(ngModel)]="filters.building" (selectionChange)="applyFilters()" placeholder="Building">
@@ -93,7 +94,9 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+        (click)="openInvoiceDetail(row)"
+      style="cursor: pointer;"></tr>
   </table>
 
   <!-- Default Angular Material Paginator -->

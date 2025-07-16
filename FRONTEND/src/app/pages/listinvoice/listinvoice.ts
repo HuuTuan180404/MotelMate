@@ -8,6 +8,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { InvoiceDetail } from './invoice-detail/invoice-detail';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 interface invoice {
   building: string;
@@ -30,7 +32,8 @@ interface invoice {
     MatPaginatorModule,
     MatInputModule,
     MatIconModule,
-    MatSortModule
+    MatSortModule,
+    MatDialogModule
   ],
   templateUrl: './listinvoice.html',
   styleUrl: './listinvoice.css'
@@ -61,6 +64,8 @@ export class Listinvoice {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+  constructor(private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.applyFilters();
@@ -122,5 +127,12 @@ export class Listinvoice {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  openInvoiceDetail(inv: invoice) {
+    this.dialog.open(InvoiceDetail, {
+      width: '400px',
+      data: inv
+    });
   }
 }
