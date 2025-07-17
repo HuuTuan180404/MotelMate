@@ -13,7 +13,6 @@ import { RoomDetail } from '../roomdetail/roomdetail';
 @Component({
   selector: 'app-roommanagement',
   imports: [
-    RoomDetail,
     Room,
     CommonModule,
     MatInputModule,
@@ -45,8 +44,8 @@ export class RoomManagement {
   onClick_btnCreate() {
     this.dialog.open(RoomDetail, {
       disableClose: true,
-      maxWidth: '90vw',
-      maxHeight: '90vh',
+      minWidth: '90vw',
+      minHeight: '90vh',
       data: { roomId: 123, mode: 'edit' },
     });
   }

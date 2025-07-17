@@ -1,18 +1,100 @@
 <div class="room-detail">
-  <button mat-icon-button aria-label="Close" title="Close">
+  <button mat-icon-button aria-label="Close" title="Close" mat-dialog-close>
     <mat-icon fontIcon="close"></mat-icon>
   </button>
-  <h2 mat-mat-dialog-title></h2>
-  <mat-dialog-content>
-    <div class="room-info"></div>
+  <h2 mat-mat-dialog-title>dsad</h2>
+  <div class="content">
+    <div class="room-info">
+      <div class="gallery">
+        <div class="thumbnails">
+          <img
+            *ngFor="let img of staticImages"
+            [src]="img"
+            alt="thumbnail"
+            (click)="changeImage(img)"
+            class="thumb"
+          />
+        </div>
+        <div class="main-image">
+          <img [src]="currentImage" alt="Ảnh chính" class="main-photo" />
+        </div>
+      </div>
 
-    <div class="building-info">
-      <div>
-        <h3></h3>
-        <input placeholder="___" type="text" readonly />
+      <div class="info">
+        <div class="info-part1-2">
+          <div class="info-part1">
+            <!-- mã phòng -->
+            <div>
+              <h4>Room code</h4>
+              <input id="roomCode" type="text" readonly placeholder="d" />
+            </div>
+
+            <!-- diện tích -->
+            <div>
+              <h4>Area</h4>
+              <input id="roomArea" type="text" readonly placeholder="20m2" />
+            </div>
+          </div>
+
+          <div class="info-part2">
+            <!-- số khách -->
+            <div>
+              <h4>Max guests</h4>
+              <input id="roomMaxGuests" type="text" readonly placeholder="3" />
+            </div>
+
+            <!-- tiền -->
+            <div>
+              <h4>Price per month</h4>
+              <input
+                id="roomPricePerMonth"
+                type="text"
+                readonly
+                placeholder="13000000"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div class="info-part3">
+          <!-- miêu tả -->
+          <label for="roomDescription"><h4>Description</h4></label>
+          <textarea name="roomDescription" id="roomDescription">
+            Phòng có ma
+          </textarea>
+        </div>
+
+        <div class="members">
+          <h4>Members</h4>
+          <div class="member" *ngFor="let member of roomMembers">
+            <img [src]="member.avatar" alt="" />
+            <!-- <div class="member-info">
+              <label> <b>Name:</b> {{member.name}} </label>
+              <br />
+              <label><b>Phone number:</b> {{member.phoneNumber}} </label>
+              <br />
+              <label><b>Birthday:</b> {{member.bdate | date:'yyyy'}} </label>
+            </div> -->
+
+            <div class="member-info">
+              <div class="info-row">
+                <label>Name:</label>
+                <span>{{ member.name }}</span>
+              </div>
+              <div class="info-row">
+                <label>Phone number:</label>
+                <span>{{ member.phoneNumber }}</span>
+              </div>
+              <div class="info-row">
+                <label>Birthday:</label>
+                <span>{{ member.bdate | date: 'yyyy' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  </mat-dialog-content>
 
-  <mat-dialog-actions></mat-dialog-actions>
+    <div class="other-infor"></div>
+  </div>
 </div>
