@@ -1,0 +1,18 @@
+<div class="chart-container" *ngIf="isBrowser">
+  <div class="bar-chart">
+    <canvas baseChart
+      [data]="barChartData"
+      [labels]="barChartLabels"
+      [options]="barChartOptions"
+      [type]="barChartType">
+    </canvas>
+  </div>
+  <div class="pie-chart">
+    <canvas baseChart
+      [data]="pieChartData"
+      [labels]="pieChartLabels"
+      [options]="pieChartOptions"
+      [type]="pieChartType">
+    </canvas>
+  </div>
+</div>

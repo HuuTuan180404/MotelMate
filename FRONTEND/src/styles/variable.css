@@ -4,14 +4,16 @@
   --secondary-color: #ff9800;
   --success-color: #4caf50;
   --error-color: #f44336;
-  --bg-color: #8fd4d4;
+  /* --bg-color: #8fd4d4; */
+
+  --create-btn: #45a9ea;
 
   --active-color: #4fd1c5;
   --expire-color: #f56565;
   --terminate-color: #a0aec0;
   --unsigned-color: #ecc94b;
 
-  /* --bg-color: #f4f6f6; */
+  --bg-color: #f4f6f6;
   --bg-color-sidebar: #2fb6b6;
   --text-color: #4d4d4d;
 

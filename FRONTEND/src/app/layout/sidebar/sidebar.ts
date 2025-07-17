@@ -12,16 +12,16 @@ export class Sidebar {
   isRequestMenuOpen = false;
 
   mainMenu = [
-    { icon: 'dashboard', label: 'Dashboard', route: '#' },
+    { icon: 'dashboard', label: 'Dashboard', route: 'dashboard' },
     { icon: 'apartment', label: 'Building', route: 'buildings' },
     { icon: 'bed', label: 'Room', route: 'rooms' },
     { icon: 'server_person', label: 'Tenant', route: 'tenants' },
     { icon: 'contract', label: 'Contract', route: 'contracts' },
     { icon: 'receipt', label: 'Invoice', route: 'invoices' },
     { icon: 'inventory_2', label: 'Asset', route: '#' },
-    { 
-      icon: 'request_page', 
-      label: 'Requests', 
+    {
+      icon: 'request_page',
+      label: 'Requests',
       isDropdown: true,
       children: [
         { icon: 'app_registration', label: 'Room Registration', route: 'requests/room-registration' },

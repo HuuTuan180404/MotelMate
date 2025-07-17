@@ -4,14 +4,15 @@
 }
 
 .layout-container {
-  height: 100%;
+  height: 100vh;
+  width: 100vw;
   display: flex;
   overflow: hidden;
 }
 
 .main-area {
-  height: 100%;
-  width: 100%;
+  flex: 1 1 0;
+  min-width: 0;
   display: flex;
   flex-direction: column;
 }
@@ -21,7 +22,6 @@ app-header {
 }
 
 .page-content {
-  flex: 1;
   margin-top: 16px;
   background-color: var(--bg-color);
   border-radius: var(--border-radius);
