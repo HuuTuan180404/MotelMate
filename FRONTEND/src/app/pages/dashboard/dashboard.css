@@ -1,0 +1,25 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: var(--bg-color);
+}
+.chart-container{
+  height: 30%;
+  margin: var(--padding-margin);
+  display:flex;
+  gap: 1%;
+}
+.bar-chart{
+  border-radius: var(--border-radius);
+  background-color: white;
+  flex: 2 1 0;
+}
+
+.pie-chart{
+  border-radius: var(--border-radius);
+  background-color: white;
+  flex: 1 1 0;
+}
+
+
