@@ -5,8 +5,8 @@
     <button mat-icon-button (click)="clearFilters()" matTooltip="Clear Filters">
       <mat-icon>close</mat-icon>
     </button>
-    <button mat-icon-button (click)="exportPDF()" matTooltip="Export to PDF">
-      <mat-icon>picture_as_pdf</mat-icon>
+    <button mat-icon-button (click)="openAddContractDialog()" matTooltip="Add Contract">
+      <mat-icon>add</mat-icon>
     </button>
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Search</mat-label>
@@ -20,7 +20,6 @@
     </mat-form-field>
   </div>
 </div>
-
 <!-- Table Container -->
 <div class="table-container">
   <!-- Filters Row -->
@@ -107,6 +106,11 @@
     </ng-container>
       <tr mat-header-row *matHeaderRowDef="displayedColumns" class ="sticky-header"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
+          No records found
+        </td>
+      </tr>
   </table>
   <mat-paginator [pageSizeOptions]="[5, 10, 15, 20]" showFirstLastButtons [length]="dataSource.data.length"></mat-paginator>
 </div>
