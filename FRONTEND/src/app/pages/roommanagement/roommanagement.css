@@ -88,3 +88,13 @@
   align-items: center;
   gap: 0 5px;
 }
+
+/* button create*/
+.create-btn {
+  display: flex;
+  align-items: center;
+  padding: var(--padding-margin);
+  border-radius: var(--border-radius);
+  border: none;
+  background-color: var(--create-btn);
+}
