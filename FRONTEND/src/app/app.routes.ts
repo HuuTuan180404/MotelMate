@@ -7,6 +7,7 @@ import { Buildingmanagement } from './pages/buildingmanagement/buildingmanagemen
 import { ContractComponent } from './pages/contractsList/contractList';
 import { TenantManagement } from './pages/tenantmanagement/tenantmanagement';
 import { Paymentrequest } from './pages/paymentrequest/paymentrequest';
+import { Dashboard } from './pages/dashboard/dashboard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -20,7 +21,8 @@ export const routes: Routes = [
       { path: 'buildings', component: Buildingmanagement },
       { path: 'contracts', component: ContractComponent },
       { path: 'tenants', component: TenantManagement },
-      { path: 'requests/payment', component: Paymentrequest}
+      { path: 'requests/payment', component: Paymentrequest},
+      { path: 'dashboard', component: Dashboard }
     ],
   },
 ];
