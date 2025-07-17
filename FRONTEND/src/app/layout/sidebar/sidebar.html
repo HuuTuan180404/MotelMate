@@ -14,7 +14,6 @@
           {{item.label}}
         </a>
       </ng-container>
-
       <!-- Menu Requests có dropdown -->
       <ng-container *ngIf="item.isDropdown">
         <div class="dropdown-container">
@@ -25,7 +24,6 @@
               {{isRequestMenuOpen ? 'expand_less' : 'expand_more'}}
             </span>
           </a>
-
           <ul *ngIf="isRequestMenuOpen" class="dropdown-menu">
             <li *ngFor="let child of item.children">
               <a [routerLink]="child.route" routerLinkActive="active">
