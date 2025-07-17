@@ -1,0 +1,11 @@
+.room-detail {
+  height: 90vh;
+  width: 90vw;
+  background-color: aqua;
+}
+
+::ng-deep .mat-mdc-dialog-surface {
+  border-radius: var(--border-radius);
+}
+
+

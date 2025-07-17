@@ -7,10 +7,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { RoomDetail } from '../roomdetail/roomdetail';
 
 @Component({
   selector: 'app-roommanagement',
   imports: [
+    RoomDetail,
     Room,
     CommonModule,
     MatInputModule,
@@ -19,11 +22,13 @@ import { MatTooltip } from '@angular/material/tooltip';
     FormsModule,
     MatFormFieldModule,
     MatTooltip,
+    MatDialogModule,
   ],
   templateUrl: './roommanagement.html',
   styleUrl: './roommanagement.css',
 })
 export class RoomManagement {
+  constructor(private dialog: MatDialog) {}
   options = [
     { name: 'All', code: -1 },
     { name: 'One', code: 1 },
@@ -38,7 +43,12 @@ export class RoomManagement {
   }
 
   onClick_btnCreate() {
-    console.log('onClick_btnCreate()');
+    this.dialog.open(RoomDetail, {
+      disableClose: true,
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      data: { roomId: 123, mode: 'edit' },
+    });
   }
 
   rooms = [
