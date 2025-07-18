@@ -45,7 +45,7 @@ export class RoomManagement {
     this.dialog.open(RoomDetail, {
       disableClose: true,
       minWidth: '90vw',
-      minHeight: '90vh',
+      maxHeight: '90vh',
       data: { roomId: 123, mode: 'edit' },
     });
   }

@@ -1,12 +1,19 @@
 <div class="room-detail">
-  <button mat-icon-button aria-label="Close" title="Close" mat-dialog-close>
-    <mat-icon fontIcon="close"></mat-icon>
+  <button mat-icon-button aria-label="Close" title="Back" mat-dialog-close>
+    <mat-icon>keyboard_arrow_left</mat-icon>
   </button>
-  <h2 mat-mat-dialog-title>dsad</h2>
+  <div mat-mat-dialog-title class="dialog-title">
+    <h2>dsad</h2>
+    <button mat-icon-button aria-label="Close" title="Back" mat-dialog-close>
+      <mat-icon>keyboard_arrow_left</mat-icon>
+    </button>
+  </div>
+
   <div class="content">
     <div class="room-info">
+      <!-- /* images */ -->
       <div class="gallery">
-        <div class="thumbnails">
+        <div class="thumbnails" #scrollContainerThumbnails>
           <img
             *ngFor="let img of staticImages"
             [src]="img"
@@ -20,6 +27,7 @@
         </div>
       </div>
 
+      <!-- /* tthông tin phòng */ -->
       <div class="info">
         <div class="info-part1-2">
           <div class="info-part1">
@@ -64,37 +72,73 @@
           </textarea>
         </div>
 
-        <div class="members">
-          <h4>Members</h4>
-          <div class="member" *ngFor="let member of roomMembers">
-            <img [src]="member.avatar" alt="" />
-            <!-- <div class="member-info">
-              <label> <b>Name:</b> {{member.name}} </label>
-              <br />
-              <label><b>Phone number:</b> {{member.phoneNumber}} </label>
-              <br />
-              <label><b>Birthday:</b> {{member.bdate | date:'yyyy'}} </label>
-            </div> -->
-
-            <div class="member-info">
-              <div class="info-row">
-                <label>Name:</label>
-                <span>{{ member.name }}</span>
+        <div class="info-part4">
+          <div class="info-part4-header">
+            <h4>Members</h4>
+            <button (click)="onClick_btnAddMember()">
+              <mat-icon>add</mat-icon><span>Add</span>
+            </button>
+          </div>
+          <div class="members" #scrollContainer>
+            <ng-container *ngIf="roomMembers.length > 0; else noMembers">
+              <div class="member" *ngFor="let member of roomMembers">
+                <img [src]="member.avatar" alt="" />
+                <div>
+                  <div class="row-info">
+                    <span class="material-symbols-outlined"> person </span>
+                    <span>{{ member.name }}</span>
+                  </div>
+                  <div class="row-info">
+                    <span class="material-symbols-outlined"> call</span>
+                    <span> {{ member.phoneNumber }}</span>
+                  </div>
+                  <div class="row-info">
+                    <span class="material-symbols-outlined"> cake </span>
+                    <span>{{ member.bdate | date: 'dd/MM/yyyy' }}</span>
+                  </div>
+                </div>
               </div>
-              <div class="info-row">
-                <label>Phone number:</label>
-                <span>{{ member.phoneNumber }}</span>
-              </div>
-              <div class="info-row">
-                <label>Birthday:</label>
-                <span>{{ member.bdate | date: 'yyyy' }}</span>
-              </div>
-            </div>
+            </ng-container>
+            <ng-template #noMembers>
+              <div style="padding: 1rem; color: #888">Chưa có thành viên</div>
+            </ng-template>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="other-infor"></div>
+    <!-- /* thông tin đơn giản của tòa nhà, chủ trọ */ -->
+    <div class="other-infor">
+      <!-- /* info chủ trọ */ -->
+      <div class="owner-info">
+        <h4 class="title">Owner information</h4>
+        <div class="owner-info-content">
+          <div>
+            <span class="material-symbols-outlined"> person </span>
+            <span>Tên chủ nhà</span>
+          </div>
+          <div>
+            <span class="material-symbols-outlined"> call</span>
+            <span>SĐT</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- /* thông tin của tòa nhà */ -->
+      <div class="building-info">
+        <h4 class="title">Building information</h4>
+        <div class="building-info-content">
+          <div>
+            <span class="material-symbols-outlined"> apartment </span>
+            <span>sunrise city</span>
+          </div>
+
+          <div>
+            <span class="material-symbols-outlined"> location_on </span>
+            <span>Địa chỉ</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

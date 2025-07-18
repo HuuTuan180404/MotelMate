@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,6 +25,10 @@ import { Tenant } from '../../models/Tenant.model';
   styleUrl: './roomdetail.css',
 })
 export class RoomDetail {
+  @ViewChild('scrollContainer', { static: true }) scrollContainer!: ElementRef;
+  @ViewChild('scrollContainerThumbnails', { static: true })
+  scrollContainerThumbnails!: ElementRef;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     public dialogRef: MatDialogRef<RoomDetail>
@@ -56,6 +60,34 @@ export class RoomDetail {
 
   changeImage(image: string) {
     this.currentImage = image;
+  }
+
+  ngAfterViewInit() {
+    const el = this.scrollContainer.nativeElement;
+    const scrollContainerThumbnails =
+      this.scrollContainerThumbnails.nativeElement;
+
+    el.addEventListener(
+      'wheel',
+      (event: WheelEvent) => {
+        if (event.deltaY !== 0) {
+          event.preventDefault();
+          el.scrollLeft += event.deltaY;
+        }
+      },
+      { passive: false }
+    );
+
+    scrollContainerThumbnails.addEventListener(
+      'wheel',
+      (event: WheelEvent) => {
+        if (event.deltaY !== 0) {
+          event.preventDefault();
+          scrollContainerThumbnails.scrollLeft += event.deltaY;
+        }
+      },
+      { passive: false }
+    );
   }
 
   roomMembers: Tenant[] = [
@@ -94,7 +126,27 @@ export class RoomDetail {
       room: '102B',
       bdate: new Date('1990-07-20'),
     },
+    {
+      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+      name: 'Trần Thị B',
+      status: 'Terminate',
+      phoneNumber: '0912345678',
+      room: '102B',
+      bdate: new Date('1990-07-20'),
+    },
+    // {
+    //   avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+    //   name: 'Trần Thị B',
+    //   status: 'Terminate',
+    //   phoneNumber: '0912345678',
+    //   room: '102B',
+    //   bdate: new Date('1990-07-20'),
+    // },
   ];
 
   room = {};
+
+  onClick_btnAddMember() {
+    console.log('dads');
+  }
 }
