@@ -41,6 +41,12 @@
   border: 2px solid white;
 }
 
+.message-icon {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
 .avatar {
   display: flex;
   align-items: center;
