@@ -8,6 +8,7 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { Tenant } from '../../models/Tenant.model';
+import { Asset } from '../../models/Asset.model';
 
 @Component({
   selector: 'app-assetmanagement',
@@ -28,186 +29,132 @@ export class AssetManagement {
   searchText: string = '';
 
   displayedColumns: string[] = [
+    'assetID',
     'name',
-    'bdate',
-    'contact',
-    'building',
-    'room',
-    'status',
+    'price',
+    'type',
+    'description',
+    'quantity',
   ];
 
-  tenants: Tenant[] = [
+  onClick_btnCreate() {
+    console.log('create new asset');
+  }
+
+  assets: Asset[] = [
     {
-      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
-      name: 'Nguyễn Văn A',
-      status: 'Active',
-      phoneNumber: '0987654321',
-      room: '101A',
-      bdate: new Date('1995-03-15'),
+      assetID: 6,
+      name: 'Tủ lạnh Samsung Inverter 256L',
+      price: 7200000,
+      description:
+        'Tủ lạnh tiết kiệm điện, phù hợp sử dụng trong văn phòng nhỏ.',
+      type: 'Electronics',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-      name: 'Trần Thị B',
-      status: 'Terminate',
-      phoneNumber: '0912345678',
-      room: '102B',
-      bdate: new Date('1990-07-20'),
+      assetID: 7,
+      name: 'Xe máy Honda Wave Alpha',
+      price: 18000000,
+      description: 'Phương tiện đi lại cho nhân viên, tiết kiệm nhiên liệu.',
+      type: 'Vehicle',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
-      name: 'Nguyễn Văn A',
-      status: 'Active',
-      phoneNumber: '0987654321',
-      room: '101A',
-      bdate: new Date('1995-03-15'),
+      assetID: 8,
+      name: 'Máy chiếu Epson EB-X41',
+      price: 9500000,
+      description: 'Máy chiếu độ sáng cao, phù hợp cho thuyết trình hội họp.',
+      type: 'Office Equipment',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-      name: 'Trần Thị B',
-      status: 'Terminate',
-      phoneNumber: '0912345678',
-      room: '102B',
-      bdate: new Date('1990-07-20'),
+      assetID: 9,
+      name: 'Camera giám sát Hikvision 2MP',
+      price: 1200000,
+      description: 'Camera an ninh có hồng ngoại, giám sát 24/7.',
+      type: 'Electronics',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
-      name: 'Nguyễn Văn A',
-      status: 'Active',
-      phoneNumber: '0987654321',
-      room: '101A',
-      bdate: new Date('1995-03-15'),
+      assetID: 10,
+      name: 'Tủ tài liệu 3 ngăn',
+      price: 1500000,
+      description: 'Tủ tài liệu bằng sắt sơn tĩnh điện, khóa bảo mật.',
+      type: 'Furniture',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-      name: 'Trần Thị B',
-      status: 'Terminate',
-      phoneNumber: '0912345678',
-      room: '102B',
-      bdate: new Date('1990-07-20'),
+      assetID: 11,
+      name: 'Máy tính bàn Core i5 Gen10',
+      price: 14000000,
+      description: 'Cấu hình ổn định, dùng cho nhân viên văn phòng và kế toán.',
+      type: 'Electronics',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
-      name: 'Nguyễn Văn A',
-      status: 'Active',
-      phoneNumber: '0987654321',
-      room: '101A',
-      bdate: new Date('1995-03-15'),
+      assetID: 12,
+      name: 'Bảng trắng văn phòng 1.2m x 2m',
+      price: 800000,
+      description: 'Bảng từ trắng có bánh xe, dễ dàng di chuyển và ghi chú.',
+      type: 'Office Equipment',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-      name: 'Trần Thị B',
-      status: 'Terminate',
-      phoneNumber: '0912345678',
-      room: '102B',
-      bdate: new Date('1990-07-20'),
+      assetID: 13,
+      name: 'Ghế họp chân quỳ',
+      price: 600000,
+      description: 'Ghế họp đơn giản, khung sắt chắc chắn, đệm mút bọc da.',
+      type: 'Furniture',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
-      name: 'Nguyễn Văn A',
-      status: 'Active',
-      phoneNumber: '0987654321',
-      room: '101A',
-      bdate: new Date('1995-03-15'),
+      assetID: 14,
+      name: 'Máy pha cà phê Espresso Philips',
+      price: 3100000,
+      description:
+        'Phù hợp cho khu vực pantry văn phòng, pha cà phê nhanh chóng.',
+      type: 'Electronics',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-      name: 'Trần Thị B',
-      status: 'Terminate',
-      phoneNumber: '0912345678',
-      room: '102B',
-      bdate: new Date('1990-07-20'),
+      assetID: 15,
+      name: 'Máy quét HP ScanJet Pro',
+      price: 4500000,
+      description:
+        'Máy quét tốc độ cao, hỗ trợ khổ giấy A4, tích hợp phần mềm OCR.',
+      type: 'Office Equipment',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
-      name: 'Nguyễn Văn A',
-      status: 'Active',
-      phoneNumber: '0987654321',
-      room: '101A',
-      bdate: new Date('1995-03-15'),
+      assetID: 1,
+      name: 'Laptop Dell XPS 13',
+      price: 25000000,
+      description:
+        'Laptop mỏng nhẹ, hiệu suất cao, phù hợp cho lập trình viên.',
+      type: 'Electronics',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-      name: 'Trần Thị B',
-      status: 'Terminate',
-      phoneNumber: '0912345678',
-      room: '102B',
-      bdate: new Date('1990-07-20'),
+      assetID: 2,
+      name: 'Máy in Canon LBP 2900',
+      price: 3000000,
+      description: 'Máy in laser đơn sắc, tốc độ cao, độ bền ổn định.',
+      type: 'Office Equipment',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
-      name: 'Nguyễn Văn A',
-      status: 'Active',
-      phoneNumber: '0987654321',
-      room: '101A',
-      bdate: new Date('1995-03-15'),
+      assetID: 3,
+      name: 'Bàn làm việc gỗ sồi',
+      price: 2000000,
+      description: 'Bàn làm việc chân sắt mặt gỗ, kích thước 120x60 cm.',
+      type: 'Furniture',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-      name: 'Trần Thị B',
-      status: 'Terminate',
-      phoneNumber: '0912345678',
-      room: '102B',
-      bdate: new Date('1990-07-20'),
+      assetID: 4,
+      name: 'Điện thoại iPhone 14 Pro',
+      price: 28000000,
+      description:
+        'Điện thoại thông minh cao cấp, màn hình OLED, camera chất lượng.',
+      type: 'Electronics',
     },
     {
-      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
-      name: 'Nguyễn Văn A',
-      status: 'Active',
-      phoneNumber: '0987654321',
-      room: '101A',
-      bdate: new Date('1995-03-15'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-      name: 'Trần Thị B',
-      status: 'Terminate',
-      phoneNumber: '0912345678',
-      room: '102B',
-      bdate: new Date('1990-07-20'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/men/11.jpg',
-      name: 'Nguyễn Văn A',
-      status: 'Active',
-      phoneNumber: '0987654321',
-      room: '101A',
-      bdate: new Date('1995-03-15'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-      name: 'Trần Thị B',
-      status: 'Terminate',
-      phoneNumber: '0912345678',
-      room: '102B',
-      bdate: new Date('1990-07-20'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/men/31.jpg',
-      name: 'Lê Văn C',
-      status: 'Unsigned',
-      phoneNumber: '0908123456',
-      room: '201C',
-      bdate: new Date('1988-12-01'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/women/41.jpg',
-      name: 'Phạm Thị D',
-      status: 'Terminate',
-      phoneNumber: '0934567890',
-      room: '310D',
-      bdate: new Date('1992-05-10'),
-    },
-    {
-      avatar: 'https://randomuser.me/api/portraits/men/51.jpg',
-      name: 'Đỗ Văn E',
-      status: 'Active',
-      phoneNumber: '0977123456',
-      room: '105E',
-      bdate: new Date('1999-09-09'),
+      assetID: 5,
+      name: 'Ghế xoay văn phòng',
+      price: 900000,
+      description: 'Ghế lưới ngả lưng, có bánh xe và tay vịn điều chỉnh được.',
+      type: 'Furniture',
     },
   ];
 
-  dataSource: MatTableDataSource<Tenant> = new MatTableDataSource(this.tenants);
+  dataSource: MatTableDataSource<Asset> = new MatTableDataSource(this.assets);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -230,7 +177,5 @@ export class AssetManagement {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
-    // this.dataSource.paginator = this.paginator;
-    // this.dataSource.sort = this.sort;
   }
 }
