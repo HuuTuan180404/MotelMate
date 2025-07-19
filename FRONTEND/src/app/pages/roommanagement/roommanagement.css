@@ -20,10 +20,22 @@
   border-radius: var(--border-radius);
 }
 
+.title {
+  padding: 10px;
+}
+
 .right-section {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0 20px;
+}
+
+.slider-bar {
+  /* display: flex; */
+  /* flex-direction: column; */
+  background-color: #d0d2db;
+  padding: var(--padding-margin);
+  border-radius: var(--border-radius);
 }
 
 ::ng-deep .mdc-line-ripple::before,
@@ -60,12 +72,14 @@
   margin-left: 30px;
 }
 
-.title {
-  padding: 10px;
-}
-
-.right-section {
-  margin-right: 10px;
+/* button create*/
+.create-btn {
+  display: flex;
+  align-items: center;
+  padding: var(--padding-margin);
+  border-radius: var(--border-radius);
+  border: none;
+  background-color: var(--create-btn);
 }
 
 .rooms {
@@ -87,14 +101,4 @@
   display: flex;
   align-items: center;
   gap: 0 5px;
-}
-
-/* button create*/
-.create-btn {
-  display: flex;
-  align-items: center;
-  padding: var(--padding-margin);
-  border-radius: var(--border-radius);
-  border: none;
-  background-color: var(--create-btn);
 }

@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltip } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RoomDetail } from '../roomdetail/roomdetail';
+import { MatSliderModule } from '@angular/material/slider';
 
 @Component({
   selector: 'app-roommanagement',
@@ -22,6 +23,7 @@ import { RoomDetail } from '../roomdetail/roomdetail';
     MatFormFieldModule,
     MatTooltip,
     MatDialogModule,
+    MatSliderModule,
   ],
   templateUrl: './roommanagement.html',
   styleUrl: './roommanagement.css',
