@@ -18,7 +18,7 @@ namespace BACKEND.Models
 
         [Required]
         [StringLength(255)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]

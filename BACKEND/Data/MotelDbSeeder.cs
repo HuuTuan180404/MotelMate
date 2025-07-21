@@ -40,6 +40,7 @@ namespace Backend.Data
                 var buildingFaker = new Faker<Building>("vi")
                     .RuleFor(b => b.Name, f => $"Tòa nhà {f.Random.AlphaNumeric(1)}")
                     .RuleFor(b => b.Address, f => f.Address.FullAddress())
+                    .RuleFor(b => b.BuildingCode, f => f.Random.Replace("B##"))
                     .RuleFor(b => b.OwnerID, f => f.PickRandom(accountIds));
 
                 var buildings = buildingFaker.Generate(10);
@@ -165,6 +166,8 @@ namespace Backend.Data
             {
                 var invoiceFaker = new Faker<Invoice>("vi")
                     .RuleFor(i => i.ContractID, f => f.PickRandom(contractIds))
+                    .RuleFor(i => i.InvoiceCode, f => f.Random.Replace("INV-###"))
+                    .RuleFor(i => i.ExtraCosts, f => f.PickRandom(contractIds))
                     .RuleFor(i => i.CreateAt, f => f.Date.Recent())
                     .RuleFor(i => i.PeriodStart, f => DateOnly.FromDateTime(f.Date.Past(1)))
                     .RuleFor(i => i.PeriodEnd, f => DateOnly.FromDateTime(f.Date.Recent()))
