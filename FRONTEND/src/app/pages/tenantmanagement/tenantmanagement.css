@@ -22,6 +22,39 @@
   border-radius: var(--border-radius);
 }
 
+.right-section {
+  display: flex;
+  gap: 0 var(--padding-margin);
+}
+
+/* ô search */
+::ng-deep .mdc-line-ripple::before,
+::ng-deep .mdc-line-ripple::after {
+  display: none !important;
+}
+
+.search-box ::ng-deep .mat-mdc-text-field-wrapper {
+  border-radius: 20px !important;
+}
+
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.search-box ::ng-deep .mdc-text-field {
+  padding: 0px 2rem !important;
+}
+
+/* button create*/
+.create-btn {
+  display: flex;
+  align-items: center;
+  padding: var(--padding-margin);
+  border-radius: var(--border-radius);
+  border: none;
+  background-color: var(--create-btn);
+}
+
 .table-container {
   border-radius: var(--border-radius);
   margin: 0 var(--padding-margin);
@@ -84,26 +117,7 @@ mat-paginator {
 .status.terminate {
   background-color: #a0aec0;
 }
-
-/* ô search */
-::ng-deep .mdc-line-ripple::before,
-::ng-deep .mdc-line-ripple::after {
-  display: none !important;
-}
-
-.search-box ::ng-deep .mat-mdc-text-field-wrapper {
-  border-radius: 20px !important;
-}
-
-::ng-deep .mat-mdc-form-field-subscript-wrapper {
-  display: none;
-}
-
-.search-box ::ng-deep .mdc-text-field {
-  padding: 0px 2rem !important;
-}
-
-#icon-search {
+icon-search {
   border: none;
   background: none;
   display: flex;

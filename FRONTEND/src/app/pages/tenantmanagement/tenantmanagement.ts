@@ -27,6 +27,10 @@ import { Tenant } from '../../models/Tenant.model';
 export class TenantManagement implements AfterViewInit {
   searchText: string = '';
 
+  onClick_btnCreate() {
+    console.log('create new tenant');
+  }
+
   displayedColumns: string[] = [
     'name',
     'bdate',
