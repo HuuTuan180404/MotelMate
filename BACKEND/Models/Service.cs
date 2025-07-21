@@ -17,10 +17,10 @@ namespace BACKEND.Models
         public int ServiceID { get; set; }
 
         [Required]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [Required]
-        public string Unit { get; set; }
+        public required string Unit { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]

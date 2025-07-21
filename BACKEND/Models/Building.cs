@@ -15,19 +15,19 @@ namespace BACKEND.Models
         [Key]
         public int BuildingID { get; set; }
 
-        public string BuildingCode { get; set; }
+        public required string BuildingCode { get; set; }
 
         [Required]
         [StringLength(255)]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         [Required]
         [StringLength(255)]
-        public string Address { get; set; }
+        public required string Address { get; set; }
 
         [ForeignKey(nameof(Owner))]
         public int OwnerID { get; set; }
-        public virtual Owner Owner { get; set; }
+        public virtual Owner? Owner { get; set; }
         public virtual ICollection<Room> Room { get; set; }
     }
 }

@@ -18,12 +18,12 @@ namespace BACKEND.Models
         public EAuditLogAction Action { get; set; }
 
         [Required]
-        public string TableName { get; set; }
+        public required string TableName { get; set; }
 
-        public string OldValue { get; set; }
+        public string? OldValue { get; set; }
 
-        public string NewValue { get; set; }
+        public string? NewValue { get; set; }
 
-        public virtual Account Account { get; set; }
+        public virtual Account? Account { get; set; }
     }
 }
