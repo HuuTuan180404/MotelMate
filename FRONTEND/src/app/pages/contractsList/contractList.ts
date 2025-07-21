@@ -197,7 +197,8 @@ export class ContractComponent implements OnInit, AfterViewInit  {
 
   openAddContractDialog(): void {
     const dialogRef = this.dialog.open(AddContractDialogComponent, {
-      width: '800px',
+      height: 'auto',
+      minWidth: '50vw',
       data: { building: '', room: null, start: '', end: '', deposit: null, total: null, status: 'Unsigned' }
     });
 

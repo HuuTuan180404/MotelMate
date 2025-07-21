@@ -50,7 +50,7 @@ export class AddContractDialogComponent {
     this.dialogRef.close();
   }
 
-  onSave(): void {
+  onConfirm(): void {
     this.dialogRef.close(this.formData);
   }
 }

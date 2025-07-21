@@ -1,5 +1,50 @@
-mat-form-field {
-  width: 100%;
-  max-width: 4000px;
-  margin-bottom: 16px;
+::ng-deep .mat-mdc-dialog-surface {
+  border-radius: var(--border-radius);
+  max-width: 100%;
+}
+
+.dialog-container::-webkit-scrollbar {
+  display: none;
+}
+.dialog-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  background: #fff;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+  overflow: auto;
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 0;
+  font-size: 1.3rem;
+  font-weight: 600;
+  border-bottom: 1px solid #eee;
+  background: #f7f7f7;
+}
+
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 16px;
+  height: auto;
+}
+.dialog-element-container{
+  display: flex;
+  gap: 5%;
+}
+.dialog-element-container *{
+  flex: 1 1 0;
+}
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px;
+  border-top: 1px solid #eee;
+  background: #f7f7f7;
 }
