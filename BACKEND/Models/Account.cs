@@ -14,7 +14,6 @@ namespace BACKEND.Models
         public required string CCCD { get; set; }
         public required string FullName { get; set; }
         public DateTime Bdate { get; set; }
-        public EAccountRole Role { get; set; }
         public EAccountStatus Status { get; set; }
         public string? URLAvatar { get; set; }
         public DateTime CreateAt { get; set; } = DateTime.Now;
