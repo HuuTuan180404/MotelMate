@@ -77,7 +77,7 @@ export class Service {
     }
   ];
 
-  displayedColumns: string[] = ['name', 'unit', 'customerPrice', 'initialPrice', 'actions'];
+  displayedColumns: string[] = ['name', 'unit', 'initialPrice', 'customerPrice', 'actions'];
   dataSource = new MatTableDataSource<ServiceItem>(this.services);
 
   // Search term and filters

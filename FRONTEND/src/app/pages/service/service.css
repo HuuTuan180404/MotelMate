@@ -247,21 +247,11 @@ th {
   }
 }
 
-::ng-deep .create-btn.mat-mdc-unelevated-button {
-  background-color: var(--primary-color) !important;
-  color: white !important;
-}
-
-::ng-deep .create-btn.mat-mdc-unelevated-button .mat-icon {
-  color: white !important;
-}
-
-::ng-deep .create-btn.mat-mdc-unelevated-button:hover {
-  background-color: #1565c0 !important;
-}
-
 .tier-box {
   display: flex;
   justify-content: space-between;
-  font-size: 13px;
+  /* font-size: 13px;
+  line-height: 1.2; */
+  max-width: 110px; 
+  margin-bottom: 2px;
 }
