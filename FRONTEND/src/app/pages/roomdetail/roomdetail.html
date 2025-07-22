@@ -3,10 +3,10 @@
     <mat-icon>keyboard_arrow_left</mat-icon>
   </button>
   <div mat-mat-dialog-title class="dialog-title">
-    <h2>dsad</h2>
-    <button mat-icon-button aria-label="Close" title="Back" mat-dialog-close>
-      <mat-icon>keyboard_arrow_left</mat-icon>
-    </button>
+    <h2>Room detail</h2>
+    <div class="btn-container">
+      <button id="btnApply">Apply</button>
+    </div>
   </div>
 
   <div class="content">
@@ -81,7 +81,13 @@
           </div>
           <div class="members" #scrollContainer>
             <ng-container *ngIf="roomMembers.length > 0; else noMembers">
-              <div class="member" *ngFor="let member of roomMembers">
+              <div
+                (keydown)="handleKeyboardEvent($event)"
+                class="member"
+                *ngFor="let member of roomMembers"
+                [class.memberIsSelected]="member.id === selectedMember"
+                (click)="defSelectedMember(member.id)"
+              >
                 <img [src]="member.avatar" alt="" />
                 <div>
                   <div class="row-info">
@@ -110,33 +116,41 @@
     <!-- /* thông tin đơn giản của tòa nhà, chủ trọ */ -->
     <div class="other-infor">
       <!-- /* info chủ trọ */ -->
-      <div class="owner-info">
-        <h4 class="title">Owner information</h4>
-        <div class="owner-info-content">
-          <div>
-            <span class="material-symbols-outlined"> person </span>
-            <span>Tên chủ nhà</span>
+      <div class="first-block">
+        <h4 class="title">Owner-Building information</h4>
+        <div class="owner-building-info">
+          <div class="owner-info-content">
+            <div>
+              <span class="material-symbols-outlined"> person </span>
+              <span>Tên chủ nhà</span>
+            </div>
+            <div>
+              <span class="material-symbols-outlined"> call</span>
+              <span>SĐT</span>
+            </div>
           </div>
-          <div>
-            <span class="material-symbols-outlined"> call</span>
-            <span>SĐT</span>
+
+          <div class="building-info-content">
+            <div>
+              <span class="material-symbols-outlined"> apartment </span>
+              <span>sunrise city</span>
+            </div>
+
+            <div>
+              <span class="material-symbols-outlined"> location_on </span>
+              <span>Địa chỉ</span>
+            </div>
           </div>
         </div>
       </div>
 
       <!-- /* thông tin của tòa nhà */ -->
-      <div class="building-info">
-        <h4 class="title">Building information</h4>
-        <div class="building-info-content">
-          <div>
-            <span class="material-symbols-outlined"> apartment </span>
-            <span>sunrise city</span>
-          </div>
-
-          <div>
-            <span class="material-symbols-outlined"> location_on </span>
-            <span>Địa chỉ</span>
-          </div>
+      <div class="second-block">
+        <h4 class="title">Assets</h4>
+        <div class="assets">
+          <label *ngFor="let asset of assets" class="asset">
+            {{ asset.name }} [x{{ asset.quantity}}]
+          </label>
         </div>
       </div>
     </div>
