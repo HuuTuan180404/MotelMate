@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace BACKEND.Migrations
 {
     /// <inheritdoc />
-    public partial class MyDatabase : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -35,9 +35,10 @@ namespace BACKEND.Migrations
                     CCCD = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Bdate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    URLAvatar = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    URLAvatar = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
                     AccountNo = table.Column<long>(type: "bigint", nullable: true),
                     AccountName = table.Column<long>(type: "bigint", nullable: true),
@@ -202,11 +203,36 @@ namespace BACKEND.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AuditLog",
+                columns: table => new
+                {
+                    AuditLogID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Timestamp = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Action = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TableName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OldValue = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NewValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AuditLog", x => x.AuditLogID);
+                    table.ForeignKey(
+                        name: "FK_AuditLog_AspNetUsers_Id",
+                        column: x => x.Id,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Building",
                 columns: table => new
                 {
                     BuildingID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    BuildingCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     Address = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     OwnerID = table.Column<int>(type: "int", nullable: false)
@@ -251,6 +277,8 @@ namespace BACKEND.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Image = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<int>(type: "int", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TenantID = table.Column<int>(type: "int", nullable: true),
@@ -298,6 +326,7 @@ namespace BACKEND.Migrations
                 {
                     RoomID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    RoomNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Area = table.Column<double>(type: "float", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -344,6 +373,7 @@ namespace BACKEND.Migrations
                 {
                     ContractID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    ContractCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     StartDate = table.Column<DateOnly>(type: "date", nullable: false),
                     EndDate = table.Column<DateOnly>(type: "date", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
@@ -439,12 +469,15 @@ namespace BACKEND.Migrations
                 {
                     InvoiceID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    InvoiceCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreateAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PeriodStart = table.Column<DateOnly>(type: "date", nullable: false),
                     PeriodEnd = table.Column<DateOnly>(type: "date", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ExtraCosts = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    ContractID = table.Column<int>(type: "int", nullable: true)
+                    ContractID = table.Column<int>(type: "int", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -520,6 +553,11 @@ namespace BACKEND.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AuditLog_Id",
+                table: "AuditLog",
+                column: "Id");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Building_OwnerID",
@@ -599,6 +637,9 @@ namespace BACKEND.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "AuditLog");
 
             migrationBuilder.DropTable(
                 name: "ContractDetail");
