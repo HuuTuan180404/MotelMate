@@ -21,6 +21,21 @@
   padding: 0 var(--padding-margin);
 }
 
+#btnApply {
+  background-color: #4caf50;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+#btnApply:hover {
+  background-color: #45a049;
+}
+
 .content {
   display: flex;
   flex-direction: column;
@@ -209,6 +224,10 @@
   font-weight: bold;
 }
 
+.memberIsSelected {
+  border: 2px solid rgb(30, 30, 216);
+}
+
 .row-info {
   display: flex;
   gap: 0 calc(var(--padding-margin) * 2);
@@ -227,12 +246,15 @@
 }
 
 /* info chủ trọ */
-.owner-info {
-  background-color: #007bff;
+.first-block {
   border-radius: var(--border-radius);
   padding: var(--padding-margin);
   display: flex;
   flex-direction: column;
+}
+
+.owner-building-info {
+  display: flex;
 }
 
 .owner-info-content {
@@ -241,29 +263,39 @@
   margin: 0 auto;
 }
 
-.owner-info-content > div {
-  display: inline-flex;
-  gap: 0 var(--padding-margin);
-  margin-top: var(--padding-margin);
-}
-
-/* thông tin của tòa nhà */
-.building-info {
-  background-color: #007bff;
-  border-radius: var(--border-radius);
-  padding: var(--padding-margin);
-  display: flex;
-  flex-direction: column;
-}
-
 .building-info-content {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
 }
 
+.owner-info-content > div,
 .building-info-content > div {
   display: inline-flex;
   gap: 0 var(--padding-margin);
   margin-top: var(--padding-margin);
+}
+
+/* thông tin của tòa nhà */
+.second-block {
+  border-radius: var(--border-radius);
+  padding: var(--padding-margin);
+  display: inline;
+}
+
+.assets {
+  display: grid;
+  grid-auto-flow: column; /* Các item sẽ xếp theo chiều ngang (cột) */
+  grid-template-rows: repeat(2, auto); /* Tối đa 2 hàng */
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.assets > label {
+  border-radius: var(--border-radius);
+  border: 1px solid #000;
+  padding: 0 5px;
+  margin: 5px;
+  white-space: nowrap;
+  max-width: fit-content;
 }

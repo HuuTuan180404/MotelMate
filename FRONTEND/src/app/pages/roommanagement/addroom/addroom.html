@@ -1,0 +1,134 @@
+<div class="dialog-container">
+  <!-- Header -->
+  <div class="dialog-header">Add a new room</div>
+
+  <!-- Body -->
+  <div class="dialog-body">
+    <div class="dialog-element">
+      <div class="room-info">
+        <div class="input-info">
+          <div class="room-location">
+            <span class="input-info-label">Room Location</span>
+            <div class="input-info-container">
+              <!-- building -->
+              <mat-form-field appearance="outline">
+                <mat-select
+                  [(ngModel)]="formData.buildingID"
+                  placeholder="Building"
+                >
+                  <mat-option *ngFor="let b of buildings" [value]="b">
+                    {{b}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <!-- room number -->
+              <mat-form-field appearance="outline">
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="formData.roomNumber"
+                  placeholder="Room"
+                  #roomCtrl="ngModel"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="room-information">
+            <span class="input-info-label">Room information</span>
+            <div class="input-info-container">
+              <!-- area -->
+              <mat-form-field appearance="outline">
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="formData.area"
+                  placeholder="Area"
+                  #roomCtrl="ngModel"
+                />
+              </mat-form-field>
+
+              <!-- price -->
+              <mat-form-field appearance="outline">
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="formData.price"
+                  placeholder="Price"
+                  #roomCtrl="ngModel"
+                />
+              </mat-form-field>
+
+              <!-- max guests -->
+              <mat-form-field appearance="outline">
+                <mat-label>Description</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="formData.maxGuests"
+                  placeholder="Max guests"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="room-description">
+            <div class="input-info-container">
+              <!-- description -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Description</mat-label>
+                <textarea
+                  matInput
+                  placeholder="Description"
+                  [(ngModel)]="formData.description"
+                  placeholder="Max guests"
+                  rows="2"
+                ></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="add-item">
+          <div class="add add-image">
+            <span>Add images</span>
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                (change)="onFileChange($event)"
+                hidden
+                #fileInput
+              />
+              <button matButton (click)="fileInput.click()">
+                <span class="material-symbols-outlined">
+                  add_photo_alternate
+                </span>
+              </button>
+              <div class="images"></div>
+            </div>
+          </div>
+          <div class="add add-asset">
+            <span>Add assets</span>
+            <div>
+              <button matButton>
+                <span class="material-symbols-outlined"> box_add </span>
+              </button>
+              <div class="images"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="dialog-footer">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onConfirm()">
+      Confirm
+    </button>
+  </div>
+</div>

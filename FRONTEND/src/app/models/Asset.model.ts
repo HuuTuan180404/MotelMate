@@ -1,4 +1,4 @@
-export interface Asset {
+export interface AssetModel {
   assetID: number;
   name: string;
   price: number;

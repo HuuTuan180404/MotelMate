@@ -1,6 +1,10 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { PageEvent, MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
+import {
+  PageEvent,
+  MatPaginatorModule,
+  MatPaginator,
+} from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,6 +18,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { AddContractDialogComponent } from './contractDialog/contractDialog';
+import { stat } from 'fs';
 
 interface Contract {
   building: string;
@@ -22,7 +27,7 @@ interface Contract {
   end: string;
   deposit: number;
   total: number;
-  status: 'Active' | 'Expire' | 'Terminate' | 'Unsigned' ;
+  status: 'Active' | 'Expire' | 'Terminate' | 'Unsigned';
 }
 
 @Component({
@@ -44,57 +49,385 @@ interface Contract {
     MatTooltipModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatDialogModule
+    MatDialogModule,
   ],
 })
-export class ContractComponent implements OnInit, AfterViewInit  {
-  displayedColumns: string[] = ['building', 'room', 'start', 'end', 'deposit', 'total', 'status'];
-  dataSource = new MatTableDataSource<Contract>;
+export class ContractComponent implements OnInit, AfterViewInit {
+  displayedColumns: string[] = [
+    'building',
+    'room',
+    'start',
+    'end',
+    'deposit',
+    'total',
+    'status',
+  ];
+  dataSource = new MatTableDataSource<Contract>();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   contracts: Contract[] = [
-    { building: 'ABCHome', room: 201, start: '1/6/2025', end: '10/7/2025', deposit: 100000, total: 2000000, status: 'Active' },
-    { building: 'QHome', room: 310, start: '2/2/2025', end: '10/6/2025', deposit: 100000, total: 1100000, status: 'Active' },
-    { building: 'QHome', room: 101, start: '2/7/2025', end: '10/8/2025', deposit: 100000, total: 3000000, status: 'Active' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 200000, total: 3000000, status: 'Active' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 300000, total: 3000000, status:  'Active'},
-    { building: 'ABCHome', room: 201, start: '2/6/2025', end: '10/7/2025', deposit: 400000, total: 2000000, status: 'Active' },
-    { building: 'QHome', room: 310, start: '2/6/2025', end: '10/6/2025', deposit: 1500000, total: 1100000, status: 'Expire' },
-    { building: 'QHome', room: 101, start: '2/6/2025', end: '10/8/2025', deposit: 2500000, total: 3000000, status: 'Terminate' },
-    { building: 'QHome', room: 102, start: '2/6/2025', end: '10/8/2025', deposit: 3100000, total: 3000000, status: 'Unsigned' },
-    { building: 'QHome', room: 102, start: '2/6/2025', end: '10/8/2025', deposit: 3200000, total: 3000000, status: 'Terminate'},
-    { building: 'ABCHome', room: 201, start: '2/6/2025', end: '10/7/2025', deposit: 100000, total: 2000000, status: 'Active' },
-    { building: 'QHome', room: 310, start: '2/5/2025', end: '10/6/2025', deposit: 100000, total: 1100000, status: 'Expire' },
-    { building: 'QHome', room: 101, start: '2/7/2025', end: '10/8/2025', deposit: 100000, total: 3000000, status: 'Terminate' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 200000, total: 3000000, status: 'Unsigned' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 300000, total: 3000000, status:  'Terminate'},
-    { building: 'ABCHome', room: 201, start: '2/6/2025', end: '10/7/2025', deposit: 400000, total: 2000000, status: 'Active' },
-    { building: 'QHome', room: 310, start: '2/5/2025', end: '10/6/2025', deposit: 1500000, total: 1100000, status: 'Expire' },
-    { building: 'QHome', room: 101, start: '2/7/2025', end: '10/8/2025', deposit: 2500000, total: 3000000, status: 'Terminate' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 3100000, total: 3000000, status: 'Unsigned' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 3200000, total: 3000000, status: 'Terminate'},
-    { building: 'ABCHome', room: 201, start: '2/6/2025', end: '10/7/2025', deposit: 100000, total: 2000000, status: 'Active' },
-    { building: 'QHome', room: 310, start: '2/5/2025', end: '10/6/2025', deposit: 100000, total: 1100000, status: 'Expire' },
-    { building: 'QHome', room: 101, start: '2/7/2025', end: '10/8/2025', deposit: 100000, total: 3000000, status: 'Terminate' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 200000, total: 3000000, status: 'Unsigned' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 300000, total: 3000000, status:  'Terminate'},
-    { building: 'ABCHome', room: 201, start: '2/6/2025', end: '10/7/2025', deposit: 400000, total: 2000000, status: 'Active' },
-    { building: 'QHome', room: 310, start: '2/5/2025', end: '10/6/2025', deposit: 1500000, total: 1100000, status: 'Expire' },
-    { building: 'QHome', room: 101, start: '2/7/2025', end: '10/8/2025', deposit: 2500000, total: 3000000, status: 'Terminate' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 3100000, total: 3000000, status: 'Unsigned' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 3200000, total: 3000000, status: 'Terminate'},
-    { building: 'ABCHome', room: 201, start: '2/6/2025', end: '10/7/2025', deposit: 100000, total: 2000000, status: 'Active' },
-    { building: 'QHome', room: 310, start: '2/5/2025', end: '10/6/2025', deposit: 100000, total: 1100000, status: 'Expire' },
-    { building: 'QHome', room: 101, start: '2/7/2025', end: '10/8/2025', deposit: 100000, total: 3000000, status: 'Terminate' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 200000, total: 3000000, status: 'Unsigned' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 300000, total: 3000000, status:  'Terminate'},
-    { building: 'ABCHome', room: 201, start: '2/6/2025', end: '10/7/2025', deposit: 400000, total: 2000000, status: 'Active' },
-    { building: 'QHome', room: 310, start: '2/5/2025', end: '10/6/2025', deposit: 1500000, total: 1100000, status: 'Expire' },
-    { building: 'QHome', room: 101, start: '2/7/2025', end: '10/8/2025', deposit: 2500000, total: 3000000, status: 'Terminate' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 3100000, total: 3000000, status: 'Unsigned' },
-    { building: 'QHome', room: 102, start: '2/7/2025', end: '10/8/2025', deposit: 3200000, total: 3000000, status: 'Terminate'},
+    {
+      building: 'ABCHome',
+      room: 201,
+      start: '1/6/2025',
+      end: '10/7/2025',
+      deposit: 100000,
+      total: 2000000,
+      status: 'Active',
+    },
+    {
+      building: 'QHome',
+      room: 310,
+      start: '2/2/2025',
+      end: '10/6/2025',
+      deposit: 100000,
+      total: 1100000,
+      status: 'Active',
+    },
+    {
+      building: 'QHome',
+      room: 101,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 100000,
+      total: 3000000,
+      status: 'Active',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 200000,
+      total: 3000000,
+      status: 'Active',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 300000,
+      total: 3000000,
+      status: 'Active',
+    },
+    {
+      building: 'ABCHome',
+      room: 201,
+      start: '2/6/2025',
+      end: '10/7/2025',
+      deposit: 400000,
+      total: 2000000,
+      status: 'Active',
+    },
+    {
+      building: 'QHome',
+      room: 310,
+      start: '2/6/2025',
+      end: '10/6/2025',
+      deposit: 1500000,
+      total: 1100000,
+      status: 'Expire',
+    },
+    {
+      building: 'QHome',
+      room: 101,
+      start: '2/6/2025',
+      end: '10/8/2025',
+      deposit: 2500000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/6/2025',
+      end: '10/8/2025',
+      deposit: 3100000,
+      total: 3000000,
+      status: 'Unsigned',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/6/2025',
+      end: '10/8/2025',
+      deposit: 3200000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'ABCHome',
+      room: 201,
+      start: '2/6/2025',
+      end: '10/7/2025',
+      deposit: 100000,
+      total: 2000000,
+      status: 'Active',
+    },
+    {
+      building: 'QHome',
+      room: 310,
+      start: '2/5/2025',
+      end: '10/6/2025',
+      deposit: 100000,
+      total: 1100000,
+      status: 'Expire',
+    },
+    {
+      building: 'QHome',
+      room: 101,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 100000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 200000,
+      total: 3000000,
+      status: 'Unsigned',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 300000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'ABCHome',
+      room: 201,
+      start: '2/6/2025',
+      end: '10/7/2025',
+      deposit: 400000,
+      total: 2000000,
+      status: 'Active',
+    },
+    {
+      building: 'QHome',
+      room: 310,
+      start: '2/5/2025',
+      end: '10/6/2025',
+      deposit: 1500000,
+      total: 1100000,
+      status: 'Expire',
+    },
+    {
+      building: 'QHome',
+      room: 101,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 2500000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 3100000,
+      total: 3000000,
+      status: 'Unsigned',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 3200000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'ABCHome',
+      room: 201,
+      start: '2/6/2025',
+      end: '10/7/2025',
+      deposit: 100000,
+      total: 2000000,
+      status: 'Active',
+    },
+    {
+      building: 'QHome',
+      room: 310,
+      start: '2/5/2025',
+      end: '10/6/2025',
+      deposit: 100000,
+      total: 1100000,
+      status: 'Expire',
+    },
+    {
+      building: 'QHome',
+      room: 101,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 100000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 200000,
+      total: 3000000,
+      status: 'Unsigned',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 300000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'ABCHome',
+      room: 201,
+      start: '2/6/2025',
+      end: '10/7/2025',
+      deposit: 400000,
+      total: 2000000,
+      status: 'Active',
+    },
+    {
+      building: 'QHome',
+      room: 310,
+      start: '2/5/2025',
+      end: '10/6/2025',
+      deposit: 1500000,
+      total: 1100000,
+      status: 'Expire',
+    },
+    {
+      building: 'QHome',
+      room: 101,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 2500000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 3100000,
+      total: 3000000,
+      status: 'Unsigned',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 3200000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'ABCHome',
+      room: 201,
+      start: '2/6/2025',
+      end: '10/7/2025',
+      deposit: 100000,
+      total: 2000000,
+      status: 'Active',
+    },
+    {
+      building: 'QHome',
+      room: 310,
+      start: '2/5/2025',
+      end: '10/6/2025',
+      deposit: 100000,
+      total: 1100000,
+      status: 'Expire',
+    },
+    {
+      building: 'QHome',
+      room: 101,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 100000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 200000,
+      total: 3000000,
+      status: 'Unsigned',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 300000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'ABCHome',
+      room: 201,
+      start: '2/6/2025',
+      end: '10/7/2025',
+      deposit: 400000,
+      total: 2000000,
+      status: 'Active',
+    },
+    {
+      building: 'QHome',
+      room: 310,
+      start: '2/5/2025',
+      end: '10/6/2025',
+      deposit: 1500000,
+      total: 1100000,
+      status: 'Expire',
+    },
+    {
+      building: 'QHome',
+      room: 101,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 2500000,
+      total: 3000000,
+      status: 'Terminate',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 3100000,
+      total: 3000000,
+      status: 'Unsigned',
+    },
+    {
+      building: 'QHome',
+      room: 102,
+      start: '2/7/2025',
+      end: '10/8/2025',
+      deposit: 3200000,
+      total: 3000000,
+      status: 'Terminate',
+    },
   ];
 
   filteredcontracts: Contract[] = [];
@@ -111,10 +444,10 @@ export class ContractComponent implements OnInit, AfterViewInit  {
     room: '',
     status: '',
     startDate: null,
-    endDate: null
+    endDate: null,
   };
 
-  constructor(public dialog: MatDialog) { }
+  constructor(public dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.applyFilters();
@@ -124,15 +457,16 @@ export class ContractComponent implements OnInit, AfterViewInit  {
     this.dataSource.sort = this.sort;
   }
   ngOnChanges() {
-    if(this.dataSource.paginator){
+    if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
   }
 
   applyFilters() {
-    this.filteredcontracts = this.contracts.filter(con => {
+    this.filteredcontracts = this.contracts.filter((con) => {
       // Apply search term filter
-      const searchMatch = !this.searchTerm ||
+      const searchMatch =
+        !this.searchTerm ||
         con.building.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
         con.room.toString().includes(this.searchTerm.toLowerCase()) ||
         con.status.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
@@ -146,8 +480,12 @@ export class ContractComponent implements OnInit, AfterViewInit  {
         (!this.filters.building || con.building === this.filters.building) &&
         (!this.filters.status || con.status === this.filters.status);
 
-      const startDate = this.filters.startDate ? new Date(this.filters.startDate) : null;
-      const endDate = this.filters.endDate ? new Date(this.filters.endDate) : null;
+      const startDate = this.filters.startDate
+        ? new Date(this.filters.startDate)
+        : null;
+      const endDate = this.filters.endDate
+        ? new Date(this.filters.endDate)
+        : null;
       if (startDate) {
         startDate.setHours(0, 0, 0, 0);
       }
@@ -169,18 +507,18 @@ export class ContractComponent implements OnInit, AfterViewInit  {
         parseInt(endParts[1], 10)
       );
 
-      const dateMatch = (!startDate || contractStartDate >= startDate) &&
-                  (!endDate || contractEndDate <= endDate);
+      const dateMatch =
+        (!startDate || contractStartDate >= startDate) &&
+        (!endDate || contractEndDate <= endDate);
 
       return searchMatch && filterMatch && dateMatch;
     });
 
-        // Reset to first page when filters change
+    // Reset to first page when filters change
     this.dataSource.data = this.filteredcontracts;
     if (this.paginator) {
       this.paginator.firstPage();
     }
-
   }
 
   clearFilters() {
@@ -190,7 +528,7 @@ export class ContractComponent implements OnInit, AfterViewInit  {
       room: '',
       status: '',
       startDate: null,
-      endDate: null
+      endDate: null,
     };
     this.applyFilters();
   }
@@ -201,13 +539,22 @@ export class ContractComponent implements OnInit, AfterViewInit  {
       maxHeight: '90vh',
       minWidth: '50vw',
       data: {
-        formData: { building: '', room: null, start: '', end: '', deposit: null, total: null, status: 'Unsigned' },
+        formData: {
+          building: '',
+          room: null,
+          start: '',
+          end: '',
+          deposit: null,
+          total: null,
+          status: 'Unsigned',
+        },
         buildings: this.buildings,
-        contracts: this.contracts
-      }
+        contracts: this.contracts,
+        statuses: this.statuses,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.contracts.push(result);
         this.applyFilters();
@@ -215,5 +562,3 @@ export class ContractComponent implements OnInit, AfterViewInit  {
     });
   }
 }
-
-

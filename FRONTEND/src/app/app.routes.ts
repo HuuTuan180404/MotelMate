@@ -10,10 +10,12 @@ import { Paymentrequest } from './pages/paymentrequest/paymentrequest';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { AssetManagement } from './pages/assetmanagement/assetmanagement';
 import { Service } from './pages/service/service';
+import { Register } from './pages/register/register';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
+  { path: 'register', component: Register },
   {
     path: '',
     component: Layout,
