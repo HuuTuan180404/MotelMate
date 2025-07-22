@@ -2,6 +2,11 @@
   border-radius: var(--border-radius);
   max-width: 100%;
 }
+::ng-deep .mat-mdc-text-field-wrapper{
+  border-radius: 4px;
+  background-color: white;
+
+}
 .dialog-container::-webkit-scrollbar {
   display: none;
 }
@@ -10,7 +15,7 @@
   flex-direction: column;
   gap: 0;
   background: #fff;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.12);
   overflow: auto;
 }
 
@@ -28,15 +33,19 @@
 .dialog-body {
   display: flex;
   flex-direction: column;
-  gap: 16px;
   padding: 24px 16px;
   height: auto;
 }
-.dialog-element-container {
+.dialog-element{
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+.dialog-element-container{
   display: flex;
   gap: 5%;
 }
-.dialog-element-container * {
+.dialog-element-container *{
   flex: 1 1 0;
 }
 .dialog-footer {
