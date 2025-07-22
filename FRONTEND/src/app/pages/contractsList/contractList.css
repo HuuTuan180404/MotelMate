@@ -1,11 +1,12 @@
-td, th {
+td,
+th {
   width: 10%;
 }
 ::ng-deep .mat-mdc-form-field-flex {
   height: 100%;
   align-items: center !important;
 }
-::ng-deep .filters-row .mat-mdc-text-field-wrapper{
+::ng-deep .filters-row .mat-mdc-text-field-wrapper {
   height: 2.5rem !important;
 }
 
@@ -13,21 +14,24 @@ td, th {
   height: 2rem;
   padding: 0 0.5rem;
 }
-::ng-deep .mdc-floating-label{
+::ng-deep .mdc-floating-label {
   overflow: visible !important;
 }
-::ng-deep .mat-mdc-form-field-subscript-wrapper {
+::ng-deep .header-container .mat-mdc-form-field-subscript-wrapper {
   display: none;
 }
-.search-field mat-label{
-  position:relative;
+::ng-deep .table-container .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+.search-field mat-label {
+  position: relative;
   top: -12px;
 }
-.filter-field mat-label{
-  position:relative;
+.filter-field mat-label {
+  position: relative;
   top: -9px;
 }
-::ng-deep .mat-mdc-form-field-infix{
+::ng-deep .table-container .mat-mdc-form-field-infix {
   padding: 0 !important;
   min-height: 0 !important;
 }
@@ -48,9 +52,9 @@ td, th {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding:0.5rem 1rem;
+  padding: 0.5rem 1rem;
   background-color: #ffffff;
-  margin: var(--padding-margin) ;
+  margin: var(--padding-margin);
 }
 
 .page-title {
@@ -66,7 +70,6 @@ td, th {
   gap: 0.5rem;
 }
 
-
 .search-container button {
   width: 40px;
   height: 40px;
@@ -80,7 +83,7 @@ td, th {
 }
 
 .search-container button {
-  width: 4
+  width: 4;
 }
 
 .search-field {
@@ -148,7 +151,7 @@ td, th {
   width: 100%;
   background: white;
 }
-.mat-cell{
+.mat-cell {
   padding-top: 1rem;
   text-align: center;
 }

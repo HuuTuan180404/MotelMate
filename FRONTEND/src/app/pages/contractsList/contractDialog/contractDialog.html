@@ -1,50 +1,71 @@
-<h1 mat-dialog-title>Add New Contract</h1>
-<div mat-dialog-content>
-  <mat-form-field>
-    <mat-label>Building</mat-label>
-    <input matInput [(ngModel)]="formData.building">
-  </mat-form-field>
+<div class="dialog-container">
+  <!-- Header -->
+  <div class="dialog-header">
+    Add Contract
+  </div>
 
-  <mat-form-field>
-    <mat-label>Room</mat-label>
-    <input matInput type="number" [(ngModel)]="formData.room">
-  </mat-form-field>
+  <!-- Body -->
+  <div class="dialog-body">
+    <div class="dialog-element">
+      <span class="dialog-element-label">Room Location</span>
+      <div class= "dialog-element-container">
+        <mat-form-field appearance="outline">
+          <mat-select [(ngModel)]="formData.building" placeholder="Building">
+            <mat-option *ngFor="let b of buildings" [value]="b">{{b}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <input matInput type="number" [(ngModel)]="formData.room" placeholder="Room" #roomCtrl="ngModel" required min="1">
+          @if (errorMessage()) {
+            <mat-error>{{errorMessage()}}</mat-error>
+          }
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="dialog-element">
+      <span class="dialog-element-label">Contract Term</span>
+      <div class= "dialog-element-container">
+        <mat-form-field appearance="outline">
+          <input matInput [matDatepicker]="startPicker" [(ngModel)]="formData.start" placeholder="Start Day">
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+          <mat-datepicker #startPicker></mat-datepicker>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <input matInput [matDatepicker]="endPicker" [(ngModel)]="formData.end" placeholder="End Day">
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+          <mat-datepicker #endPicker></mat-datepicker>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="dialog-element">
+      <span class="dialog-element-label">Payment Info</span>
+      <div class= "dialog-element-container">
+        <mat-form-field appearance="outline">
+          <input matInput type="number" step="1000" [(ngModel)]="formData.deposit" placeholder="Deposit">
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <input matInput type="number" step="1000" [(ngModel)]="formData.total" placeholder="Total">
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="dialog-element">
+      <span class="dialog-element-label">Status</span>
+      <div class= "dialog-element-container">
+        <mat-form-field appearance="outline">
+          <mat-select [(ngModel)]="formData.status" placeholder="Status">
+            <mat-option value="Active">Active</mat-option>
+            <mat-option value="Expire">Expire</mat-option>
+            <mat-option value="Terminate">Terminate</mat-option>
+            <mat-option value="Unsigned">Unsigned</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
 
-  <mat-form-field>
-    <mat-label>Start Date</mat-label>
-    <input matInput [matDatepicker]="startPicker" [(ngModel)]="formData.start">
-    <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-    <mat-datepicker #startPicker></mat-datepicker>
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-label>End Date</mat-label>
-    <input matInput [matDatepicker]="endPicker" [(ngModel)]="formData.end">
-    <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-    <mat-datepicker #endPicker></mat-datepicker>
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-label>Deposit</mat-label>
-    <input matInput type="number" [(ngModel)]="formData.deposit">
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-label>Total (VND)</mat-label>
-    <input matInput type="number" [(ngModel)]="formData.total">
-  </mat-form-field>
-
-  <mat-form-field>
-    <mat-label>Status</mat-label>
-    <mat-select [(ngModel)]="formData.status">
-      <mat-option value="Active">Active</mat-option>
-      <mat-option value="Expire">Expire</mat-option>
-      <mat-option value="Terminate">Terminate</mat-option>
-      <mat-option value="Unsigned">Unsigned</mat-option>
-    </mat-select>
-  </mat-form-field>
-</div>
-<div mat-dialog-actions>
-  <button mat-button (click)="onCancel()">Cancel</button>
-  <button mat-button (click)="onSave()" cdkFocusInitial>Save</button>
+  <!-- Footer -->
+  <div class="dialog-footer">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onConfirm()">Confirm</button>
+  </div>
 </div>
