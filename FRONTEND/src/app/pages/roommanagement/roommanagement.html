@@ -4,24 +4,7 @@
       <h2>ROOM MANAGEMENT</h2>
     </div>
     <div class="right-section">
-      <div class="slider-bar">
-        <span>Price</span>
-        <mat-slider min="200" max="500">
-          <input aria-label="from value" value="300" matSliderStartThumb />
-          <input aria-label="to value" value="400" matSliderEndThumb />
-        </mat-slider>
-      </div>
-
-      <div class="select-building">
-        <mat-form-field>
-          <mat-label>Building</mat-label>
-          <mat-select [(value)]="buildingCode" canSelectNullableOptions>
-            @for (option of options; track option) {
-            <mat-option [value]="option.code">{{ option.name }}</mat-option>
-            }
-          </mat-select>
-        </mat-form-field>
-      </div>
+      <!-- search bar -->
       <div class="search-box">
         <mat-form-field class="example-form-field">
           <mat-label>Search</mat-label>
@@ -45,18 +28,97 @@
         </mat-form-field>
       </div>
 
+      <!-- btn filter -->
+      <button
+        (click)="toggleFilter($event)"
+        mat-flat-button
+        class="filter-btn"
+        matTooltip="Filter rooms"
+      >
+        Filter
+      </button>
+
+      <!-- btn create -->
       <button
         (click)="onClick_btnCreate()"
         mat-flat-button
         class="create-btn"
         matTooltip="Create room"
       >
-        <mat-icon>add</mat-icon> Create
+        <i class="fa-solid fa-plus"></i> Create
+      </button>
+
+      <!-- btn create -->
+      <button
+        (click)="onClick_btnCreate()"
+        mat-flat-button
+        class="create-btn"
+        matTooltip="Create room"
+      >
+        <i class="fa-solid fa-plus"></i> Create
       </button>
     </div>
   </header>
 
   <div class="rooms">
     <app-room *ngFor="let room of rooms" [room]="room"></app-room>
+  </div>
+
+  <div class="filter-panel" [class.open]="isFilterPanelOpen" #filterPanel>
+    <h3>Filter</h3>
+    <br />
+    <div class="btn-container">
+      <button (click)="applyFilters()" style="background-color: #4caf50">
+        <i class="fa-solid fa-filter"></i>
+        Apply
+      </button>
+      <button (click)="clearFilters()" style="background-color: #f44336">
+        <i class="fa-solid fa-filter-circle-xmark"></i>
+        Clear
+      </button>
+      <button (click)="toggleFilter($event)">
+        Close
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+
+    <div class="filter-container">
+      <!-- dropdown menu -->
+      <div class="select-building">
+        <mat-form-field>
+          <mat-label>Building</mat-label>
+          <mat-select [(value)]="buildingCode" canSelectNullableOptions>
+            @for (option of options; track option) {
+            <mat-option
+              (click)="$event.stopPropagation()"
+              [value]="option.code"
+            >
+              {{ option.name }}
+            </mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <!-- slider -->
+      <div class="filter-price">
+        <label>
+          Price: {{minPrice| number:'1.0-0' }} - {{maxPrice| number:'1.0-0'}}
+        </label>
+        <mat-slider
+          [min]="sliderMin"
+          [max]="sliderMax"
+          [step]="100000"
+          [discrete]="true"
+        >
+          <input
+            aria-label="from value"
+            [(value)]="minPrice"
+            matSliderStartThumb
+          />
+          <input aria-label="to value" [(value)]="maxPrice" matSliderEndThumb />
+        </mat-slider>
+      </div>
+    </div>
   </div>
 </div>

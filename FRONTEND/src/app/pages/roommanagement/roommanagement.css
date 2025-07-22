@@ -14,7 +14,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 6%;
+  height: 6vh;
   padding: var(--padding-margin);
   background-color: #fff;
   border-radius: var(--border-radius);
@@ -31,8 +31,6 @@
 }
 
 .slider-bar {
-  /* display: flex; */
-  /* flex-direction: column; */
   background-color: #d0d2db;
   padding: var(--padding-margin);
   border-radius: var(--border-radius);
@@ -50,8 +48,6 @@
 ::ng-deep .mdc-text-field {
   padding: 0px 30px !important;
 }
-
-/* .mdc-text-field */
 
 ::ng-deep .mat-mdc-form-field-subscript-wrapper {
   display: none;
@@ -72,23 +68,91 @@
   margin-left: 30px;
 }
 
-/* button create*/
-.create-btn {
+/* <!-- btn filter --> */
+.filter-panel {
+  position: absolute;
+  right: 0;
+  width: 300px;
+  height: 100%;
+  background: #ffffff;
+  box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+  transform: translateX(100%);
+  transition: transform 0.3s ease-in-out;
+  padding: var(--padding-margin);
+  border-radius: var(--border-radius);
+  z-index: 10;
+}
+
+.filter-panel.open {
+  transform: translateX(0);
+}
+
+/* button create, btn filter*/
+.create-btn,
+.filter-btn {
   display: flex;
   align-items: center;
   padding: var(--padding-margin);
   border-radius: var(--border-radius);
   border: none;
   background-color: var(--create-btn);
+  cursor: pointer;
+}
+
+.create-btn:hover,
+.filter-btn:hover {
+  background-color: var(--create-btn-hover);
+}
+
+.btn-container > button {
+  flex: 1;
+  border-radius: var(--border-radius);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-container {
+  display: flex;
+  gap: var(--padding-margin);
+  margin: var(--padding-margin) 0;
+  height: 40px;
+}
+
+.filter-container {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-margin);
+}
+
+/* <!-- slider --> */
+.filter-price {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-margin);
+  padding: 0 20px;
+  border: 1px solid #d0d2db;
+  border-radius: var(--border-radius);
+}
+
+.filter-price > mat-slider {
+  margin-top: 12px;
+}
+
+/* <!-- dropdown menu --> */
+.select-building {
+  display: flex;
+  flex-direction: column;
 }
 
 .rooms {
   overflow-y: auto;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(20%, 1fr));
+  grid-template-columns: repeat(4, minmax(20%, 1fr));
   gap: var(--padding-margin);
   margin-top: var(--padding-margin);
   padding-bottom: 16px;
+  min-width: 70%;
 }
 
 .rooms::-webkit-scrollbar {
