@@ -36,27 +36,6 @@
   border-radius: var(--border-radius);
 }
 
-::ng-deep .mdc-line-ripple::before,
-::ng-deep .mdc-line-ripple::after {
-  display: none !important;
-}
-
-::ng-deep .mat-mdc-text-field-wrapper {
-  border-radius: 20px !important;
-}
-
-::ng-deep .mdc-text-field {
-  padding: 0px 30px !important;
-}
-
-::ng-deep .mat-mdc-form-field-subscript-wrapper {
-  display: none;
-}
-
-::ng-deep .mat-mdc-form-field-icon-prefix {
-  padding-left: 16px !important;
-}
-
 #icon-search {
   border: none;
   background: none;
@@ -88,7 +67,26 @@
 }
 
 /* button create, btn filter*/
-.create-btn,
+.create-btn {
+  display: flex;
+  align-items: center;
+  padding: var(--padding-margin);
+  background-color: var(--primary-color);
+  cursor: pointer;
+  color: white;
+}
+
+.create-btn {
+}
+
+.create-btn > .mat-icon {
+  color: white !important;
+}
+
+.create-btn:hover {
+  background-color: #1565c0 !important;
+}
+
 .filter-btn {
   display: flex;
   align-items: center;
@@ -99,14 +97,16 @@
   cursor: pointer;
 }
 
-.create-btn:hover,
 .filter-btn:hover {
   background-color: var(--create-btn-hover);
 }
 
+/* in filter panel */
 .btn-container > button {
   flex: 1;
-  border-radius: var(--border-radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   cursor: pointer;
 }
@@ -165,14 +165,4 @@
   display: flex;
   align-items: center;
   gap: 0 5px;
-}
-
-/* button create*/
-.create-btn {
-  display: flex;
-  align-items: center;
-  padding: var(--padding-margin);
-  border-radius: var(--border-radius);
-  border: none;
-  background-color: var(--create-btn);
 }

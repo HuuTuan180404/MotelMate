@@ -40,20 +40,20 @@
 
       <!-- btn create -->
       <button
-        (click)="onClick_btnCreate()"
         mat-flat-button
         class="create-btn"
+        (click)="onClick_btnCreate()"
         matTooltip="Create room"
       >
-        <i class="fa-solid fa-plus"></i> Create
+        <mat-icon>add</mat-icon> <span>Create</span>
       </button>
 
-      <!-- btn create -->
+      <!-- btn view -->
       <button
         (click)="onClick_btnView()"
         mat-flat-button
-        class="create-btn"
-        matTooltip="Create room"
+        class="view-btn"
+        matTooltip="View room"
       >
         <i class="fa-solid fa-plus"></i> View
       </button>

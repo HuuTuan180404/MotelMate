@@ -26,7 +26,6 @@ import { AddRoom } from './addroom/addroom';
     MatTooltip,
     MatDialogModule,
     MatSliderModule,
-    AddRoom,
   ],
   templateUrl: './roommanagement.html',
   styleUrl: './roommanagement.css',
