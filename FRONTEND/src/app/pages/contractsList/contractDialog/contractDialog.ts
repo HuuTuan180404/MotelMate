@@ -1,7 +1,7 @@
 
 import { Component, Inject, signal } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormsModule } from '@angular/forms';
+import {FormControl, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
@@ -34,43 +34,61 @@ export interface ContractFormData {
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    ReactiveFormsModule
   ],
 })
 export class AddContractDialogComponent {
   formData: ContractFormData;
   buildings: string[] = [];
   contracts: any[] = [];
-  errorMessage = signal('');
+  readonly errorMessage = signal('');
+  roomCtrl = new FormControl<number | null>(null, [
+    Validators.required,
+    Validators.min(1),
+  ]);
+
 
   constructor(
     public dialogRef: MatDialogRef<AddContractDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
-  ) {
+  ){
     this.formData = { ...data.formData };
     this.buildings = data.buildings || [];
     this.contracts = data.contracts || [];
+    this.roomCtrl.setValue(this.formData.room ?? null);
   }
 
   onCancel(): void {
     this.dialogRef.close();
   }
 
-  onConfirm(): void {
-  // Nếu chưa nhập số phòng hợp lệ, không submit
-  if (!this.formData.room || this.formData.room < 1) {
-    this.errorMessage.set('Vui lòng nhập số phòng hợp lệ.');
+  updateErrorMessage(): void {
+  const room = this.roomCtrl.value;
+
+  if (!room || room < 1) {
+    this.errorMessage.set('Please enter a valid room number!');
     return;
   }
 
+
   const exists = this.contracts.some(
-    c => c.building === this.formData.building && c.room === this.formData.room
+    c => c.building === this.formData.building && c.room === room
   );
 
   if (exists) {
-    this.errorMessage.set('Phòng này đã có hợp đồng!');
+    this.errorMessage.set('This room already has a contract!');
+    this.roomCtrl.setErrors({ conflict: true });
     return;
+``}else{
+    this.errorMessage.set('');
+    this.roomCtrl.setErrors(null);
   }
+}
+  onConfirm(): void {
 
+  this.formData.room = this.roomCtrl.value ?? 0;
+  this.updateErrorMessage();
+  if (this.roomCtrl.invalid) return;
   this.dialogRef.close(this.formData);
 }
 

@@ -15,10 +15,8 @@
           </mat-select>
         </mat-form-field>
         <mat-form-field appearance="outline">
-          <input matInput type="number" [(ngModel)]="formData.room" placeholder="Room" #roomCtrl="ngModel" required min="1">
-          @if (errorMessage()) {
-            <mat-error>{{errorMessage()}}</mat-error>
-          }
+          <input matInput type="number" [formControl]="roomCtrl" placeholder="Room" (blur)="updateErrorMessage()">
+            <mat-error *ngIf="roomCtrl.errors">{{errorMessage()}}</mat-error>
         </mat-form-field>
       </div>
     </div>
