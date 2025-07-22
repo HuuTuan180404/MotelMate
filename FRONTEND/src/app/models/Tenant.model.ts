@@ -1,4 +1,5 @@
-export interface Tenant {
+export interface TenantModel {
+  id: number;
   avatar: string;
   name: string;
   status: string;

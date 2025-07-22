@@ -19,6 +19,7 @@ export class Sidebar {
     { icon: 'contract', label: 'Contract', route: 'contracts' },
     { icon: 'receipt', label: 'Invoice', route: 'invoices' },
     { icon: 'inventory_2', label: 'Asset', route: 'assets' },
+    { icon: 'room_service', label: 'Service', route: 'services' },
     {
       icon: 'request_page',
       label: 'Requests',

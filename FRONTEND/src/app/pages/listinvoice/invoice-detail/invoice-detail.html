@@ -1,12 +1,55 @@
-<h2 mat-dialog-title>Invoice Detail</h2>
+<h2 mat-dialog-title>
+  Invoice Detail
+  <button mat-icon-button class="close-btn" (click)="close()">
+    <mat-icon>close</mat-icon>
+  </button>
+</h2>
+
 <div mat-dialog-content>
+  <p><strong>Invoice Code:</strong> {{ data.invoiceCode }}</p>
   <p><strong>Building:</strong> {{ data.building }}</p>
   <p><strong>Room:</strong> {{ data.room }}</p>
   <p><strong>Month:</strong> {{ data.month }}</p>
+  <p><strong>Period:</strong> {{ data.periodStart }} - {{ data.periodEnd }}</p>
   <p><strong>Due Date:</strong> {{ data.due }}</p>
-  <p><strong>Total:</strong> {{ data.total | number }}</p>
+  <p><strong>Created At:</strong> {{ data.createAt }}</p>
+
+  <div *ngIf="data.extraCosts?.length">
+    <h4>Extra Costs</h4>
+    <ul>
+      <li *ngFor="let cost of data.extraCosts">
+        {{ cost.description }} - {{ cost.amount | number }} VND
+      </li>
+    </ul>
+  </div>
+
+  <div *ngIf="data.services?.length">
+    <h4>Services</h4>
+    <table class="service-table">
+      <thead>
+        <tr>
+          <th>Service</th>
+          <th>Quantity</th>
+          <th>Initial Price</th>
+          <th>Final Price</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of data.services">
+          <td>{{ s.name }}</td>
+          <td>{{ s.quantity }}</td>
+          <td>{{ s.initialPrice | number }}</td>
+          <td>{{ s.finalPrice | number }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>Total:</strong> {{ data.total | number }} VND</p>
   <p><strong>Status:</strong> {{ data.status }}</p>
 </div>
-<div mat-dialog-actions align="end">
-  <button mat-button (click)="close()">Close</button>
+
+<div mat-dialog-actions align="end" *ngIf="data.status !== 'Paid'">
+  <button mat-button color="warn" (click)="delete()">Delete</button>
+  <button mat-button color="primary" (click)="edit()">Update</button>
 </div>

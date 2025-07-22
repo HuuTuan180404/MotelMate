@@ -7,8 +7,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
-import { Tenant } from '../../models/Tenant.model';
-import { Asset } from '../../models/Asset.model';
+import { TenantModel } from '../../models/Tenant.model';
+import { AssetModel } from '../../models/Asset.model';
 
 @Component({
   selector: 'app-assetmanagement',
@@ -41,7 +41,7 @@ export class AssetManagement {
     console.log('create new asset');
   }
 
-  assets: Asset[] = [
+  assets: AssetModel[] = [
     {
       assetID: 6,
       name: 'Tủ lạnh Samsung Inverter 256L',
@@ -154,7 +154,9 @@ export class AssetManagement {
     },
   ];
 
-  dataSource: MatTableDataSource<Asset> = new MatTableDataSource(this.assets);
+  dataSource: MatTableDataSource<AssetModel> = new MatTableDataSource(
+    this.assets
+  );
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
