@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BACKEND.Migrations
 {
     [DbContext(typeof(MotelMateDbContext))]
-    [Migration("20250707040755_MyDatabase")]
-    partial class MyDatabase
+    [Migration("20250722075748_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,6 +46,9 @@ namespace BACKEND.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Discriminator")
                         .IsRequired()
@@ -86,10 +89,6 @@ namespace BACKEND.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -101,8 +100,10 @@ namespace BACKEND.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("URLAvatar")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UpdateAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -153,6 +154,41 @@ namespace BACKEND.Migrations
                     b.ToTable("Asset");
                 });
 
+            modelBuilder.Entity("BACKEND.Models.AuditLog", b =>
+                {
+                    b.Property<int>("AuditLogID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuditLogID"));
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NewValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OldValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TableName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("AuditLogID");
+
+                    b.HasIndex("Id");
+
+                    b.ToTable("AuditLog");
+                });
+
             modelBuilder.Entity("BACKEND.Models.Building", b =>
                 {
                     b.Property<int>("BuildingID")
@@ -165,6 +201,10 @@ namespace BACKEND.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("BuildingCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -188,6 +228,9 @@ namespace BACKEND.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ContractID"));
+
+                    b.Property<string>("ContractCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<decimal>("Deposit")
                         .HasColumnType("decimal(18,2)");
@@ -255,6 +298,16 @@ namespace BACKEND.Migrations
 
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("ExtraCosts")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("InvoiceCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateOnly>("PeriodEnd")
                         .HasColumnType("date");
@@ -356,6 +409,9 @@ namespace BACKEND.Migrations
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("OwnerID")
                         .HasColumnType("int");
 
@@ -369,6 +425,9 @@ namespace BACKEND.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("RequestID");
 
@@ -398,6 +457,10 @@ namespace BACKEND.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("RoomNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -657,6 +720,17 @@ namespace BACKEND.Migrations
                     b.HasDiscriminator().HasValue("Tenant");
                 });
 
+            modelBuilder.Entity("BACKEND.Models.AuditLog", b =>
+                {
+                    b.HasOne("BACKEND.Models.Account", "Account")
+                        .WithMany("AuditLog")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+                });
+
             modelBuilder.Entity("BACKEND.Models.Building", b =>
                 {
                     b.HasOne("BACKEND.Models.Owner", "Owner")
@@ -864,6 +938,11 @@ namespace BACKEND.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("BACKEND.Models.Account", b =>
+                {
+                    b.Navigation("AuditLog");
                 });
 
             modelBuilder.Entity("BACKEND.Models.Asset", b =>
