@@ -9,6 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { CommonModule } from '@angular/common';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
 
 export interface ContractFormData {
   building: string;
@@ -34,13 +35,15 @@ export interface ContractFormData {
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatIconModule
   ],
 })
 export class AddContractDialogComponent {
   formData: ContractFormData;
   buildings: string[] = [];
   contracts: any[] = [];
+  statuses: string[] = [];
   readonly errorMessage = signal('');
   roomCtrl = new FormControl<number | null>(null, [
     Validators.required,
@@ -56,6 +59,11 @@ export class AddContractDialogComponent {
     this.buildings = data.buildings || [];
     this.contracts = data.contracts || [];
     this.roomCtrl.setValue(this.formData.room ?? null);
+    this.statuses = data.statuses || [];
+  }
+
+  ngOnInit(): void {
+
   }
 
   onCancel(): void {
@@ -79,7 +87,7 @@ export class AddContractDialogComponent {
     this.errorMessage.set('This room already has a contract!');
     this.roomCtrl.setErrors({ conflict: true });
     return;
-``}else{
+  }else{
     this.errorMessage.set('');
     this.roomCtrl.setErrors(null);
   }

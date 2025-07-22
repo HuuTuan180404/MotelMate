@@ -14,6 +14,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { AddContractDialogComponent } from './contractDialog/contractDialog';
+import { stat } from 'fs';
 
 interface Contract {
   building: string;
@@ -203,7 +204,8 @@ export class ContractComponent implements OnInit, AfterViewInit  {
       data: {
         formData: { building: '', room: null, start: '', end: '', deposit: null, total: null, status: 'Unsigned' },
         buildings: this.buildings,
-        contracts: this.contracts
+        contracts: this.contracts,
+        statuses: this.statuses
       }
     });
 
