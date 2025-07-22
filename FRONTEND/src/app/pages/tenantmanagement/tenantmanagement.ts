@@ -13,7 +13,6 @@ import { Room } from '../roommanagement/room/room';
 @Component({
   selector: 'app-tenantmanagement',
   imports: [
-    Room,
     FormsModule,
     CommonModule,
     MatFormFieldModule,

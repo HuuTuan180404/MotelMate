@@ -11,6 +11,7 @@ import { RoomDetail } from '../roomdetail/roomdetail';
 import { MatSliderModule } from '@angular/material/slider';
 import { RoomModel } from '../../models/Room.model';
 import { Room } from './room/room';
+import { AddRoom } from './addroom/addroom';
 
 @Component({
   selector: 'app-roommanagement',
@@ -25,6 +26,7 @@ import { Room } from './room/room';
     MatTooltip,
     MatDialogModule,
     MatSliderModule,
+    AddRoom,
   ],
   templateUrl: './roommanagement.html',
   styleUrl: './roommanagement.css',
@@ -59,12 +61,46 @@ export class RoomManagement {
     this.filteredRooms = [...this.rooms];
   }
 
-  onClick_btnCreate() {
+  onClick_btnView() {
     this.dialog.open(RoomDetail, {
       disableClose: true,
       minWidth: '90vw',
       maxHeight: '90vh',
       data: { roomId: 123, mode: 'edit' },
+    });
+  }
+
+  onClick_btnCreate() {
+    // this.dialog.open(AddRoom, {
+    //   disableClose: true,
+    //   minWidth: '90vw',
+    //   maxHeight: '90vh',
+    // });
+
+    const dialogRef = this.dialog.open(AddRoom, {
+      height: 'auto',
+      maxHeight: '90vh',
+      minWidth: '60vw',
+      data: {
+        formData: {
+          buildingID: 1,
+          roomNumber: 1,
+          maxGuests: 2,
+          area: 2.4,
+          price: 1300000,
+          images: [],
+          description: '',
+          assets: [],
+        },
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        // this.contracts.push(result);
+        // this.applyFilters();
+        console.log(result);
+      }
     });
   }
 

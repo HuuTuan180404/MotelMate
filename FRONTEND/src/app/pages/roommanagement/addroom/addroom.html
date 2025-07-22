@@ -1,80 +1,134 @@
-<h2 mat-dialog-title>Thêm Phòng Mới</h2>
+<div class="dialog-container">
+  <!-- Header -->
+  <div class="dialog-header">Add a new room</div>
 
-<form [formGroup]="roomForm" (ngSubmit)="onSubmit()" class="form-container">
-  <mat-dialog-content>
-    <!-- Upload ảnh -->
-    <label>Ảnh phòng:</label>
-    <input
-      aria-label="image"
-      type="file"
-      (change)="onFileChange($event)"
-      multiple
-    />
+  <!-- Body -->
+  <div class="dialog-body">
+    <div class="dialog-element">
+      <div class="room-info">
+        <div class="input-info">
+          <div class="room-location">
+            <span class="input-info-label">Room Location</span>
+            <div class="input-info-container">
+              <!-- building -->
+              <mat-form-field appearance="outline">
+                <mat-select
+                  [(ngModel)]="formData.buildingID"
+                  placeholder="Building"
+                >
+                  <mat-option *ngFor="let b of buildings" [value]="b">
+                    {{b}}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
 
-    <!-- Hiển thị preview -->
-    <div class="image-preview" *ngIf="imagePreviews.length">
-      <img aria-label="preview" *ngFor="let img of imagePreviews" [src]="img" />
+              <!-- room number -->
+              <mat-form-field appearance="outline">
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="formData.roomNumber"
+                  placeholder="Room"
+                  #roomCtrl="ngModel"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="room-information">
+            <span class="input-info-label">Room information</span>
+            <div class="input-info-container">
+              <!-- area -->
+              <mat-form-field appearance="outline">
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="formData.area"
+                  placeholder="Area"
+                  #roomCtrl="ngModel"
+                />
+              </mat-form-field>
+
+              <!-- price -->
+              <mat-form-field appearance="outline">
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="formData.price"
+                  placeholder="Price"
+                  #roomCtrl="ngModel"
+                />
+              </mat-form-field>
+
+              <!-- max guests -->
+              <mat-form-field appearance="outline">
+                <mat-label>Description</mat-label>
+                <input
+                  matInput
+                  type="number"
+                  [(ngModel)]="formData.maxGuests"
+                  placeholder="Max guests"
+                />
+              </mat-form-field>
+            </div>
+          </div>
+
+          <div class="room-description">
+            <div class="input-info-container">
+              <!-- description -->
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Description</mat-label>
+                <textarea
+                  matInput
+                  placeholder="Description"
+                  [(ngModel)]="formData.description"
+                  placeholder="Max guests"
+                  rows="2"
+                ></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+        </div>
+
+        <div class="add-item">
+          <div class="add add-image">
+            <span>Add images</span>
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                multiple
+                (change)="onFileChange($event)"
+                hidden
+                #fileInput
+              />
+              <button matButton (click)="fileInput.click()">
+                <span class="material-symbols-outlined">
+                  add_photo_alternate
+                </span>
+              </button>
+              <div class="images"></div>
+            </div>
+          </div>
+          <div class="add add-asset">
+            <span>Add assets</span>
+            <div>
+              <button matButton>
+                <span class="material-symbols-outlined"> box_add </span>
+              </button>
+              <div class="images"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <!-- Mã phòng -->
-    <mat-form-field appearance="fill">
-      <mat-label>Mã phòng</mat-label>
-      <input aria-label="roomCode" matInput formControlName="roomCode" />
-    </mat-form-field>
-
-    <!-- Chọn tòa nhà -->
-    <mat-form-field appearance="fill">
-      <mat-label>Tòa nhà</mat-label>
-      <mat-select formControlName="building">
-        <mat-option *ngFor="let b of buildings" [value]="b">{{ b }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <!-- Diện tích -->
-    <mat-form-field appearance="fill">
-      <mat-label>Diện tích (m²)</mat-label>
-      <input aria-label="area" matInput type="number" formControlName="area" />
-    </mat-form-field>
-
-    <!-- Số người tối đa -->
-    <mat-form-field appearance="fill">
-      <mat-label>Số người ở tối đa</mat-label>
-      <input
-        aria-label="maxPeople"
-        matInput
-        type="number"
-        formControlName="maxPeople"
-      />
-    </mat-form-field>
-
-    <!-- Giá phòng -->
-    <mat-form-field appearance="fill">
-      <mat-label>Giá phòng (VND)</mat-label>
-      <input aria-label="price"" matInput type="number" formControlName="price"
-      />
-    </mat-form-field>
-
-    <!-- Miêu tả -->
-    <mat-form-field appearance="fill">
-      <mat-label>Miêu tả</mat-label>
-      <textarea
-        aria-label="description"
-        matInput
-        formControlName="description"
-        rows="3"
-      ></textarea>
-    </mat-form-field>
-  </mat-dialog-content>
-
-  <mat-dialog-actions align="end">
-    <button mat-button mat-dialog-close>Hủy</button>
-    <button
-      mat-flat-button
-      color="primary"
-      type="submit"
-      [disabled]="roomForm.invalid"
-    >
-      Lưu
+  <!-- Footer -->
+  <div class="dialog-footer">
+    <button mat-button (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" (click)="onConfirm()">
+      Confirm
     </button>
-  </mat-dialog-actions>
-</form>
+  </div>
+</div>
