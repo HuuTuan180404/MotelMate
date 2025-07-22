@@ -1,0 +1,80 @@
+<h2 mat-dialog-title>Thêm Phòng Mới</h2>
+
+<form [formGroup]="roomForm" (ngSubmit)="onSubmit()" class="form-container">
+  <mat-dialog-content>
+    <!-- Upload ảnh -->
+    <label>Ảnh phòng:</label>
+    <input
+      aria-label="image"
+      type="file"
+      (change)="onFileChange($event)"
+      multiple
+    />
+
+    <!-- Hiển thị preview -->
+    <div class="image-preview" *ngIf="imagePreviews.length">
+      <img aria-label="preview" *ngFor="let img of imagePreviews" [src]="img" />
+    </div>
+
+    <!-- Mã phòng -->
+    <mat-form-field appearance="fill">
+      <mat-label>Mã phòng</mat-label>
+      <input aria-label="roomCode" matInput formControlName="roomCode" />
+    </mat-form-field>
+
+    <!-- Chọn tòa nhà -->
+    <mat-form-field appearance="fill">
+      <mat-label>Tòa nhà</mat-label>
+      <mat-select formControlName="building">
+        <mat-option *ngFor="let b of buildings" [value]="b">{{ b }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Diện tích -->
+    <mat-form-field appearance="fill">
+      <mat-label>Diện tích (m²)</mat-label>
+      <input aria-label="area" matInput type="number" formControlName="area" />
+    </mat-form-field>
+
+    <!-- Số người tối đa -->
+    <mat-form-field appearance="fill">
+      <mat-label>Số người ở tối đa</mat-label>
+      <input
+        aria-label="maxPeople"
+        matInput
+        type="number"
+        formControlName="maxPeople"
+      />
+    </mat-form-field>
+
+    <!-- Giá phòng -->
+    <mat-form-field appearance="fill">
+      <mat-label>Giá phòng (VND)</mat-label>
+      <input aria-label="price"" matInput type="number" formControlName="price"
+      />
+    </mat-form-field>
+
+    <!-- Miêu tả -->
+    <mat-form-field appearance="fill">
+      <mat-label>Miêu tả</mat-label>
+      <textarea
+        aria-label="description"
+        matInput
+        formControlName="description"
+        rows="3"
+      ></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Hủy</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="roomForm.invalid"
+    >
+      Lưu
+    </button>
+  </mat-dialog-actions>
+</form>
