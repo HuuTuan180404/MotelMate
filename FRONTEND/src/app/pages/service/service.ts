@@ -77,7 +77,7 @@ export class Service {
     }
   ];
 
-  displayedColumns: string[] = ['name', 'unit', 'customerPrice', 'initialPrice', 'isTiered', 'actions'];
+  displayedColumns: string[] = ['name', 'unit', 'customerPrice', 'initialPrice', 'actions'];
   dataSource = new MatTableDataSource<ServiceItem>(this.services);
 
   // Search term and filters
@@ -103,7 +103,7 @@ export class Service {
       isTiered: this.filters.isTiered
     });
   }
-  
+
   openCreateForm() {
     // TODO: Open dialog to create new service
     console.log('Open create form');

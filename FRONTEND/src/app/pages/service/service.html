@@ -39,17 +39,20 @@
     </ng-container>
 
     <ng-container matColumnDef="initialPrice">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Initial Price </th>
-      <td mat-cell *matCellDef="let s"> {{ s.initialPrice | number: '1.0-2' }} </td>
-    </ng-container>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Initial Price </th>
+        <td mat-cell *matCellDef="let s">
+            <ng-container *ngIf="s.isTiered && s.serviceTier?.length; else singlePrice">
+            <div class="tier-box" *ngFor="let tier of s.serviceTier">
+                <span>{{ tier.fromQuantity }} - {{ tier.toQuantity }}:</span>
+                <span>{{ tier.govUnitPrice | number: '1.0-2' }}</span>
+            </div>
+            </ng-container>
+            <ng-template #singlePrice>
+            {{ s.initialPrice | number: '1.0-2' }}
+            </ng-template>
+        </td>
+        </ng-container>
 
-    <ng-container matColumnDef="isTiered">
-      <th mat-header-cell *matHeaderCellDef> Tiered </th>
-      <td mat-cell *matCellDef="let s">
-        <mat-icon color="primary" *ngIf="s.isTiered">check_circle</mat-icon>
-        <mat-icon color="warn" *ngIf="!s.isTiered">cancel</mat-icon>
-      </td>
-    </ng-container>
 
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef> Actions </th>

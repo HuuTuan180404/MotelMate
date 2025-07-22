@@ -260,3 +260,8 @@ th {
   background-color: #1565c0 !important;
 }
 
+.tier-box {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+}
