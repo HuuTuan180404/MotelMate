@@ -1,1 +1,51 @@
-<p>login works!</p>
+<div class="login-wrapper">
+  <div class="background-overlay"></div>  
+
+  <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <img src="/assets/images/logo.svg" alt="Logo" class="logo" />
+    <p style="margin-top: 0; margin-bottom: 1rem;">Please Login your account.</p>
+
+    <!-- Email -->
+    <input type="email" formControlName="email" placeholder="Email" />
+    <div class="error-feedback">
+      <small *ngIf="form.controls['email'].errors?.['required'] && form.controls['email'].touched">
+        Email is required
+      </small>
+      <small *ngIf="form.controls['email'].errors?.['email'] && form.controls['email'].touched">
+        Invalid email
+      </small>
+    </div>
+
+    <!-- Password -->
+    <input type="password" formControlName="password" placeholder="Password" />
+    <div class="error-feedback">
+      <small *ngIf="form.controls['password'].errors?.['required'] && form.controls['password'].touched">
+        Password is required
+      </small>
+      <small *ngIf="form.controls['password'].errors?.['minlength'] && form.controls['password'].touched">
+        Min 6 characters
+      </small>
+    </div>
+
+    <!-- Remember me & Forgot -->
+    <div class="options">
+      <label><input type="checkbox" formControlName="remember" /> Remember me</label>
+      <a href="#" style="color: #3591CD;">Forgot Password?</a>
+    </div>
+
+    <!-- Login button -->
+    <button class="btn btn-primary" type="submit" [disabled]="form.invalid">Log In</button>
+
+    <div class="divider">or</div>
+
+    <!-- Google -->
+    <button type="button" class="btn btn-google">
+      <img src="/assets/images/gg.svg" style="width: 15px;" alt="Google" /> Continue With Google
+    </button>
+
+    <!-- Register -->
+    <p class="register">
+      New member here? <a routerLink="/register" style="color:#3591CD;">Register Now</a>
+    </p>
+  </form>
+</div>
