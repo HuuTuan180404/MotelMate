@@ -18,18 +18,31 @@ export class Sidebar {
     { icon: 'server_person', label: 'Tenant', route: 'tenants' },
     { icon: 'contract', label: 'Contract', route: 'contracts' },
     { icon: 'receipt', label: 'Invoice', route: 'invoices' },
-    { icon: 'inventory_2', label: 'Asset', route: '#' },
+    { icon: 'inventory_2', label: 'Asset', route: 'assets' },
+    { icon: 'room_service', label: 'Service', route: 'services' },
     {
       icon: 'request_page',
       label: 'Requests',
       isDropdown: true,
       children: [
-        { icon: 'app_registration', label: 'Room Registration', route: 'requests/room-registration' },
-        { icon: 'update', label: 'Extend Contract', route: 'requests/extend-contract' },
+        {
+          icon: 'app_registration',
+          label: 'Room Registration',
+          route: 'requests/room-registration',
+        },
+        {
+          icon: 'update',
+          label: 'Extend Contract',
+          route: 'requests/extend-contract',
+        },
         { icon: 'payment', label: 'Payment', route: 'requests/payment' },
-        { icon: 'feedback', label: 'Feedback/Issue', route: 'requests/feedback' }
-      ]
-    }
+        {
+          icon: 'feedback',
+          label: 'Feedback/Issue',
+          route: 'requests/feedback',
+        },
+      ],
+    },
   ];
 
   accountMenu = [

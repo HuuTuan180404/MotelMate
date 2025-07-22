@@ -8,31 +8,56 @@
 }
 
 .room-detail {
-  height: 90vh;
   width: 90vw;
   display: flex;
   flex-direction: column;
   background-color: var(--bg-color);
 }
 
+.dialog-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--padding-margin);
+}
+
+#btnApply {
+  background-color: #4caf50;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+#btnApply:hover {
+  background-color: #45a049;
+}
+
 .content {
-  flex: 1;
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
 }
 
 .room-info {
-  display: flex;
+  display: grid;
+  box-sizing: border-box;
+  grid-template-columns: 40% 60%;
+  gap: var(--padding-margin);
   width: 100%;
+  padding: var(--padding-margin);
+  align-items: center;
+  flex-grow: 0;
 }
 
 /* images */
 .gallery {
-  max-width: 40%;
+  width: 100%;
   display: flex;
   flex-direction: column-reverse;
-  padding: var(--padding-margin);
 }
 
 .main-image {
@@ -74,15 +99,14 @@
 
 /* tthông tin phòng */
 .info {
-  flex: 1;
+  width: calc(100% - 8px);
   display: flex;
   flex-direction: column;
-  padding: var(--padding-margin);
-  justify-content: center;
 }
 
 .info-part1-2 {
   display: flex;
+  flex-direction: row;
 }
 
 .info-part1-2 > div {
@@ -119,41 +143,159 @@
   resize: none;
 }
 
-.members {
-  margin: var(--padding-margin);
-  padding: var(--padding-margin);
-  gap: 10px;
+.info-part4 {
+  width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  flex-grow: 0;
+  padding: 0 var(--padding-margin);
+  margin-top: 10px;
+}
+
+.info-part4-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--padding-margin);
+}
+
+.info-part4-header > button {
+  display: flex;
+  border-radius: var(--border-radius);
+  background-color: var(--create-btn);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+}
+
+.info-part4-header > button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(99, 102, 241, 0.5);
+  background: linear-gradient(135deg, #4338ca, #4f46e5);
+}
+
+.info-part4-header > button:active {
+  transform: scale(0.98);
+  box-shadow: 0 3px 8px rgba(99, 102, 241, 0.3);
+}
+
+.members {
+  display: flex;
+  gap: 0 calc(var(--padding-margin) * 2);
+  width: 95%;
+  margin: 0 auto;
   overflow-x: auto;
-  width: 100px;
+  /* scrollbar-width: thin; */
+}
+
+.members::-webkit-scrollbar {
+  display: none;
 }
 
 .member {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  border: 1px solid #ce9999;
+  border: 1px solid #000;
+  padding: 8px;
   border-radius: var(--border-radius);
-  padding: 0 var(--padding-margin);
-  overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
 }
 
 .member > img {
   height: 60px;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
+  width: 60px;
   border-radius: 50%;
+  object-fit: cover;
+  align-self: center;
+  margin-bottom: var(--padding-margin);
 }
 
-.info-row {
-  display: flex;
-  justify-content: space-between; /* đẩy phần tử sang 2 bên */
-  gap: 8px;
+.member > div > div {
+  margin-top: var(--padding-margin);
 }
 
-.info-row > label {
+.member label {
   font-weight: bold;
-  text-align: right;
+}
+
+.memberIsSelected {
+  border: 2px solid rgb(30, 30, 216);
+}
+
+.row-info {
+  display: flex;
+  gap: 0 calc(var(--padding-margin) * 2);
+}
+
+/* thông tin đơn giản của tòa nhà, chủ trọ */
+.other-infor {
+  flex: 1;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns:
+    calc(50% - var(--padding-margin) / 2)
+    calc(50% - var(--padding-margin) / 2);
+  gap: 0 var(--padding-margin);
+  padding: var(--padding-margin);
+}
+
+/* info chủ trọ */
+.first-block {
+  border-radius: var(--border-radius);
+  padding: var(--padding-margin);
+  display: flex;
+  flex-direction: column;
+}
+
+.owner-building-info {
+  display: flex;
+}
+
+.owner-info-content {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.building-info-content {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.owner-info-content > div,
+.building-info-content > div {
+  display: inline-flex;
+  gap: 0 var(--padding-margin);
+  margin-top: var(--padding-margin);
+}
+
+/* thông tin của tòa nhà */
+.second-block {
+  border-radius: var(--border-radius);
+  padding: var(--padding-margin);
+  display: inline;
+}
+
+.assets {
+  display: grid;
+  grid-auto-flow: column; /* Các item sẽ xếp theo chiều ngang (cột) */
+  grid-template-rows: repeat(2, auto); /* Tối đa 2 hàng */
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.assets > label {
+  border-radius: var(--border-radius);
+  border: 1px solid #000;
+  padding: 0 5px;
+  margin: 5px;
+  white-space: nowrap;
+  max-width: fit-content;
 }

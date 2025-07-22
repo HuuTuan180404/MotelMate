@@ -8,10 +8,14 @@ import { ContractComponent } from './pages/contractsList/contractList';
 import { TenantManagement } from './pages/tenantmanagement/tenantmanagement';
 import { Paymentrequest } from './pages/paymentrequest/paymentrequest';
 import { Dashboard } from './pages/dashboard/dashboard';
+import { AssetManagement } from './pages/assetmanagement/assetmanagement';
+import { Service } from './pages/service/service';
+import { Register } from './pages/register/register';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login },
+  { path: 'register', component: Register },
   {
     path: '',
     component: Layout,
@@ -21,8 +25,10 @@ export const routes: Routes = [
       { path: 'buildings', component: Buildingmanagement },
       { path: 'contracts', component: ContractComponent },
       { path: 'tenants', component: TenantManagement },
-      { path: 'requests/payment', component: Paymentrequest},
-      { path: 'dashboard', component: Dashboard }
+      { path: 'requests/payment', component: Paymentrequest },
+      { path: 'dashboard', component: Dashboard },
+      { path: 'assets', component: AssetManagement },
+      { path: 'services', component: Service },
     ],
   },
 ];

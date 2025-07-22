@@ -10,9 +10,13 @@
       <span class="badge"></span>
     </div>
 
-    <div class="message-icon">
-      <i class="fa-regular fa-message"></i>
-    </div>
+    <button
+      aria-label="Send message"
+      class="message-icon"
+      (click)="sendMessage()"
+    >
+      <i class="fa-sharp fa-solid fa-paper-plane fa-lg"></i>
+    </button>
 
     <div class="avatar">
       <img

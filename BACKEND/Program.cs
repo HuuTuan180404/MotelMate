@@ -1,3 +1,4 @@
+using Backend.Data;
 using BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,6 +19,13 @@ if (app.Environment.IsDevelopment())
         options.DocumentPath = "/openapi/v1.json";
     });
     app.MapOpenApi();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var services = scope.ServiceProvider;
+        var context = services.GetRequiredService<MotelMateDbContext>();
+        MotelDbSeeder.Seed(context);
+    }
 }
 
 app.UseHttpsRedirection();

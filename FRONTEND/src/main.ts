@@ -10,6 +10,6 @@ bootstrapApplication(App, {
   providers: [
     ...appConfig.providers,
     importProvidersFrom(),
-    provideAnimations()
+    provideAnimations(),
   ]
 });

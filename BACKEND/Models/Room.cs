@@ -19,7 +19,7 @@ namespace BACKEND.Models
         public int RoomID { get; set; }
 
         [Required]
-        public string RoomNumber { get; set; }
+        public required string RoomNumber { get; set; }
 
         [Required]
         public double Area { get; set; }
@@ -36,7 +36,7 @@ namespace BACKEND.Models
         public Nullable<int> BuildingID { get; set; }
 
         public virtual ICollection<RoomAsset> RoomAssets { get; set; }
-        public virtual Building Building { get; set; }
+        public required virtual Building Building { get; set; }
         public virtual ICollection<Contract> Contracts { get; set; }
         public virtual ICollection<RoomImage> RoomImages { get; set; }
     }

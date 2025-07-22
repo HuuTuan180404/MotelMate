@@ -33,7 +33,6 @@ namespace BACKEND.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Nếu muốn lưu enum dưới dạng string thay vì int, bỏ comment các dòng dưới:
-            modelBuilder.Entity<Account>().Property(e => e.Role).HasConversion<string>();
             modelBuilder.Entity<Account>().Property(e => e.Status).HasConversion<string>();
 
             modelBuilder.Entity<Asset>().Property(e => e.Type).HasConversion<string>();

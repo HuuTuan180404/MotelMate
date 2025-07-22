@@ -101,7 +101,6 @@ namespace BACKEND.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("URLAvatar")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("UpdateAt")
@@ -172,11 +171,9 @@ namespace BACKEND.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("NewValue")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("OldValue")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TableName")

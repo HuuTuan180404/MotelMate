@@ -15,7 +15,7 @@ namespace BACKEND.Models
         [Key]
         public int InvoiceID { get; set; }
 
-        public string InvoiceCode { get; set; }
+        public required string InvoiceCode { get; set; }
 
         public DateTime CreateAt { get; set; } = DateTime.Now;
 

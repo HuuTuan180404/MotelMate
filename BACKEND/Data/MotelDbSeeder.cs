@@ -21,7 +21,6 @@ namespace Backend.Data
                     .RuleFor(a => a.PhoneNumber, f => f.Phone.PhoneNumber("09########"))
                     .RuleFor(a => a.Email, f => f.Internet.Email())
                     .RuleFor(a => a.PasswordHash, f => BCrypt.Net.BCrypt.HashPassword("Password@123"))
-                    .RuleFor(a => a.Role, f => EAccountRole.Tenant)
                     .RuleFor(a => a.Status, f => EAccountStatus.Active)
                     .RuleFor(a => a.Bdate, f => f.Date.Past(30, DateTime.Now.AddYears(-18)))
                     .RuleFor(a => a.URLAvatar, f => f.Internet.Avatar())
@@ -40,6 +39,7 @@ namespace Backend.Data
                 var buildingFaker = new Faker<Building>("vi")
                     .RuleFor(b => b.Name, f => $"Tòa nhà {f.Random.AlphaNumeric(1)}")
                     .RuleFor(b => b.Address, f => f.Address.FullAddress())
+                    .RuleFor(b => b.BuildingCode, f => f.Random.Replace("B##"))
                     .RuleFor(b => b.OwnerID, f => f.PickRandom(accountIds));
 
                 var buildings = buildingFaker.Generate(10);
@@ -165,6 +165,8 @@ namespace Backend.Data
             {
                 var invoiceFaker = new Faker<Invoice>("vi")
                     .RuleFor(i => i.ContractID, f => f.PickRandom(contractIds))
+                    .RuleFor(i => i.InvoiceCode, f => f.Random.Replace("INV-###"))
+                    .RuleFor(i => i.ExtraCosts, f => f.PickRandom(contractIds))
                     .RuleFor(i => i.CreateAt, f => f.Date.Recent())
                     .RuleFor(i => i.PeriodStart, f => DateOnly.FromDateTime(f.Date.Past(1)))
                     .RuleFor(i => i.PeriodEnd, f => DateOnly.FromDateTime(f.Date.Recent()))
@@ -227,6 +229,7 @@ namespace Backend.Data
                 var ownerFaker = new Faker<Owner>("vi")
                     .RuleFor(o => o.FullName, f => f.Name.FullName())
                     .RuleFor(o => o.PhoneNumber, f => f.Phone.PhoneNumber("09########"))
+                    .RuleFor(t => t.CCCD, f => f.Random.Replace("############"))
                     .RuleFor(o => o.Email, f => f.Internet.Email());
                 var owners = ownerFaker.Generate(10);
                 context.Owner.AddRange(owners);
