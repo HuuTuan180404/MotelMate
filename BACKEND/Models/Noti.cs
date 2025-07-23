@@ -19,8 +19,8 @@ namespace BACKEND.Models
 
         [ForeignKey(nameof(Owner))]
         public Nullable<int> OwnerID { get; set; }
-        public virtual Owner Owner { get; set; }
+        public virtual Owner ?Owner { get; set; }
 
-        public virtual ICollection<NotiRecipient> NotiRecipients { get; set; }
+        public virtual ICollection<NotiRecipient> ?NotiRecipients { get; set; }
     }
 }

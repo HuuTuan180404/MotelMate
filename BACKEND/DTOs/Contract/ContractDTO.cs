@@ -6,7 +6,7 @@ namespace BACKEND.DTOs
     public partial class ContractDTO
     {
         public int ContractID { get; set; }
-        public string ContractCode { get; set; }
+        public string ?ContractCode { get; set; }
  
         public DateOnly StartDate { get; set; }
  

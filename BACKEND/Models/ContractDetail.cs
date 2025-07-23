@@ -21,7 +21,7 @@ namespace BACKEND.Models
 
         public bool? IsRoomRepresentative { get; set; }
 
-        public virtual Tenant Tenant { get; set; }
-        public virtual Contract Contract { get; set; }
+        public virtual Tenant ?Tenant { get; set; }
+        public virtual Contract ?Contract { get; set; }
     }
 }
