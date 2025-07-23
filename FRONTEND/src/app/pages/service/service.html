@@ -1,13 +1,7 @@
 <!-- Header with Title and Search -->
 <div class="header-container">
-  <h2 class="page-title">Service</h2>
+  <h2 class="page-title">SERVICE</h2>
   <div class="search-container">
-    <button mat-icon-button (click)="clearAllFilters()" matTooltip="Clear Filters">
-      <mat-icon>close</mat-icon>
-    </button>
-    <button mat-icon-button (click)="exportServices()" matTooltip="Export to csv">
-      <mat-icon>file_upload</mat-icon>
-    </button>
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Search</mat-label>
       <input
@@ -39,22 +33,25 @@
       <td mat-cell *matCellDef="let s"> {{ s.unit }} </td>
     </ng-container>
 
+    <ng-container matColumnDef="initialPrice">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> Initial Price </th>
+        <td mat-cell *matCellDef="let s">
+            <ng-container *ngIf="s.isTiered && s.serviceTier?.length; else singlePrice">
+            <div class="tier-box" *ngFor="let tier of s.serviceTier">
+                <span>{{ tier.fromQuantity }} - {{ tier.toQuantity }}:</span>
+                <span>{{ tier.govUnitPrice | number: '1.0-2' }}</span>
+            </div>
+            </ng-container>
+            <ng-template #singlePrice>
+            {{ s.initialPrice | number: '1.0-2' }}
+            </ng-template>
+        </td>
+    </ng-container>
+
+    
     <ng-container matColumnDef="customerPrice">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Customer Price </th>
       <td mat-cell *matCellDef="let s"> {{ s.customerPrice | number: '1.0-2' }} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="initialPrice">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header> Initial Price </th>
-      <td mat-cell *matCellDef="let s"> {{ s.initialPrice | number: '1.0-2' }} </td>
-    </ng-container>
-
-    <ng-container matColumnDef="isTiered">
-      <th mat-header-cell *matHeaderCellDef> Tiered </th>
-      <td mat-cell *matCellDef="let s">
-        <mat-icon color="primary" *ngIf="s.isTiered">check_circle</mat-icon>
-        <mat-icon color="warn" *ngIf="!s.isTiered">cancel</mat-icon>
-      </td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
