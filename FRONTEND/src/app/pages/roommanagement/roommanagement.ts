@@ -160,6 +160,14 @@ export class RoomManagement {
     },
   ];
 
+  onSearchBar(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+
+    
+
+    // this.rooms.filter = filterValue.trim().toLowerCase();
+  }
+
   applyFilter() {
     this.filters.minPrice = this.minPrice;
     this.filters.maxPrice = this.maxPrice;

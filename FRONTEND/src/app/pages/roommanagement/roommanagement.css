@@ -14,7 +14,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 6vh;
   padding: var(--padding-margin);
   background-color: #fff;
   border-radius: var(--border-radius);
@@ -30,24 +29,70 @@
   gap: 0 20px;
 }
 
-.slider-bar {
-  background-color: #d0d2db;
-  padding: var(--padding-margin);
-  border-radius: var(--border-radius);
-}
-
-#icon-search {
-  border: none;
-  background: none;
+/* button open filter panel */
+#btn-open-filter-panel {
+  width: 40px;
+  height: 40px;
   display: flex;
-  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: #f0f0f0;
+  border: 1px solid #e0e0e0;
+  gap: 0.5rem;
+  cursor: pointer;
 }
 
-#search-label {
-  margin-left: 30px;
+/* search bar */
+::ng-deep .mat-mdc-form-field-flex {
+  height: 100%;
+  align-items: center !important;
+}
+::ng-deep .search-field .mat-mdc-text-field-wrapper {
+  height: 2rem;
+  padding: 0 0.5rem;
+}
+::ng-deep .mdc-floating-label {
+  overflow: visible !important;
+}
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
 }
 
-/* <!-- btn filter --> */
+.search-field > .mat-mdc-form-field-flex {
+  margin: auto 0;
+}
+
+.search-field mat-label {
+  position: relative;
+  top: -12px;
+}
+
+.search-field {
+  width: 300px;
+}
+
+.search-field .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+/* button create*/
+.create-btn {
+  display: flex;
+  align-items: center;
+  padding: var(--padding-margin);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  background-color: var(--create-btn);
+  cursor: pointer;
+}
+
+.create-btn:hover {
+  background-color: var(--create-btn-hover);
+}
+
+/* <!--  filter panel --> */
 .filter-panel {
   position: absolute;
   right: 0;
@@ -64,41 +109,6 @@
 
 .filter-panel.open {
   transform: translateX(0);
-}
-
-/* button create, btn filter*/
-.create-btn {
-  display: flex;
-  align-items: center;
-  padding: var(--padding-margin);
-  background-color: var(--primary-color);
-  cursor: pointer;
-  color: white;
-}
-
-.create-btn {
-}
-
-.create-btn > .mat-icon {
-  color: white !important;
-}
-
-.create-btn:hover {
-  background-color: #1565c0 !important;
-}
-
-.filter-btn {
-  display: flex;
-  align-items: center;
-  padding: var(--padding-margin);
-  border-radius: var(--border-radius);
-  border: none;
-  background-color: var(--create-btn);
-  cursor: pointer;
-}
-
-.filter-btn:hover {
-  background-color: var(--create-btn-hover);
 }
 
 /* in filter panel */
@@ -137,6 +147,12 @@
 
 .filter-price > mat-slider {
   margin-top: 12px;
+}
+
+.slider-bar {
+  background-color: #d0d2db;
+  padding: var(--padding-margin);
+  border-radius: var(--border-radius);
 }
 
 /* <!-- dropdown menu --> */
