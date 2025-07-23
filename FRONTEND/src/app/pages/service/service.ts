@@ -18,6 +18,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
+import { CreateServiceDialog } from './create-service-dialog/create-service-dialog';
 
 export interface ServiceTier {
   serviceTierID?: number;
@@ -80,6 +81,8 @@ export class Service {
       isTiered: false
     }
   ];
+
+  originalService: ServiceItem | null = null;
   editingServiceID: number | null = null;
   displayedColumns: string[] = ['name', 'unit', 'initialPrice', 'customerPrice', 'actions'];
   dataSource = new MatTableDataSource<ServiceItem>(this.services);
@@ -112,9 +115,30 @@ export class Service {
   }
 
   openCreateForm() {
-    // TODO: Open dialog to create new service
-    console.log('Open create form');
+    const dialogRef = this.dialog.open(CreateServiceDialog, {
+      panelClass: 'custom-dialog-panel'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const newId = Math.max(...this.services.map(s => s.serviceID), 0) + 1;
+        const newService = {
+          ...result,
+          serviceID: newId
+        };
+        this.services.push(newService);
+        this.dataSource.data = [...this.services];
+        this.applyFilters();
+        this.snackBar.open('Service created successfully.', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          panelClass: 'custom-snackbar-success'
+        });
+      }
+    });
   }
+
+  
 
   deleteService(id: number) {
     const dialogRef = this.dialog.open(ConfirmDialog, {
@@ -138,11 +162,20 @@ export class Service {
     });
   }
   startEdit(service: ServiceItem) {
-  this.editingServiceID = service.serviceID;
+    this.editingServiceID = service.serviceID;
+    this.originalService = JSON.parse(JSON.stringify(service));
   }
 
   cancelEdit() {
+    if (this.originalService) {
+      const index = this.services.findIndex(s => s.serviceID === this.originalService!.serviceID);
+      if (index !== -1) {
+        this.services[index] = this.originalService!;
+        this.dataSource.data = [...this.services];
+      }
+    }
     this.editingServiceID = null;
+    this.originalService = null;
   }
 
   saveEdit(service: ServiceItem) {

@@ -143,19 +143,6 @@ td, th {
   gap: 0 5px;
 }
 
-::ng-deep .btn-add.mat-mdc-unelevated-button {
-  background-color: var(--primary-color) !important;
-  color: white !important;
-}
-
-::ng-deep .btn-add.mat-mdc-unelevated-button .mat-icon {
-  color: white !important;
-}
-
-::ng-deep .btn-add.mat-mdc-unelevated-button:hover {
-  background-color: #1565c0 !important;
-}
-
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -193,7 +180,7 @@ td, th {
   color: var(--primary-color);
   text-align: center;
   margin-bottom: 1rem;
-  font-size: 30px;
+  font-size: 28px;
   font-weight: 500;
 }
 .form-label {
@@ -237,6 +224,15 @@ td, th {
 .btn-submit {
   background-color: var(--primary-color); /* hoặc thay bằng #2daaf9 */
   color: white;
+}
+.btn-cancel:hover {
+  background-color: #718096; 
+  opacity: 0.9;
+}
+
+.btn-submit:hover {
+  background-color: var(-create-btn-hover);
+  opacity: 0.9;
 }
 .popup-form input,
 .popup-form textarea {
