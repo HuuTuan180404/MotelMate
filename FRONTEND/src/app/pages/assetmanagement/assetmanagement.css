@@ -96,6 +96,11 @@
   overflow-y: auto;
 }
 
+.table-container .mat-mdc-cell {
+  padding: 16px 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
 .table-container::-webkit-scrollbar {
   display: none;
 }

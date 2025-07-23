@@ -5,4 +5,7 @@ export const environment = {
     cloudName: 'dkymvpncv',
     uploadPreset: 'intern_motel_mate',
   },
+  apiURL: {
+    getTenant: 'http://localhost:5223/api/tenant',
+  },
 };
