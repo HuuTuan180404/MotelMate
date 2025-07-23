@@ -4,38 +4,27 @@
     <h2 class="title">ASSET MANAGEMENT</h2>
 
     <div class="right-section">
-      <!-- /* ô search */ -->
       <div class="search-box">
-        <mat-form-field class="example-form-field">
+        <mat-form-field appearance="outline" class="search-field">
           <mat-label>Search</mat-label>
           <input
-            placeholder="..."
+            (keyup)="applyFilter($event)"
             matInput
-            type="text"
+            placeholder="Search..."
             [(ngModel)]="searchText"
             #input
-            (keyup)="applyFilter($event)"
           />
-          @if (searchText) {
-          <button
-            id="icon-search"
-            matSuffix
-            matIconButton
-            aria-label="btnSearch"
-            (click)="searchText=''"
-          >
-            <mat-icon>clear</mat-icon>
-          </button>
-          }
+          <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
+
       <button
-        (click)="onClick_btnCreate()"
         mat-flat-button
+        (click)="onClick_btnCreate()"
         class="create-btn"
         matTooltip="Create room"
       >
-        <mat-icon>add</mat-icon> Create
+        <mat-icon>add</mat-icon> <span>Create</span>
       </button>
     </div>
   </div>

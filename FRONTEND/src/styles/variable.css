@@ -1,11 +1,13 @@
 :root {
-  --mat-button-filled-container-color:#45a9ea;
+  --mat-button-filled-container-color: #45a9ea;
   /* button colors */
   --primary-color: #45a9ea;
   --secondary-color: #ff9800;
   --success-color: #4caf50;
   --error-color: #f44336;
   /* --bg-color: #8fd4d4; */
+
+  --bg-image: url("../assets/images/bg.jpg");
 
   --create-btn: #45a9ea;
   --create-btn-hover: #0d6efd;
