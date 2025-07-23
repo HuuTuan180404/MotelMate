@@ -255,3 +255,42 @@ th {
   max-width: 110px; 
   margin-bottom: 2px;
 }
+.editable-input {
+  width: 100px;
+  padding: 2px 5px;
+  font-size: 14px;
+}
+.tier-input {
+  width: 60px;
+  padding: 2px 4px;
+}
+
+.add-tier-btn {
+  margin-top: 8px;
+  font-size: 13px;
+  height: 32px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+  background-color: #e3f2fd;
+
+  mat-icon {
+    font-size: 18px;
+  }
+}
+::ng-deep .mat-mdc-snack-bar-container.custom-snackbar .mdc-snackbar__surface {
+  background-color: #f44336 !important;
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 8px !important;
+}
+
+::ng-deep .mat-mdc-snack-bar-container.custom-snackbar-success .mdc-snackbar__surface {
+  background-color: var(--primary-color) !important;
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 8px !important;
+}
+

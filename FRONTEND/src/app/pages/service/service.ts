@@ -15,6 +15,9 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
 
 export interface ServiceTier {
   serviceTierID?: number;
@@ -47,7 +50,8 @@ export interface ServiceItem {
     MatTooltipModule,
     MatFormFieldModule,
     MatInputModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSnackBarModule
   ],
   templateUrl: './service.html',
   styleUrl: './service.css'
@@ -76,7 +80,7 @@ export class Service {
       isTiered: false
     }
   ];
-
+  editingServiceID: number | null = null;
   displayedColumns: string[] = ['name', 'unit', 'initialPrice', 'customerPrice', 'actions'];
   dataSource = new MatTableDataSource<ServiceItem>(this.services);
 
@@ -89,7 +93,10 @@ export class Service {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
@@ -109,16 +116,88 @@ export class Service {
     console.log('Open create form');
   }
 
-  editService(service: ServiceItem) {
-    // TODO: Open dialog to edit selected service
-    console.log('Edit service:', service);
+  deleteService(id: number) {
+    const dialogRef = this.dialog.open(ConfirmDialog, {
+      data: {
+        title: 'Confirm Delete',
+        message: 'Are you sure you want to delete this service?'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.services = this.services.filter(s => s.serviceID !== id);
+        this.dataSource.data = this.services;
+        this.applyFilters(); 
+        this.snackBar.open('Service deleted.', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          panelClass: 'custom-snackbar-success'
+        });
+      }
+    });
+  }
+  startEdit(service: ServiceItem) {
+  this.editingServiceID = service.serviceID;
   }
 
-  deleteService(id: number) {
-    this.services = this.services.filter(s => s.serviceID !== id);
-    this.dataSource.data = this.services;
-    this.applyFilters(); // update filters after deletion
+  cancelEdit() {
+    this.editingServiceID = null;
   }
+
+  saveEdit(service: ServiceItem) {
+    if (!service.unit.trim()) {
+      this.snackBar.open('Unit must not be empty.', 'Close', { duration: 3000, verticalPosition: 'top', panelClass: 'custom-snackbar'});
+      return;
+    }
+    if (service.customerPrice <= 0) {
+      this.snackBar.open('Customer price must be greater than 0.', 'Close', { duration: 3000, verticalPosition: 'top', panelClass: 'custom-snackbar' });
+      return;
+    }
+    if (service.isTiered && service.serviceTier) {
+      for (let i = 0; i < service.serviceTier.length; i++) {
+        const tier = service.serviceTier[i];
+        if (tier.fromQuantity >= tier.toQuantity) {
+          this.snackBar.open(`Tier ${i + 1}: From quantity must be less than to quantity.`, 'Close', { duration: 3000, verticalPosition: 'top', panelClass: 'custom-snackbar' });
+          return;
+        }
+        if (tier.govUnitPrice <= 0) {
+          this.snackBar.open(`Tier ${i + 1}: Unit price must be greater than 0.`, 'Close', { duration: 3000 , verticalPosition: 'top', panelClass: 'custom-snackbar'});
+          return;
+        }
+        for (let j = 0; j < service.serviceTier.length; j++) {
+          if (i !== j) {
+            const other = service.serviceTier[j];
+            if (
+              (tier.fromQuantity <= other.toQuantity && tier.fromQuantity >= other.fromQuantity) ||
+              (tier.toQuantity <= other.toQuantity && tier.toQuantity >= other.fromQuantity)
+            ) {
+              this.snackBar.open(`Tier ${i + 1} overlaps with tier ${j + 1}.`, 'Close', { duration: 3000, verticalPosition: 'top', panelClass: 'custom-snackbar' });
+              return;
+            }
+          }
+        }
+      }
+      service.serviceTier.sort((a, b) => a.fromQuantity - b.fromQuantity);
+    }
+
+    this.editingServiceID = null;
+    this.dataSource.data = [...this.services];
+    this.snackBar.open('Saved successfully', 'Close', { duration: 2000 , verticalPosition: 'top', panelClass: 'custom-snackbar-success'});
+  }
+
+  addTier(service: any): void {
+    if (!service.serviceTier) {
+      service.serviceTier = [];
+    }
+
+    service.serviceTier.push({
+      fromQuantity: 0,
+      toQuantity: 0,
+      govUnitPrice: 0
+    });
+  }
+
 
   private customFilterPredicate() {
     return (data: ServiceItem, filter: string): boolean => {
