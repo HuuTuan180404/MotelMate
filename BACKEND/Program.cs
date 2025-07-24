@@ -59,7 +59,6 @@ builder.Services.AddIdentity<Account, IdentityRole<int>>()
 builder.Services.AddAutoMapper(typeof(ContractMapper));
 builder.Services.AddAutoMapper(typeof(TenantMapper));
 builder.Services.AddAutoMapper(typeof(RoomMapper));
-builder.Services.AddAutoMapper(typeof(AssetMapper));
 
 builder.Services.AddAuthentication(options =>
 {
