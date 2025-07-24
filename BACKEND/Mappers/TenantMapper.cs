@@ -3,15 +3,19 @@ using BACKEND.Models;
 using BACKEND.DTOs.RoomDTO;
 using BACKEND.Enums;
 
-public class TenantMappingProfile : Profile
+namespace BACKEND.Mappers
 {
-    public TenantMappingProfile()
+    public class TenantMapper : Profile
     {
-        CreateMap<Tenant, ReadTenantDTO>()
-            .ForMember(t => t.Status, opt => opt.MapFrom(src => src.Status.ToString()));
+        public TenantMapper()
+        {
+            CreateMap<Tenant, ReadTenantDTO>()
+                .ForMember(t => t.Status, opt => opt.MapFrom(src => src.Status.ToString()));
 
-        CreateMap<ReadTenantDTO, Tenant>()
-            .ForMember(dest => dest.Status, opt => opt.MapFrom(src =>
-                Enum.Parse<EAccountStatus>(src.Status, true)));
+
+            CreateMap<ReadTenantDTO, Tenant>()
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src =>
+                    Enum.Parse<EAccountStatus>(src.Status, true)));
+        }
     }
 }
