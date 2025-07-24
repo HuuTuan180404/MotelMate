@@ -53,60 +53,6 @@ export interface ServiceItem {
   styleUrl: './service.css'
 })
 
-// export class Service {
-//   services: ServiceItem[] = [
-//     {
-//       serviceID: 1,
-//       name: 'Electricity',
-//       unit: 'kWh',
-//       customerPrice: 3500,
-//       initialPrice: 2000,
-//       isTiered: true,
-//       serviceTier: [
-//         { fromQuantity: 0, toQuantity: 50, govUnitPrice: 1500 },
-//         { fromQuantity: 51, toQuantity: 100, govUnitPrice: 1800 }
-//       ]
-//     },
-//     {
-//       serviceID: 2,
-//       name: 'WiFi',
-//       unit: 'tháng',
-//       customerPrice: 100000,
-//       initialPrice: 50000,
-//       isTiered: false
-//     }
-//   ];
-
-//   displayedColumns: string[] = ['name', 'unit', 'customerPrice', 'initialPrice', 'isTiered', 'actions'];
-//   dataSource = new MatTableDataSource<ServiceItem>(this.services);
-
-//   @ViewChild(MatPaginator) paginator!: MatPaginator;
-//   @ViewChild(MatSort) sort!: MatSort;
-
-//   constructor(private dialog: MatDialog) {}
-
-//   ngAfterViewInit(): void {
-//     this.dataSource.paginator = this.paginator;
-//     this.dataSource.sort = this.sort;
-//   }
-
-//   applyFilter(filterValue: string) {
-//     this.dataSource.filter = filterValue.trim().toLowerCase();
-//   }
-
-//   openCreateForm() {
-//     // TODO: Open dialog to create new service
-//   }
-
-//   editService(service: ServiceItem) {
-//     // TODO: Open dialog to edit selected service
-//   }
-
-//   deleteService(id: number) {
-//     this.services = this.services.filter(s => s.serviceID !== id);
-//     this.dataSource.data = this.services;
-//   }
-// }
 export class Service {
   services: ServiceItem[] = [
     {
@@ -131,7 +77,7 @@ export class Service {
     }
   ];
 
-  displayedColumns: string[] = ['name', 'unit', 'customerPrice', 'initialPrice', 'isTiered', 'actions'];
+  displayedColumns: string[] = ['name', 'unit', 'initialPrice', 'customerPrice', 'actions'];
   dataSource = new MatTableDataSource<ServiceItem>(this.services);
 
   // Search term and filters
@@ -156,17 +102,6 @@ export class Service {
       searchTerm: this.searchTerm.trim().toLowerCase(),
       isTiered: this.filters.isTiered
     });
-  }
-
-  clearAllFilters() {
-    this.searchTerm = '';
-    this.filters.isTiered = '';
-    this.applyFilters();
-  }
-
-  exportServices() {
-    // TODO: Implement export to CSV
-    console.log('Exporting services...');
   }
 
   openCreateForm() {
