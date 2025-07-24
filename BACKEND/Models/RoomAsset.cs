@@ -17,7 +17,7 @@ namespace BACKEND.Models
         public int Quantity { get; set; }
         public string? Description { get; set; }
 
-        public virtual Asset Asset { get; set; }
-        public virtual Room Room { get; set; }
+        public virtual Asset ?Asset { get; set; }
+        public virtual Room ?Room { get; set; }
     }
 }

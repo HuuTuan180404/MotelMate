@@ -41,7 +41,7 @@ namespace BACKEND.Models
 
         public string? Description { get; set; }
 
-        public virtual Contract Contract { get; set; }
+        public virtual Contract ?Contract { get; set; }
         public virtual ICollection<InvoiceDetail> InvoiceDetail { get; set; }
     }
 }

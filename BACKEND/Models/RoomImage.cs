@@ -10,6 +10,6 @@ namespace BACKEND.Models
         [ForeignKey(nameof(Room))]
         public Nullable<int> RoomID { get; set; }
         public required string ImageURL { get; set; }
-        public virtual Room Room { get; set; }
+        public virtual Room ?Room { get; set; }
     }
 }

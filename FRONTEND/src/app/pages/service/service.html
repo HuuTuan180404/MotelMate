@@ -1,4 +1,3 @@
-<!-- Header with Title and Search -->
 <div class="header-container">
   <h2 class="page-title">SERVICE</h2>
   <div class="search-container">
@@ -13,56 +12,103 @@
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
     <button mat-flat-button class="create-btn" (click)="openCreateForm()" matTooltip="Create Service">
-      <mat-icon>add</mat-icon> Create
+      <mat-icon>add</mat-icon> Add
     </button>
   </div>
 </div>
 
 <!-- Table Container -->
 <div class="table-container">
-  <!-- Table with sort -->
   <table mat-table [dataSource]="dataSource" matSort class="contracts-table">
 
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
-      <td mat-cell *matCellDef="let s"> {{ s.name }} </td>
+      <td mat-cell *matCellDef="let s">
+        <ng-container *ngIf="editingServiceID === s.serviceID; else readonlyName">
+          <input [(ngModel)]="s.name" class="editable-input" />
+        </ng-container>
+        <ng-template #readonlyName>{{ s.name }}</ng-template>
+      </td>
     </ng-container>
-
+    
     <ng-container matColumnDef="unit">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Unit </th>
-      <td mat-cell *matCellDef="let s"> {{ s.unit }} </td>
+      <td mat-cell *matCellDef="let s">
+        <ng-container *ngIf="editingServiceID === s.serviceID; else readonlyUnit">
+          <input [(ngModel)]="s.unit" class="editable-input" />
+        </ng-container>
+        <ng-template #readonlyUnit>{{ s.unit }}</ng-template>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="initialPrice">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header> Initial Price </th>
-        <td mat-cell *matCellDef="let s">
-            <ng-container *ngIf="s.isTiered && s.serviceTier?.length; else singlePrice">
-            <div class="tier-box" *ngFor="let tier of s.serviceTier">
-                <span>{{ tier.fromQuantity }} - {{ tier.toQuantity }}:</span>
-                <span>{{ tier.govUnitPrice | number: '1.0-2' }}</span>
-            </div>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Initial Price </th>
+      <td mat-cell *matCellDef="let s">
+        <ng-container *ngIf="s.isTiered; else nonTiered">
+          <div class="tier-box" *ngFor="let tier of s.serviceTier">
+            <ng-container *ngIf="editingServiceID === s.serviceID; else viewTier">
+              <input type="number" [(ngModel)]="tier.fromQuantity" class="tier-input" />
+              -
+              <input type="number" [(ngModel)]="tier.toQuantity" class="tier-input" />
+              :
+              <input type="number" [(ngModel)]="tier.govUnitPrice" class="tier-input" />
             </ng-container>
-            <ng-template #singlePrice>
-            {{ s.initialPrice | number: '1.0-2' }}
+            <ng-template #viewTier>
+              <span>{{ tier.fromQuantity }} - {{ tier.toQuantity }}:</span>
+              <span>{{ tier.govUnitPrice | number: '1.0-2' }}</span>
             </ng-template>
-        </td>
+          </div>
+          <button *ngIf="editingServiceID === s.serviceID"
+                mat-stroked-button
+                color="primary"
+                class="add-tier-btn"
+                (click)="addTier(s)">
+          <mat-icon>add</mat-icon> Add Tier
+        </button>
+        </ng-container>
+
+        <ng-template #nonTiered>
+          <ng-container *ngIf="editingServiceID === s.serviceID; else viewInitial">
+            <input type="number" [(ngModel)]="s.initialPrice" class="editable-input" />
+          </ng-container>
+          <ng-template #viewInitial>
+            {{ s.initialPrice | number: '1.0-2' }}
+          </ng-template>
+        </ng-template>
+      </td>
     </ng-container>
 
-    
     <ng-container matColumnDef="customerPrice">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Customer Price </th>
-      <td mat-cell *matCellDef="let s"> {{ s.customerPrice | number: '1.0-2' }} </td>
+      <td mat-cell *matCellDef="let s">
+        <ng-container *ngIf="editingServiceID === s.serviceID; else viewCustomerPrice">
+          <input type="number" [(ngModel)]="s.customerPrice" class="editable-input" />
+        </ng-container>
+        <ng-template #viewCustomerPrice>
+          {{ s.customerPrice | number: '1.0-2' }}
+        </ng-template>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef> Actions </th>
       <td mat-cell *matCellDef="let s">
-        <button mat-icon-button color="accent" (click)="editService(s)">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" (click)="deleteService(s)">
-          <mat-icon>delete</mat-icon>
-        </button>
+        <ng-container *ngIf="editingServiceID !== s.serviceID">
+          <button mat-icon-button color="primary" [disabled]="editingServiceID !== null" (click)="startEdit(s)">
+            <mat-icon style="color: #45a9ea;">edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="deleteService(s.serviceID)">
+            <mat-icon style="color: #f44336;">delete</mat-icon>
+          </button>
+        </ng-container>
+        <ng-container *ngIf="editingServiceID === s.serviceID">
+          <button mat-icon-button color="primary" (click)="saveEdit(s)">
+            <mat-icon style="color: #4CAF50;">check</mat-icon>
+          </button>
+          <button mat-icon-button (click)="cancelEdit()">
+            <mat-icon style="color: #a0aec0;">close</mat-icon>
+          </button>
+        </ng-container>
       </td>
     </ng-container>
 
@@ -70,6 +116,5 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
 
-  <!-- Default Angular Material Paginator -->
   <mat-paginator [pageSizeOptions]="[5, 10, 15]" showFirstLastButtons></mat-paginator>
 </div>

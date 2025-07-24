@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 
 using NSwag.Generation.Processors.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using BACKEND.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,24 +20,19 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
-// builder.Services.AddOpenApiDocument(config =>
-// {
-//     config.Title = "MotelMate API";
-//     config.Version = "v1";
-//     config.Description = "API for managing the motel system";
+builder.Services.AddAutoMapper(typeof(ContractMapper));
+builder.Services.AddAutoMapper(typeof(TenantMapper));
+builder.Services.AddAutoMapper(typeof(RoomMapper));
+builder.Services.AddAutoMapper(typeof(AssetMapper));
 
-//     config.AddSecurity("JWT", new OpenApiSecurityScheme
-//     {
-//         Type = OpenApiSecuritySchemeType.Http,
-//         Scheme = "bearer",
-//         BearerFormat = "JWT",
-//         Description = "Enter a valid JWT Bearer token below",
-//         In = OpenApiSecurityApiKeyLocation.Header,
-//         Name = "Authorization"
-//     });
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policy =>
+        policy.WithOrigins("http://localhost:4200") // Angular
+              .AllowAnyHeader()
+              .AllowAnyMethod());
+});
 
-//     config.OperationProcessors.Add(new AspNetCoreOperationSecurityScopeProcessor("JWT"));
-// });
 
 builder.Services.AddAuthentication(options =>
 {
@@ -78,8 +74,8 @@ if (app.Environment.IsDevelopment())
     using (var scope = app.Services.CreateScope())
     {
         var services = scope.ServiceProvider;
-        var context = services.GetRequiredService<MotelMateDbContext>();
-        MotelDbSeeder.Seed(context);
+        // var context = services.GetRequiredService<MotelMateDbContext>();
+        // MotelDbSeeder.Seed(context);
     }
 }
 
@@ -91,10 +87,11 @@ app.UseCors(x => x
      .AllowCredentials()
       //.WithOrigins("https://localhost:44351))
       .SetIsOriginAllowed(origin => true));
-    
+
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+app.UseCors();

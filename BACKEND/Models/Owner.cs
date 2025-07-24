@@ -3,8 +3,8 @@ namespace BACKEND.Models
     public class Owner : Account
     {
         public long AccountNo { get; set; }
-        public long AccountName { get; set; }
-        public long BankCode { get; set; }
+        public string AccountName { get; set; }
+        public int BankCode { get; set; }
         public Owner() : base()
         {
             this.Buildings = new HashSet<Building>();

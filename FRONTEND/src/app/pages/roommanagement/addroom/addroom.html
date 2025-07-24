@@ -62,12 +62,12 @@
 
               <!-- max guests -->
               <mat-form-field appearance="outline">
-                <mat-label>Description</mat-label>
                 <input
                   matInput
                   type="number"
-                  [(ngModel)]="formData.maxGuests"
-                  placeholder="Max guests"
+                  [(ngModel)]="formData.price"
+                  placeholder="Price"
+                  #roomCtrl="ngModel"
                 />
               </mat-form-field>
             </div>

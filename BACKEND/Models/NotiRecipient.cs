@@ -11,7 +11,7 @@ namespace BACKEND.Models
 
         [ForeignKey(nameof(Tenant))]
         public Nullable<int> TenantID { get; set; }
-        public virtual Tenant Tenant { get; set; }
-        public virtual Noti Noti { get; set; }
+        public virtual Tenant ?Tenant { get; set; }
+        public virtual Noti ?Noti { get; set; }
     }
 }

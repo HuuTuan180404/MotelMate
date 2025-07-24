@@ -17,11 +17,11 @@ namespace BACKEND.Models
         public DateOnly StartDate { get; set; }
 
         [Required]
-        public DateTime EndDate { get; set; }
+        public DateOnly EndDate { get; set; }
 
         public bool? IsRoomRepresentative { get; set; }
 
-        public virtual Tenant Tenant { get; set; }
-        public virtual Contract Contract { get; set; }
+        public virtual Tenant ?Tenant { get; set; }
+        public virtual Contract ?Contract { get; set; }
     }
 }

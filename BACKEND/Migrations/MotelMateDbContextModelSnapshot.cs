@@ -33,8 +33,8 @@ namespace BACKEND.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Bdate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("Bdate")
+                        .HasColumnType("date");
 
                     b.Property<string>("CCCD")
                         .IsRequired()
@@ -269,8 +269,8 @@ namespace BACKEND.Migrations
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
-                    b.Property<DateTime>("EndDate")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
 
                     b.Property<bool?>("IsRoomRepresentative")
                         .HasColumnType("bit");
@@ -698,14 +698,15 @@ namespace BACKEND.Migrations
                 {
                     b.HasBaseType("BACKEND.Models.Account");
 
-                    b.Property<long>("AccountName")
-                        .HasColumnType("bigint");
+                    b.Property<string>("AccountName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("AccountNo")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("BankCode")
-                        .HasColumnType("bigint");
+                    b.Property<int>("BankCode")
+                        .HasColumnType("int");
 
                     b.HasDiscriminator().HasValue("Owner");
                 });

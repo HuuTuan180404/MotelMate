@@ -2,6 +2,7 @@ export interface AssetModel {
   assetID: number;
   name: string;
   price: number;
-  description: string;
   type: string;
+  description?: string; // dấu ? là optional giống nullable
+  quantity: number;
 }
