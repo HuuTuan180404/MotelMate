@@ -7,5 +7,6 @@ export const environment = {
   },
   apiURL: {
     getTenant: 'http://localhost:5223/api/tenant',
+    serviceApi: 'http://localhost:5223/api/service',
   },
 };

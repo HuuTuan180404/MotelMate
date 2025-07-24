@@ -23,9 +23,14 @@
 
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Name </th>
-      <td mat-cell *matCellDef="let s"> {{ s.name }} </td>
+      <td mat-cell *matCellDef="let s">
+        <ng-container *ngIf="editingServiceID === s.serviceID; else readonlyName">
+          <input [(ngModel)]="s.name" class="editable-input" />
+        </ng-container>
+        <ng-template #readonlyName>{{ s.name }}</ng-template>
+      </td>
     </ng-container>
-
+    
     <ng-container matColumnDef="unit">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> Unit </th>
       <td mat-cell *matCellDef="let s">

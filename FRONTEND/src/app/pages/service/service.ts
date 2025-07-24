@@ -1,4 +1,4 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -19,23 +19,9 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ConfirmDialog } from './confirm-dialog/confirm-dialog';
 import { CreateServiceDialog } from './create-service-dialog/create-service-dialog';
+import { ServiceItem } from '../../models/Service.model';
+import { ServiceService } from '../../services/service';
 
-export interface ServiceTier {
-  serviceTierID?: number;
-  fromQuantity: number;
-  toQuantity: number;
-  govUnitPrice: number;
-}
-
-export interface ServiceItem {
-  serviceID: number;
-  name: string;
-  unit: string;
-  customerPrice: number;
-  initialPrice: number;
-  isTiered: boolean;
-  serviceTier?: ServiceTier[];
-}
 
 @Component({
   selector: 'app-service',
@@ -58,30 +44,8 @@ export interface ServiceItem {
   styleUrl: './service.css'
 })
 
-export class Service {
-  services: ServiceItem[] = [
-    {
-      serviceID: 1,
-      name: 'Electricity',
-      unit: 'kWh',
-      customerPrice: 3500,
-      initialPrice: 2000,
-      isTiered: true,
-      serviceTier: [
-        { fromQuantity: 0, toQuantity: 50, govUnitPrice: 1500 },
-        { fromQuantity: 51, toQuantity: 100, govUnitPrice: 1800 }
-      ]
-    },
-    {
-      serviceID: 2,
-      name: 'WiFi',
-      unit: 'tháng',
-      customerPrice: 100000,
-      initialPrice: 50000,
-      isTiered: false
-    }
-  ];
-
+export class Service implements OnInit{
+  services: ServiceItem[] = [];
   originalService: ServiceItem | null = null;
   editingServiceID: number | null = null;
   displayedColumns: string[] = ['name', 'unit', 'initialPrice', 'customerPrice', 'actions'];
@@ -98,15 +62,41 @@ export class Service {
 
   constructor(
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private serviceService: ServiceService
   ) {}
 
+  ngOnInit(): void {
+    this.fetchServices();
+  }
   ngAfterViewInit(): void {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
+    // this.dataSource.paginator = this.paginator;
+    // this.dataSource.sort = this.sort;
     this.dataSource.filterPredicate = this.customFilterPredicate();
   }
-
+  fetchServices(): void {
+    this.serviceService.getAllServices().subscribe({
+      next: (data) => {
+        this.services = data;
+        this.dataSource.data = [...this.services];
+        // this.dataSource.paginator = this.paginator;  
+        // this.dataSource.sort = this.sort;    
+        setTimeout(() => {  
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        });
+        this.applyFilters();
+      },
+      error: (err) => {
+        console.error('Failed to fetch services', err);
+        this.snackBar.open('Failed to load services.', 'Close', {
+          duration: 3000,
+          verticalPosition: 'top',
+          panelClass: 'custom-snackbar'
+        });
+      }
+    });
+  }
   applyFilters() {
     this.dataSource.filter = JSON.stringify({
       searchTerm: this.searchTerm.trim().toLowerCase(),
@@ -120,7 +110,8 @@ export class Service {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
+      if (result) {// Call API to create service here
+        // For now, add to list (demo)
         const newId = Math.max(...this.services.map(s => s.serviceID), 0) + 1;
         const newService = {
           ...result,
@@ -150,13 +141,25 @@ export class Service {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result === true) {
-        this.services = this.services.filter(s => s.serviceID !== id);
-        this.dataSource.data = this.services;
-        this.applyFilters(); 
-        this.snackBar.open('Service deleted.', 'Close', {
-          duration: 2000,
-          verticalPosition: 'top',
-          panelClass: 'custom-snackbar-success'
+        this.serviceService.deleteService(id).subscribe({
+          next: () => {
+            this.services = this.services.filter(s => s.serviceID !== id);
+            this.dataSource.data = [...this.services];
+            this.applyFilters();
+            this.snackBar.open('Service deleted.', 'Close', {
+              duration: 2000,
+              verticalPosition: 'top',
+              panelClass: 'custom-snackbar-success'
+            });
+          },
+          error: (err) => {
+            console.error('Failed to delete service', err);
+            this.snackBar.open('Failed to delete service.', 'Close', {
+              duration: 3000,
+              verticalPosition: 'top',
+              panelClass: 'custom-snackbar'
+            });
+          }
         });
       }
     });
@@ -213,10 +216,18 @@ export class Service {
       }
       service.serviceTier.sort((a, b) => a.fromQuantity - b.fromQuantity);
     }
-
-    this.editingServiceID = null;
-    this.dataSource.data = [...this.services];
-    this.snackBar.open('Saved successfully', 'Close', { duration: 2000 , verticalPosition: 'top', panelClass: 'custom-snackbar-success'});
+    this.serviceService.editService(service).subscribe({
+      next: () => {
+        this.dataSource.data = [...this.services];
+        this.editingServiceID = null;
+        this.originalService = null;
+        this.snackBar.open('Saved successfully', 'Close', { duration: 2000 , verticalPosition: 'top', panelClass: 'custom-snackbar-success'});
+      },
+      error: (err) => {
+        console.error('Failed to save service', err);
+        this.snackBar.open('Failed to save service.', 'Close', { duration: 3000, verticalPosition: 'top', panelClass: 'custom-snackbar' });
+      }
+    });
   }
 
   addTier(service: any): void {

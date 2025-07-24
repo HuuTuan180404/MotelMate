@@ -250,9 +250,9 @@ th {
 .tier-box {
   display: flex;
   justify-content: space-between;
-  /* font-size: 13px;
+  /* font-size: 13px
   line-height: 1.2; */
-  max-width: 110px; 
+  max-width: 150px; 
   margin-bottom: 2px;
 }
 .editable-input {
