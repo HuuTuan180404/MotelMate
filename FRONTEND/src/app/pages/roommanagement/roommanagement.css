@@ -172,14 +172,19 @@
 }
 
 .rooms {
-  overflow-y: auto;
+  display: flex;
+  /* flex-wrap: wrap; */
+  flex-direction: column;
+  gap: var(--padding-margin);
+
+  /* overflow-y: auto;
   display: grid;
   height: 100%;
   grid-template-columns: repeat(4, minmax(20%, 1fr));
   gap: var(--padding-margin);
   margin-top: var(--padding-margin);
   padding-bottom: 16px;
-  min-width: 100%;
+  min-width: 100%; */
 }
 
 .rooms::-webkit-scrollbar {
@@ -195,24 +200,23 @@
 }
 
 /* ================= */
-* {
-  margin: 0;
-  padding: 0;
-}
-
 .card {
   display: flex;
-  flex-direction: column;
-  height: 100%;
-  background-color: #ffffff;
+  background-color: aqua;
+
+  max-height: 180px;
+
+  max-width: 45%;
   box-shadow: var(--box-shadow);
   border-radius: var(--border-radius);
+  padding: var(--padding-margin);
 }
 
 .image {
-  width: 90%;
-  height: 60%;
-  margin: var(--padding-margin) auto;
+  /* width: 90%; */
+  aspect-ratio: 3 / 4;
+  height: 100%;
+  margin: auto;
   border-radius: var(--border-radius);
 }
 
@@ -223,24 +227,24 @@
 }
 
 .info {
+  flex: 1;
+  margin: auto 0;
+  background: #ffc5c5;
   display: flex;
   flex-direction: column;
-  margin: 0 auto;
-  width: 90%;
-  height: 40%;
   padding: var(--padding-margin);
 }
 
-.section1 {
+/* .section-room-number {
   display: flex;
   justify-content: space-between;
-}
+} */
 
-.groupPrice {
+/* .groupPrice {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
+} */
 
 .section-price {
   display: flex;
@@ -256,26 +260,9 @@
   display: block;
 }
 
-.avatars {
-  flex: 1;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  min-width: 0;
-}
-
-.avatars img:hover {
-  height: 60px;
-  width: 60px;
-  margin-right: 10px;
-  margin-left: 10px;
-  object-fit: cover;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-}
-
 .imgs {
   display: flex;
+  flex: 1;
   align-items: center;
   flex-wrap: wrap;
   gap: 4px;
@@ -290,14 +277,24 @@
   transition: all 0.3s ease;
 }
 
-/* room status */
-.room-status {
+.imgs > img:hover {
+  height: 60px;
+  width: 60px;
+  margin-right: 10px;
+  margin-left: 10px;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+/* status */
+.section-room-status {
   overflow: hidden;
   text-overflow: ellipsis;
-  display: block;
   display: flex;
   align-items: center;
   gap: 0 5px;
+  margin-left: auto;
 }
 
 .icon-status {
