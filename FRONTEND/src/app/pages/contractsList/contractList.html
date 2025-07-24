@@ -67,6 +67,11 @@
   </div>
 
   <table mat-table [dataSource]="dataSource"  matSort class="contracts-table" >
+    <ng-container matColumnDef="contractholder">
+      <th mat-header-cell *matHeaderCellDef>Contract Holder</th>
+      <td mat-cell *matCellDef="let inv">{{inv.building}}</td>
+    </ng-container>
+
     <ng-container matColumnDef="building">
       <th mat-header-cell *matHeaderCellDef>Building</th>
       <td mat-cell *matCellDef="let inv">{{inv.building}}</td>

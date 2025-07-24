@@ -54,6 +54,7 @@ interface Contract {
 })
 export class ContractComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = [
+    'contractholder',
     'building',
     'room',
     'start',

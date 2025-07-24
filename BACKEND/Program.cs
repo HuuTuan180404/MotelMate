@@ -20,6 +20,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
+builder.Services.AddAutoMapper(typeof(ContractMapper));
 builder.Services.AddAutoMapper(typeof(TenantMapper));
 builder.Services.AddAutoMapper(typeof(RoomMapper));
 builder.Services.AddAutoMapper(typeof(AssetMapper));

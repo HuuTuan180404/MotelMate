@@ -22,6 +22,6 @@ namespace BACKEND.Models
         [ForeignKey(nameof(Service))]
         public Nullable<int> ServiceID { get; set; }
 
-        public virtual Service Service { get; set; }
+        public virtual Service ?Service { get; set; }
     }
 }
