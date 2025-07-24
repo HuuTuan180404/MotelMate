@@ -3,7 +3,7 @@ namespace BACKEND.Models
     public class Owner : Account
     {
         public long AccountNo { get; set; }
-        public string AccountName { get; set; }
+        public string AccountName { get; set; } = null!;
         public int BankCode { get; set; }
         public Owner() : base()
         {
