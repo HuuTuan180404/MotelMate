@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 
 using NSwag.Generation.Processors.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using BACKEND.Mappers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +21,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 });
 
 builder.Services.AddAutoMapper(typeof(TenantMappingProfile));
+builder.Services.AddAutoMapper(typeof(ContractMapper));
 
 builder.Services.AddCors(options =>
 {
