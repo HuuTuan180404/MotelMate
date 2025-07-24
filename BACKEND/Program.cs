@@ -22,6 +22,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 
 builder.Services.AddAutoMapper(typeof(TenantMapper));
 builder.Services.AddAutoMapper(typeof(RoomMapper));
+builder.Services.AddAutoMapper(typeof(AssetMapper));
 
 builder.Services.AddCors(options =>
 {
@@ -72,8 +73,8 @@ if (app.Environment.IsDevelopment())
     using (var scope = app.Services.CreateScope())
     {
         var services = scope.ServiceProvider;
-        var context = services.GetRequiredService<MotelMateDbContext>();
-        MotelDbSeeder.Seed(context);
+        // var context = services.GetRequiredService<MotelMateDbContext>();
+        // MotelDbSeeder.Seed(context);
     }
 }
 

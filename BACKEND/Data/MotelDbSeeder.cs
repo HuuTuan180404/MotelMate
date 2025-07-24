@@ -208,7 +208,6 @@ namespace Backend.Data
                     .RuleFor(a => a.URLAvatar, f => f.PickRandom(avatarUrls))
                     .RuleFor(a => a.CreateAt, f => f.Date.Past(2))
                     .RuleFor(a => a.UpdateAt, f => f.Date.Recent())
-
                     .RuleFor(a => a.PhoneNumber, f => f.Phone.PhoneNumber("09########"))
                     .RuleFor(a => a.Email, f => f.Internet.Email())
                     .RuleFor(a => a.PasswordHash, f => BCrypt.Net.BCrypt.HashPassword("Password@123"));
@@ -413,7 +412,7 @@ namespace Backend.Data
                 var assetIds = context.Asset.Select(a => a.AssetID).ToList();
                 var roomAssets = new List<RoomAsset>();
                 var random = new Random();
-                for (int i = 0; i < 50; i++)
+                for (int i = 0; i < 450; i++)
                 {
                     roomAssets.Add(new RoomAsset
                     {
