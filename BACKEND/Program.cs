@@ -20,8 +20,9 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
 
-builder.Services.AddAutoMapper(typeof(TenantMappingProfile));
 builder.Services.AddAutoMapper(typeof(ContractMapper));
+builder.Services.AddAutoMapper(typeof(TenantMapper));
+builder.Services.AddAutoMapper(typeof(RoomMapper));
 
 builder.Services.AddCors(options =>
 {
@@ -30,7 +31,6 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader()
               .AllowAnyMethod());
 });
-
 
 
 builder.Services.AddAuthentication(options =>
@@ -73,8 +73,8 @@ if (app.Environment.IsDevelopment())
     using (var scope = app.Services.CreateScope())
     {
         var services = scope.ServiceProvider;
-        // var context = services.GetRequiredService<MotelMateDbContext>();
-        // MotelDbSeeder.Seed(context);
+        var context = services.GetRequiredService<MotelMateDbContext>();
+        MotelDbSeeder.Seed(context);
     }
 }
 

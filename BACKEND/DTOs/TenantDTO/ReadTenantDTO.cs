@@ -10,6 +10,6 @@ namespace BACKEND.DTOs.RoomDTO
         public DateOnly Bdate { get; set; }
         public string PhoneNumber { get; set; }
         public string Status { get; set; }
-        public string? URLAvatar { get; set; }
+        public string URLAvatar { get; set; }
     }
 }
