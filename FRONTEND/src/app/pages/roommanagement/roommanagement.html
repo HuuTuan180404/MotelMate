@@ -37,9 +37,12 @@
     </div>
   </header>
 
-  <div class="rooms">
-    <app-room *ngFor="let room of rooms" [room]="room"></app-room>
-  </div>
+  <!-- <app-room *ngFor="let room of _rooms" [room]="room"></app-room> -->
+  <cdk-virtual-scroll-viewport itemSize="50%" class="room-list">
+    <div class="rooms">
+      <app-room *cdkVirtualFor="let room of _rooms" [room]="room"></app-room>
+    </div>
+  </cdk-virtual-scroll-viewport>
 
   <div class="filter-panel" [class.open]="isFilterPanelOpen" #filterPanel>
     <h3>Filter</h3>

@@ -59,18 +59,22 @@
   display: block;
 }
 
-.groupMaxguest {
-  display: flex;
-  align-items: center;
-  gap: 0 5px;
-}
-
 .avatars {
   flex: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
   min-width: 0;
+}
+
+.avatars img:hover {
+  height: 60px;
+  width: 60px;
+  margin-right: 10px;
+  margin-left: 10px;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: all 0.3s ease;
 }
 
 .imgs {
@@ -89,31 +93,19 @@
   transition: all 0.3s ease;
 }
 
-.avatars img:hover {
-  height: 60px;
-  width: 60px;
-  margin-right: 10px;
-  margin-left: 10px;
-  object-fit: cover;
-  border-radius: 50%;
-  transition: all 0.3s ease;
-}
-
+/* room status */
 .room-status {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
   display: flex;
   align-items: center;
   gap: 0 5px;
 }
 
-.room-status {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: block;
-}
-
 .icon-status {
   height: 10px;
-  aspect-ratio: 1 / 1;
+  width: 10px;
   border-radius: 50%;
 }
 

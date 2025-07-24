@@ -1,33 +1,25 @@
 <div class="card">
   <div class="image">
-    <img src="assets/images/roomtest.jpg" alt="" />
+    <img [src]="room.urlImage" alt="" />
   </div>
 
   <div class="info">
     <div class="section1">
-      <h4 class="roomID">Code: {{room.name}}</h4>
+      <h4 class="roomID">Code: {{room.roomNumber}}</h4>
 
-      <div class="groupMaxguest">
-        <span class="material-symbols-outlined">groups_2</span>
-        <h4>{{room.maxGuest}}</h4>
+      <div class="section-price">
+        <span class="material-symbols-outlined"> money_bag </span>
+        <label class="price">{{ room.price | number:'1.0-0' }} </label>
       </div>
     </div>
 
     <div class="groupPrice">
-      <h4 class="buildingID">Building code: {{room.buildingID}}</h4>
-      <div class="section-price">
-        <span class="material-symbols-outlined"> money_bag </span>
-        <label class="price">{{room.price}}</label>
-      </div>
+      <h4 class="buildingID">Building name: {{room.buildingName}}</h4>
     </div>
 
     <div class="avatars">
       <div class="imgs">
-        <img
-          *ngFor="let item of room.avatars"
-          [src]="item.url"
-          alt="item.alt"
-        />
+        <img *ngFor="let item of room.urlAvatars" [src]="item" alt="item.alt" />
       </div>
 
       <div class="room-status">
