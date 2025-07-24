@@ -36,56 +36,56 @@ export class RoomDetail {
   scrollContainerThumbnails!: ElementRef;
   selectedMember: number | null = null;
 
-  roomMembers: TenantModel[] = [
-    {
-      id: 1,
-      avatar:
-        'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-      name: 'Nguyễn Văn A',
-      status: 'Active',
-      phoneNumber: '0987654321',
-      room: '101A',
-      bdate: new Date('1995-03-15'),
-    },
-    {
-      id: 2,
-      avatar:
-        'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-      name: 'Nguyễn Văn A',
-      status: 'Active',
-      phoneNumber: '0987654321',
-      room: '101A',
-      bdate: new Date('1995-03-15'),
-    },
-    {
-      id: 3,
-      avatar:
-        'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-      name: 'Nguyễn Văn A',
-      status: 'Active',
-      phoneNumber: '0987654321',
-      room: '101A',
-      bdate: new Date('1995-03-15'),
-    },
-    {
-      id: 4,
-      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-      name: 'Trần Thị B',
-      status: 'Terminate',
-      phoneNumber: '0912345678',
-      room: '102B',
-      bdate: new Date('1990-07-20'),
-    },
-    {
-      id: 5,
-      avatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-      name: 'Trần Thị B',
-      status: 'Terminate',
-      phoneNumber: '0912345678',
-      room: '102B',
-      bdate: new Date('1990-07-20'),
-    },
-  ];
+  roomMembers: TenantModel[] = [];
+  //   {
+  //     tenantID: 1,
+  //     urlAvatar:
+  //       'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
+  //     name: 'Nguyễn Văn A',
+  //     fullName: 'Active',
+  //     phoneNumber: '0987654321',
+  //     room: '101A',
+  //     bdate: new Date('1995-03-15'),
+  //   },
+  //   {
+  //     tenantID: 2,
+  //     urlAvatar:
+  //       'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
+  //     name: 'Nguyễn Văn A',
+  //     fullName: 'Active',
+  //     phoneNumber: '0987654321',
+  //     room: '101A',
+  //     bdate: new Date('1995-03-15'),
+  //   },
+  //   {
+  //     tenantID: 3,
+  //     urlAvatar:
+  //       'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
+  //     name: 'Nguyễn Văn A',
+  //     fullName: 'Active',
+  //     phoneNumber: '0987654321',
+  //     room: '101A',
+  //     bdate: new Date('1995-03-15'),
+  //   },
+  //   {
+  //     tenantID: 4,
+  //     urlAvatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+  //     name: 'Trần Thị B',
+  //     fullName: 'Terminate',
+  //    phoneNumber: '0912345678',
+  //     room: '102B',
+  //     bdate: new Date('1990-07-20'),
+  //   },
+  //   {
+  //     tenantID: 5,
+  //     urlAvatar: 'https://randomuser.me/api/portraits/women/21.jpg',
+  //     name: 'Trần Thị B',
+  //     fullName: 'Terminate',
+  //     phoneNumber: '0912345678',
+  //     room: '102B',
+  //     bdate: new Date('1990-07-20'),
+  //   },
+  // ];
 
   defSelectedMember(id: number) {
     this.selectedMember = id;
@@ -94,7 +94,7 @@ export class RoomDetail {
   defDeleteMember() {
     if (this.selectedMember !== null) {
       this.roomMembers = this.roomMembers.filter(
-        (item) => item.id !== this.selectedMember
+        (item) => item.tenantID !== this.selectedMember
       );
       this.selectedMember = null; // Clear selection
     }

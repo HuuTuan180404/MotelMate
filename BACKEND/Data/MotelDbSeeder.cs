@@ -22,7 +22,7 @@ namespace Backend.Data
                     .RuleFor(a => a.Email, f => f.Internet.Email())
                     .RuleFor(a => a.PasswordHash, f => BCrypt.Net.BCrypt.HashPassword("Password@123"))
                     .RuleFor(a => a.Status, f => EAccountStatus.Active)
-                    .RuleFor(a => a.Bdate, f => f.Date.Past(30, DateTime.Now.AddYears(-18)))
+                    .RuleFor(a => a.Bdate, f => DateOnly.FromDateTime(f.Date.Past(30, DateTime.Now.AddYears(-18))))
                     .RuleFor(a => a.URLAvatar, f => f.Internet.Avatar())
                     .RuleFor(a => a.CreateAt, f => f.Date.Past(2))
                     .RuleFor(a => a.UpdateAt, f => f.Date.Recent());

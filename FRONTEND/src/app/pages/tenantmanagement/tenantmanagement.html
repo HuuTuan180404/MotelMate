@@ -4,80 +4,62 @@
 
     <div class="right-section">
       <div class="search-box">
-        <mat-form-field class="example-form-field">
+        <mat-form-field appearance="outline" class="search-field">
           <mat-label>Search</mat-label>
           <input
-            placeholder="..."
+            (keyup)="applyFilter($event)"
             matInput
-            type="text"
+            placeholder="Search..."
             [(ngModel)]="searchText"
             #input
-            (keyup)="applyFilter($event)"
           />
-          @if (searchText) {
-          <button
-            id="icon-search"
-            matSuffix
-            matIconButton
-            aria-label="btnSearch"
-            (click)="searchText=''"
-          >
-            <mat-icon>clear</mat-icon>
-          </button>
-          }
+          <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
 
       <button
-        (click)="onClick_btnCreate()"
         mat-flat-button
+        (click)="onClick_btnCreate()"
         class="create-btn"
         matTooltip="Create room"
       >
-        <mat-icon>add</mat-icon> Create
+        <mat-icon>add</mat-icon> <span>Create</span>
       </button>
     </div>
   </div>
 
   <div class="table-container">
     <table mat-table [dataSource]="dataSource" matSort class="contracts-table">
-      <ng-container matColumnDef="name">
+      <ng-container matColumnDef="cccd">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+        <td mat-cell *matCellDef="let inv">{{inv.cccd}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fullName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Full Name</th>
         <td mat-cell *matCellDef="let inv">
           <div id="fullName">
-            <img id="avatar" [src]="inv.avatar" alt="" />
-            {{inv.name}}
+            <img id="avatar" [src]="inv.urlAvatar" alt="" />
+            {{inv.fullName}}
           </div>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="bdate">
-        <th mat-header-cell *matHeaderCellDef>Birthday</th>
-        <td mat-cell *matCellDef="let inv">
-          {{inv.bdate | date:'dd/MM/yyyy'}}
-        </td>
+        <th mat-header-cell *matHeaderCellDef>Date of birth</th>
+        <td mat-cell *matCellDef="let inv">{{inv.bdate }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="contact">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Phone number</th>
-        <td mat-cell *matCellDef="let inv">{{inv.contact}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="building">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Building</th>
-        <td mat-cell *matCellDef="let inv">{{inv.building}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="room">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Room</th>
-        <td mat-cell *matCellDef="let inv">{{inv.room}}</td>
+      <ng-container matColumnDef="phoneNumber">
+        <th mat-header-cell *matHeaderCellDef>Phone number</th>
+        <td mat-cell *matCellDef="let inv">{{inv.phoneNumber }}</td>
       </ng-container>
 
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef>Status</th>
         <td mat-cell *matCellDef="let inv">
-          <span [ngClass]="'status ' + inv.status.toLowerCase()"
-            >{{ inv.status }}
+          <span [ngClass]="'status ' + inv.status.toLowerCase()">
+            {{ inv.status }}
           </span>
         </td>
       </ng-container>

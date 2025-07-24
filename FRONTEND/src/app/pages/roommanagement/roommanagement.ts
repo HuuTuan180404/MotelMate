@@ -26,7 +26,6 @@ import { AddRoom } from './addroom/addroom';
     MatTooltip,
     MatDialogModule,
     MatSliderModule,
-    AddRoom,
   ],
   templateUrl: './roommanagement.html',
   styleUrl: './roommanagement.css',
@@ -160,6 +159,14 @@ export class RoomManagement {
       status: 'Occupied',
     },
   ];
+
+  onSearchBar(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+
+    
+
+    // this.rooms.filter = filterValue.trim().toLowerCase();
+  }
 
   applyFilter() {
     this.filters.minPrice = this.minPrice;

@@ -1,9 +1,9 @@
 export interface TenantModel {
-  id: number;
-  avatar: string;
-  name: string;
-  status: string;
+  tenantID: number;
+  fullName: string;
+  cccd: string;
+  bdate: string;
   phoneNumber: string;
-  room: string;
-  bdate: Date;
+  status: string;
+  urlAvatar: string;
 }

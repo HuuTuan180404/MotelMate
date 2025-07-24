@@ -3,59 +3,36 @@
     <div class="title">
       <h2>ROOM MANAGEMENT</h2>
     </div>
+
     <div class="right-section">
-      <!-- search bar -->
+      <button
+        mat-icon-button
+        (click)="toggleFilter($event)"
+        matTooltip="Filter"
+        id="btn-open-filter-panel"
+      >
+        <span class="material-symbols-outlined"> filter_arrow_right </span>
+      </button>
       <div class="search-box">
-        <mat-form-field class="example-form-field">
+        <mat-form-field appearance="outline" class="search-field">
           <mat-label>Search</mat-label>
           <input
-            placeholder="..."
             matInput
-            type="text"
+            placeholder="Search..."
             [(ngModel)]="searchText"
+            #input
           />
-          @if (searchText) {
-          <button
-            id="icon-search"
-            matSuffix
-            matIconButton
-            aria-label="btnSearch"
-            (click)="searchText=''"
-          >
-            <mat-icon>search</mat-icon>
-          </button>
-          }
+          <mat-icon matSuffix>search</mat-icon>
         </mat-form-field>
       </div>
 
-      <!-- btn filter -->
       <button
-        (click)="toggleFilter($event)"
         mat-flat-button
-        class="filter-btn"
-        matTooltip="Filter rooms"
-      >
-        Filter
-      </button>
-
-      <!-- btn create -->
-      <button
         (click)="onClick_btnCreate()"
-        mat-flat-button
-        class="create-btn"
+        class="button create-btn"
         matTooltip="Create room"
       >
-        <i class="fa-solid fa-plus"></i> Create
-      </button>
-
-      <!-- btn create -->
-      <button
-        (click)="onClick_btnView()"
-        mat-flat-button
-        class="create-btn"
-        matTooltip="Create room"
-      >
-        <i class="fa-solid fa-plus"></i> View
+        <mat-icon>add</mat-icon> <span>Create</span>
       </button>
     </div>
   </header>
