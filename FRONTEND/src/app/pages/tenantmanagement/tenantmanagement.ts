@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { TenantModel } from '../../models/Tenant.model';
 import { Room } from '../roommanagement/room/room';
-import { TenantService } from '../../services/tenant';
+import { TenantService } from '../../services/tenantservice';
 import {
   HttpClient,
   HttpClientJsonpModule,
@@ -36,7 +36,7 @@ import {
 export class TenantManagement implements AfterViewInit, OnInit {
   searchText: string = '';
   _tenants: TenantModel[] = [];
-  displayedColumns: string[] = [
+  _displayedColumns: string[] = [
     'cccd',
     // 'urlAvatar',
     'fullName',

@@ -8,7 +8,7 @@ import { TenantModel } from '../models/Tenant.model';
   providedIn: 'root',
 })
 export class TenantService {
-  private apiTenant = `${environment.apiURL.getTenant}`;
+  private apiTenant = `${environment.apiURL.getTenant}/tenant`;
   constructor(private http: HttpClient) {}
 
   getAllTenants(): Observable<TenantModel[]> {
