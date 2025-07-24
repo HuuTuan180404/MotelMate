@@ -1,4 +1,3 @@
-
 namespace BACKEND.Models
 {
     using System;
@@ -43,7 +42,7 @@ namespace BACKEND.Models
         [ForeignKey(nameof(Room))]
         public Nullable<int> RoomID { get; set; }
 
-        public virtual Room? Room { get; set; }
+        public virtual Room Room { get; set; }
         public virtual ICollection<ContractDetail> ContractDetail { get; set; }
         public virtual ICollection<Invoice> Invoice { get; set; }
     }

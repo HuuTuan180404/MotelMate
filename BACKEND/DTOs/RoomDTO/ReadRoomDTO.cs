@@ -3,7 +3,7 @@ namespace BACKEND.RoomDTO.DTOs
     using System;
     using BACKEND.Enums;
 
-    public partial class RoomDTO
+    public class ReadRoomDTO
     {
         public int RoomID { get; set; }
         public string ?RoomNumber { get; set; }
@@ -12,5 +12,6 @@ namespace BACKEND.RoomDTO.DTOs
         public ERoomStatus Status { get; set; }
         public string? Description { get; set; }
         public Nullable<int> BuildingID { get; set; }
+        public required string BuildingName { get; set; }
     }
 }

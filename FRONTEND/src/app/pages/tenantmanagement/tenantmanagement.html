@@ -30,43 +30,36 @@
 
   <div class="table-container">
     <table mat-table [dataSource]="dataSource" matSort class="contracts-table">
-      <ng-container matColumnDef="name">
+      <ng-container matColumnDef="cccd">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>ID</th>
+        <td mat-cell *matCellDef="let inv">{{inv.cccd}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fullName">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>Full Name</th>
         <td mat-cell *matCellDef="let inv">
           <div id="fullName">
-            <img id="avatar" [src]="inv.avatar" alt="" />
-            {{inv.name}}
+            <img id="avatar" [src]="inv.urlAvatar" alt="" />
+            {{inv.fullName}}
           </div>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="bdate">
-        <th mat-header-cell *matHeaderCellDef>Birthday</th>
-        <td mat-cell *matCellDef="let inv">
-          {{inv.bdate | date:'dd/MM/yyyy'}}
-        </td>
+        <th mat-header-cell *matHeaderCellDef>Date of birth</th>
+        <td mat-cell *matCellDef="let inv">{{inv.bdate }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="contact">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Phone number</th>
-        <td mat-cell *matCellDef="let inv">{{inv.contact}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="building">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Building</th>
-        <td mat-cell *matCellDef="let inv">{{inv.building}}</td>
-      </ng-container>
-
-      <ng-container matColumnDef="room">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header>Room</th>
-        <td mat-cell *matCellDef="let inv">{{inv.room}}</td>
+      <ng-container matColumnDef="phoneNumber">
+        <th mat-header-cell *matHeaderCellDef>Phone number</th>
+        <td mat-cell *matCellDef="let inv">{{inv.phoneNumber }}</td>
       </ng-container>
 
       <ng-container matColumnDef="status">
         <th mat-header-cell *matHeaderCellDef>Status</th>
         <td mat-cell *matCellDef="let inv">
-          <span [ngClass]="'status ' + inv.status.toLowerCase()"
-            >{{ inv.status }}
+          <span [ngClass]="'status ' + inv.status.toLowerCase()">
+            {{ inv.status }}
           </span>
         </td>
       </ng-container>

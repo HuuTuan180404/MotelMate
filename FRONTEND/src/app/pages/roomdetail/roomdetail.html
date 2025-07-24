@@ -85,14 +85,14 @@
                 (keydown)="handleKeyboardEvent($event)"
                 class="member"
                 *ngFor="let member of roomMembers"
-                [class.memberIsSelected]="member.id === selectedMember"
-                (click)="defSelectedMember(member.id)"
+                [class.memberIsSelected]="member.tenantID === selectedMember"
+                (click)="defSelectedMember(member.tenantID)"
               >
-                <img [src]="member.avatar" alt="" />
+                <img [src]="member.urlAvatar" alt="" />
                 <div>
                   <div class="row-info">
                     <span class="material-symbols-outlined"> person </span>
-                    <span>{{ member.name }}</span>
+                    <span>{{ member.fullName }}</span>
                   </div>
                   <div class="row-info">
                     <span class="material-symbols-outlined"> call</span>
