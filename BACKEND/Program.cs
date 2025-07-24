@@ -6,11 +6,44 @@ using Microsoft.IdentityModel.Tokens;
 using NSwag.Generation.Processors.Security;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using BACKEND.Mappers;
+using BACKEND.Interfaces;
+using BACKEND.Service;
+using Microsoft.OpenApi.Models;
+using BACKEND.Models;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(option =>
+{
+    option.SwaggerDoc("v1", new OpenApiInfo { Title = "Demo API", Version = "v1" });
+    option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    option.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+});
 
 builder.Services.AddDbContext<MotelMateDbContext>
     (option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -19,20 +52,14 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
+builder.Services.AddIdentity<Account, IdentityRole<int>>()
+    .AddEntityFrameworkStores<MotelMateDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddAutoMapper(typeof(ContractMapper));
 builder.Services.AddAutoMapper(typeof(TenantMapper));
 builder.Services.AddAutoMapper(typeof(RoomMapper));
 builder.Services.AddAutoMapper(typeof(AssetMapper));
-
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-        policy.WithOrigins("http://localhost:4200") // Angular
-              .AllowAnyHeader()
-              .AllowAnyMethod());
-});
-
 
 builder.Services.AddAuthentication(options =>
 {
@@ -61,19 +88,30 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("OwnerPolicy", p => p.RequireRole("Owner"));
     options.AddPolicy("TenantPolicy", p => p.RequireRole("Tenant"));
 });
-var app = builder.Build();
 
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwaggerUi(options =>
-    {
-        options.DocumentPath = "/openapi/v1.json";
-    });
+    app.UseSwagger();
+    app.UseSwaggerUI();
+
     app.MapOpenApi();
 
     using (var scope = app.Services.CreateScope())
     {
         var services = scope.ServiceProvider;
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+        // string[] roleNames = { "Owner", "Tenant" };
+
+        // foreach (var role in roleNames)
+        // {
+        //     if (!await roleManager.RoleExistsAsync(role))
+        //     {
+        //         await roleManager.CreateAsync(new IdentityRole<int>(role));
+        //     }
+        // }
         // var context = services.GetRequiredService<MotelMateDbContext>();
         // MotelDbSeeder.Seed(context);
     }
@@ -94,4 +132,3 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
-app.UseCors();
