@@ -6,12 +6,12 @@
     <input matInput [(ngModel)]="newService.name" required />
   </mat-form-field>
 
-  <mat-form-field appearance="outline">
+  <mat-form-field appearance="outline" floatLabel="auto">
     <mat-label>Unit</mat-label>
     <input matInput [(ngModel)]="newService.unit" required />
   </mat-form-field>
 
-  <mat-form-field appearance="outline">
+  <mat-form-field appearance="outline" floatLabel="auto">
     <mat-label>Customer Price</mat-label>
     <input matInput type="number" [(ngModel)]="newService.customerPrice" required />
   </mat-form-field>
@@ -23,15 +23,15 @@
     class="tier-row"
     *ngFor="let tier of newService.serviceTier; let i = index"
   >
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" floatLabel="auto">
       <mat-label>From Quantity</mat-label>
       <input matInput type="number" [(ngModel)]="tier.fromQuantity" />
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" floatLabel="auto">
       <mat-label>To Quantity</mat-label>
       <input matInput type="number" [(ngModel)]="tier.toQuantity" />
     </mat-form-field>
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" floatLabel="auto">
       <mat-label>Gov Unit Price</mat-label>
       <input matInput type="number" [(ngModel)]="tier.govUnitPrice" />
     </mat-form-field>
@@ -45,7 +45,7 @@
   </button>
 </ng-container>
   <ng-container *ngIf="!newService.isTiered">
-    <mat-form-field appearance="outline">
+    <mat-form-field appearance="outline" floatLabel="auto">
       <mat-label>Initial Price</mat-label>
       <input matInput type="number" [(ngModel)]="newService.initialPrice" required />
     </mat-form-field>
