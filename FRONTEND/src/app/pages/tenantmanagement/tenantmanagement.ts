@@ -8,7 +8,6 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { TenantModel } from '../../models/Tenant.model';
-import { Room } from '../roommanagement/room/room';
 import { TenantService } from '../../services/tenantservice';
 import {
   HttpClient,
