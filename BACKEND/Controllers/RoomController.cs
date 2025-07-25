@@ -1,6 +1,7 @@
 using AutoMapper;
 using BACKEND.Data;
 using BACKEND.DTOs.RoomDTO;
+using BACKEND.Enums;
 using BACKEND.RoomDTO.DTOs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -28,10 +29,28 @@ namespace BACKEND.Controllers
             var rooms = await _context.Room
                                     .Include(r => r.Building)
                                     .Include(r => r.RoomImages)
+                                    .Include(r => r.Contracts.Where(c => c.Status == EContractStatus.Active)) // hợp đồng active
+                                        .ThenInclude(c => c.ContractDetail)
+                                            .ThenInclude(cd => cd.Tenant)
                                     .ToListAsync();
 
             return Ok(_mapper.Map<List<ReadRoomDTO>>(rooms));
         }
+
+        public async Task<ActionResult<IEnumerable<ReadRoomDTO>>> GetRoomDetail()
+        {
+            var rooms = await _context.Room
+                                    .Include(r => r.Building)
+                                    .Include(r => r.RoomImages)
+                                    .Include(r => r.Contracts.Where(c => c.Status == EContractStatus.Active)) // hợp đồng active
+                                        .ThenInclude(c => c.ContractDetail)
+                                            .ThenInclude(cd => cd.Tenant)
+                                    .ToListAsync();
+
+            return Ok(_mapper.Map<List<ReadRoomDTO>>(rooms));
+        }
+
+
 
         private bool RoomIsExists(int id)
         {
