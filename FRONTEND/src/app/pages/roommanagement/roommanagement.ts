@@ -106,6 +106,33 @@ export class RoomManagement implements OnInit, AfterViewInit {
     });
   }
 
+  handleImageError(room: RoomModel) {
+    // room.urlImage = '../../../assets/images/avatar_error.svg'; // ảnh lỗi trong local
+    // this.cdr.detectChanges();
+  }
+
+  handleAvatarError(room: RoomModel, index: number) {
+    room.urlAvatars[index] = '../../../assets/images/avatar_error.svg'; // ảnh lỗi trong local
+    this.cdr.detectChanges();
+  }
+
+  showMoreAvatars(room: RoomModel) {
+    // Hiển thị dialog hoặc tooltip để xem toàn bộ avatar
+    // console.log('More avatars for room:', room.urlAvatars);
+    // Ví dụ: Mở dialog với danh sách đầy đủ
+    // this.dialog.open(AvatarDialogComponent, { data: room.urlAvatars });
+  }
+
+  viewRoomDetail(id: number) {
+    console.log('view detail');
+    this.dialog.open(RoomDetail, {
+      disableClose: true,
+      minWidth: '90vw',
+      maxHeight: '90vh',
+      data: { roomId: 123, mode: 'edit' },
+    });
+  }
+
   // init filter panel
   sliderMin = 0;
   sliderMax = 2000000;
