@@ -5,6 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using BACKEND.Data;
 using BACKEND.DTOs.AuthDTO;
 using BACKEND.Enums;
 using BACKEND.Interfaces;
@@ -12,6 +13,7 @@ using BACKEND.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
 namespace BACKEND.Controllers
@@ -23,37 +25,37 @@ namespace BACKEND.Controllers
         private readonly UserManager<Account> _userManager;
         private readonly ITokenService _tokenService;
 
-        private readonly IConfiguration _config;
+        private readonly MotelMateDbContext _dbContext;
 
 
-        public AccountController(UserManager<Account> userManager, ITokenService tokenService, IConfiguration config)
+        public AccountController(UserManager<Account> userManager, ITokenService tokenService, MotelMateDbContext dbContext)
         {
             _userManager = userManager;
             _tokenService = tokenService;
-            _config = config;
+            _dbContext = dbContext;
         }
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDTO model)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO registerDTO)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
             Account user;
 
-            if (!string.IsNullOrEmpty(model.AccountName) && model.AccountNo > 0 && model.BankCode > 0)
+            if (!string.IsNullOrEmpty(registerDTO.AccountName) && registerDTO.AccountNo > 0 && registerDTO.BankCode > 0)
             {
                 user = new Owner
                 {
-                    UserName = model.UserName,
-                    Email = model.Email,
-                    CCCD = model.CCCD,
-                    FullName = model.FullName,
-                    Bdate = model.Bdate,
-                    URLAvatar = model.URLAvatar,
+                    UserName = registerDTO.UserName,
+                    Email = registerDTO.Email,
+                    CCCD = registerDTO.CCCD,
+                    FullName = registerDTO.FullName,
+                    Bdate = registerDTO.Bdate,
+                    URLAvatar = registerDTO.URLAvatar,
                     Status = EAccountStatus.Active,
-                    AccountNo = model.AccountNo,
-                    AccountName = model.AccountName,
-                    BankCode = model.BankCode,
+                    AccountNo = registerDTO.AccountNo,
+                    AccountName = registerDTO.AccountName,
+                    BankCode = registerDTO.BankCode,
                     SecurityStamp = Guid.NewGuid().ToString()
                 };
             }
@@ -61,18 +63,18 @@ namespace BACKEND.Controllers
             {
                 user = new Tenant
                 {
-                    UserName = model.UserName,
-                    Email = model.Email,
-                    CCCD = model.CCCD,
-                    FullName = model.FullName,
-                    Bdate = model.Bdate,
-                    URLAvatar = model.URLAvatar,
+                    UserName = registerDTO.UserName,
+                    Email = registerDTO.Email,
+                    CCCD = registerDTO.CCCD,
+                    FullName = registerDTO.FullName,
+                    Bdate = registerDTO.Bdate,
+                    URLAvatar = registerDTO.URLAvatar,
                     Status = EAccountStatus.Active,
                     SecurityStamp = Guid.NewGuid().ToString()
                 };
             }
 
-            var result = await _userManager.CreateAsync(user, model.Password);
+            var result = await _userManager.CreateAsync(user, registerDTO.Password);
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
@@ -108,52 +110,42 @@ namespace BACKEND.Controllers
 
             await _tokenService.StoreRefreshTokenAsync(user, refreshToken);
 
-            // Gửi refresh token qua HTTP-only cookie
+            // Send refresh token via HTTP-only cookie
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                Secure = false,
-                SameSite = SameSiteMode.None,
+                SameSite = SameSiteMode.Strict,
                 Expires = DateTime.UtcNow.AddYears(100)
             };
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
 
-            // Trả access token qua body
             return Ok(new
             {
                 accessToken
             });
         }
 
-        [Authorize]
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()
         {
-            var token = Request.Headers["Authorization"].FirstOrDefault()?.Replace("Bearer ", "");
-            if (string.IsNullOrEmpty(token))
-                return Unauthorized();
+            string? refreshTokenFromCookie = Request.Cookies["refreshToken"];
+            if (string.IsNullOrEmpty(refreshTokenFromCookie))
+                return Unauthorized("Missing refresh token");
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidIssuer = _config["JWT:Issuer"],
-
-                ValidateAudience = true,
-                ValidAudience = _config["JWT:Audience"],
-
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]!)),
-
-                ValidateLifetime = false,
-            }, out var validatedToken);
-
-            var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null) return Unauthorized("Missing user");
-            var user = await _userManager.FindByIdAsync(userId);
+            // Find user by refresh token
+            var user = await _dbContext.Users
+            .Join(_dbContext.UserTokens,
+                u => u.Id,
+                t => t.UserId,
+                (u, t) => new { User = u, Token = t })
+            .Where(x => x.Token.Name == "RefreshToken" && x.Token.Value == refreshTokenFromCookie)
+            .Select(x => x.User)
+            .FirstOrDefaultAsync();
+            if (user == null)
+                return Unauthorized("Invalid refresh token");
 
             var storedRefreshToken = await _tokenService.GetRefreshTokenAsync(user);
-            string? refreshTokenFromCookie = Request.Cookies["refreshToken"];
+
 
             if (storedRefreshToken != refreshTokenFromCookie)
                 return Unauthorized("refreshTokenFromCookie");
@@ -165,7 +157,7 @@ namespace BACKEND.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                SameSite = SameSiteMode.None,
+                SameSite = SameSiteMode.Strict,
                 Expires = DateTime.UtcNow.AddYears(100)
             };
             Response.Cookies.Append("refreshToken", newRefreshToken, cookieOptions);
