@@ -11,6 +11,7 @@ using BACKEND.Service;
 using Microsoft.OpenApi.Models;
 using BACKEND.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -60,6 +61,7 @@ builder.Services.AddAutoMapper(typeof(ContractMapper));
 builder.Services.AddAutoMapper(typeof(TenantMapper));
 builder.Services.AddAutoMapper(typeof(RoomMapper));
 
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme =
@@ -79,8 +81,21 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
             System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"])
-        )
+        ),
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
     };
+    // options.Events = new JwtBearerEvents
+    // {
+    //     OnAuthenticationFailed = context =>
+    //     {
+    //         var logger = context.HttpContext.RequestServices.GetRequiredService<ILogger<Program>>();
+    //         logger.LogError(context.Exception, "Token auth failed");
+
+    //         return Task.CompletedTask;
+    //     }
+    // };
+
 });
 builder.Services.AddAuthorization(options =>
 {
@@ -115,6 +130,7 @@ if (app.Environment.IsDevelopment())
         // MotelDbSeeder.Seed(context);
     }
 }
+// IdentityModelEventSource.ShowPII = true;
 
 app.UseHttpsRedirection();
 

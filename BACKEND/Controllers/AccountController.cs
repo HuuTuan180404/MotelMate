@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using BACKEND.DTOs.AuthDTO;
 using BACKEND.Enums;
@@ -10,6 +12,7 @@ using BACKEND.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace BACKEND.Controllers
 {
@@ -20,10 +23,14 @@ namespace BACKEND.Controllers
         private readonly UserManager<Account> _userManager;
         private readonly ITokenService _tokenService;
 
+        private readonly IConfiguration _config;
+
+
         public AccountController(UserManager<Account> userManager, ITokenService tokenService, IConfiguration config)
         {
             _userManager = userManager;
             _tokenService = tokenService;
+            _config = config;
         }
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
@@ -85,7 +92,7 @@ namespace BACKEND.Controllers
                 Role = user is Owner ? "Owner" : "Tenant"
             });
         }
-    
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
@@ -105,7 +112,8 @@ namespace BACKEND.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                SameSite = SameSiteMode.None, 
+                Secure = false,
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddYears(100)
             };
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
@@ -121,14 +129,34 @@ namespace BACKEND.Controllers
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var token = Request.Headers["Authorization"].FirstOrDefault()?.Replace("Bearer ", "");
+            if (string.IsNullOrEmpty(token))
+                return Unauthorized();
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var principal = tokenHandler.ValidateToken(token, new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidIssuer = _config["JWT:Issuer"],
+
+                ValidateAudience = true,
+                ValidAudience = _config["JWT:Audience"],
+
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]!)),
+
+                ValidateLifetime = false,
+            }, out var validatedToken);
+
+            var userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (userId == null) return Unauthorized("Missing user");
             var user = await _userManager.FindByIdAsync(userId);
 
             var storedRefreshToken = await _tokenService.GetRefreshTokenAsync(user);
             string? refreshTokenFromCookie = Request.Cookies["refreshToken"];
 
             if (storedRefreshToken != refreshTokenFromCookie)
-                return Unauthorized(refreshTokenFromCookie);
+                return Unauthorized("refreshTokenFromCookie");
 
             var newAccessToken = await _tokenService.GenerateAccessTokenAsync(user);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
@@ -137,7 +165,7 @@ namespace BACKEND.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                SameSite = SameSiteMode.None, 
+                SameSite = SameSiteMode.None,
                 Expires = DateTime.UtcNow.AddYears(100)
             };
             Response.Cookies.Append("refreshToken", newRefreshToken, cookieOptions);

@@ -2,6 +2,7 @@ using AutoMapper;
 using BACKEND.Data;
 using BACKEND.DTOs.RoomDTO;
 using BACKEND.RoomDTO.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -22,6 +23,7 @@ namespace BACKEND.Controllers
         }
 
         // GET: api/room
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadRoomDTO>>> GetRooms()
         {
