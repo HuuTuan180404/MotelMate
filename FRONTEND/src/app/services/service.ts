@@ -22,4 +22,9 @@ export class ServiceService {
   editService(service: ServiceItem): Observable<any> {
     return this.http.put(`${this.apiService}/${service.serviceID}`, service);
   }
+  
+  createService(service: ServiceItem): Observable<any> {
+  return this.http.post(`${this.apiService}`, service);
+}
+
 }

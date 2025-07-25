@@ -1,6 +1,6 @@
 using AutoMapper;
 using BACKEND.Models;
-using BACKEND.DTOs;
+using BACKEND.DTOs.ServiceDTO;
 
 namespace BACKEND.Mappers
 {
@@ -8,16 +8,20 @@ namespace BACKEND.Mappers
     {
         public ServiceMappingProfile()
         {
-            CreateMap<Service, ReadServiceDTO>();
+            CreateMap<BACKEND.Models.Service, ReadServiceDTO>();
             CreateMap<ServiceTier, ReadServiceTierDTO>();
 
-             // Edit Mapping (Update)
-            CreateMap<EditServiceDTO, Service>()
-                .ForMember(dest => dest.ServiceID, opt => opt.Ignore())  // Không map ID (Controller handle)
-                .ForMember(dest => dest.IsTiered, opt => opt.Ignore())   // Không cho sửa IsTiered
-                .ForMember(dest => dest.ServiceTier, opt => opt.Ignore()); // ServiceTier handle manual update
+            CreateMap<EditServiceDTO, BACKEND.Models.Service>()
+                .ForMember(dest => dest.ServiceID, opt => opt.Ignore())
+                .ForMember(dest => dest.IsTiered, opt => opt.Ignore())
+                .ForMember(dest => dest.ServiceTier, opt => opt.Ignore());
 
             CreateMap<EditServiceTierDTO, ServiceTier>();
+
+            // Mapping CreateServiceDTO
+            CreateMap<CreateServiceDTO, BACKEND.Models.Service>()
+                .ForMember(dest => dest.ServiceID, opt => opt.Ignore())
+                .ForMember(dest => dest.ServiceTier, opt => opt.Ignore());
         }
     }
 }

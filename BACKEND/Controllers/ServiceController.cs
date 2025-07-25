@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
 using BACKEND.Models;
-using BACKEND.DTOs;
+using BACKEND.DTOs.ServiceDTO;
 using BACKEND.Data;
 
 namespace BACKEND.Controllers
@@ -101,5 +101,45 @@ namespace BACKEND.Controllers
 
             return NoContent();
         }
+
+        // POST: api/Service
+        [HttpPost]
+        public async Task<IActionResult> CreateService([FromBody] CreateServiceDTO dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var service =  new BACKEND.Models.Service
+            {
+                Name = dto.Name,
+                Unit = dto.Unit,
+                CustomerPrice = dto.CustomerPrice,
+                InitialPrice = dto.IsTiered ? 0 : dto.InitialPrice,  // Nếu là Tiered thì InitialPrice = 0
+                IsTiered = dto.IsTiered,
+                ServiceTier = new List<ServiceTier>()
+            };
+
+            if (dto.IsTiered && dto.ServiceTier != null)
+            {
+                foreach (var tierDto in dto.ServiceTier)
+                {
+                    var tier = new ServiceTier
+                    {
+                        FromQuantity = tierDto.FromQuantity,
+                        ToQuantity = tierDto.ToQuantity,
+                        GovUnitPrice = tierDto.GovUnitPrice
+                    };
+                    service.ServiceTier.Add(tier);
+                }
+            }
+
+            _context.Services.Add(service);
+            await _context.SaveChangesAsync();
+
+            var result = _mapper.Map<ReadServiceDTO>(service);
+
+            return CreatedAtAction(nameof(GetServices), new { id = service.ServiceID }, result);
+        }
+
     }
 }
