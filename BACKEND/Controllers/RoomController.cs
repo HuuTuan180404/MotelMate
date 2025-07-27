@@ -37,20 +37,23 @@ namespace BACKEND.Controllers
             return Ok(_mapper.Map<List<ReadRoomDTO>>(rooms));
         }
 
-        public async Task<ActionResult<IEnumerable<ReadRoomDTO>>> GetRoomDetail()
+        // GET: api/Rooms/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ReadRoomDetailDTO>> GetRoomDetail(int id)
         {
-            var rooms = await _context.Room
+            var room = await _context.Room
                                     .Include(r => r.Building)
+                                        .ThenInclude(b => b.Owner)
                                     .Include(r => r.RoomImages)
                                     .Include(r => r.Contracts.Where(c => c.Status == EContractStatus.Active)) // hợp đồng active
                                         .ThenInclude(c => c.ContractDetail)
                                             .ThenInclude(cd => cd.Tenant)
-                                    .ToListAsync();
+                                    .Include(ra => ra.RoomAssets)
+                                        .ThenInclude(a => a.Asset)
+                                    .FirstOrDefaultAsync(r => r.RoomID == id);
 
-            return Ok(_mapper.Map<List<ReadRoomDTO>>(rooms));
+            return Ok(_mapper.Map<ReadRoomDetailDTO>(room));
         }
-
-
 
         private bool RoomIsExists(int id)
         {
