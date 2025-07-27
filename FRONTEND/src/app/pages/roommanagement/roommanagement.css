@@ -187,6 +187,7 @@
 /* ================= */
 .card {
   display: flex;
+  flex-direction: row;
   max-height: 180px;
   box-shadow: var(--box-shadow);
   background-color: #fff;

@@ -123,13 +123,20 @@ export class RoomManagement implements OnInit, AfterViewInit {
     // this.dialog.open(AvatarDialogComponent, { data: room.urlAvatars });
   }
 
+  roomDetail?: RoomDetail;
   viewRoomDetail(id: number) {
-    console.log('view detail');
-    this.dialog.open(RoomDetail, {
-      disableClose: true,
-      minWidth: '90vw',
-      maxHeight: '90vh',
-      data: { roomId: 123, mode: 'edit' },
+    this.roomService.getRoomById(id).subscribe({
+      next: (data) => {
+        this.dialog.open(RoomDetail, {
+          maxWidth: '90vw',
+          maxHeight: '90vh',
+          data: data,
+        });
+      },
+
+      error: (error) => {
+        console.error('Error loading rooms:', error);
+      },
     });
   }
 
@@ -144,15 +151,6 @@ export class RoomManagement implements OnInit, AfterViewInit {
 
   showFilterPanel: boolean = false;
   filteredRooms: any[] = [];
-
-  onClick_btnView() {
-    this.dialog.open(RoomDetail, {
-      disableClose: true,
-      minWidth: '90vw',
-      maxHeight: '90vh',
-      data: { roomId: 123, mode: 'edit' },
-    });
-  }
 
   onClick_btnCreate() {
     const dialogRef = this.dialog.open(AddRoom, {

@@ -10,12 +10,13 @@
   </div>
 
   <div class="content">
+    <!-- /* thông tin phòng */ -->
     <div class="room-info">
       <!-- /* images */ -->
       <div class="gallery">
         <div class="thumbnails" #scrollContainerThumbnails>
           <img
-            *ngFor="let img of staticImages"
+            *ngFor="let img of _roomDetail.urlRoomImages"
             [src]="img"
             alt="thumbnail"
             (click)="changeImage(img)"
@@ -23,134 +24,191 @@
           />
         </div>
         <div class="main-image">
-          <img [src]="currentImage" alt="Ảnh chính" class="main-photo" />
+          <img [src]="_currentImage" alt="Ảnh chính" class="main-photo" />
         </div>
       </div>
 
-      <!-- /* tthông tin phòng */ -->
       <div class="info">
-        <div class="info-part1-2">
-          <div class="info-part1">
-            <!-- mã phòng -->
-            <div>
-              <h4>Room code</h4>
-              <input id="roomCode" type="text" readonly placeholder="d" />
-            </div>
+        <!-- /* info chủ trọ */ -->
+        <div class="owner-building-info-container">
+          <mat-card class="owner-building-info-card">
+            <mat-card-header class="owner-building-info-card-header">
+              <mat-card-title class="owner-building-info-card-title">
+                <mat-icon>contacts</mat-icon>
+                Owner-Building information
+              </mat-card-title>
+            </mat-card-header>
 
-            <!-- diện tích -->
-            <div>
-              <h4>Area</h4>
-              <input id="roomArea" type="text" readonly placeholder="20m2" />
-            </div>
-          </div>
-
-          <div class="info-part2">
-            <!-- số khách -->
-            <div>
-              <h4>Max guests</h4>
-              <input id="roomMaxGuests" type="text" readonly placeholder="3" />
-            </div>
-
-            <!-- tiền -->
-            <div>
-              <h4>Price per month</h4>
-              <input
-                id="roomPricePerMonth"
-                type="text"
-                readonly
-                placeholder="13000000"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div class="info-part3">
-          <!-- miêu tả -->
-          <label for="roomDescription"><h4>Description</h4></label>
-          <textarea name="roomDescription" id="roomDescription">
-            Phòng có ma
-          </textarea>
-        </div>
-
-        <div class="info-part4">
-          <div class="info-part4-header">
-            <h4>Members</h4>
-            <button (click)="onClick_btnAddMember()">
-              <mat-icon>add</mat-icon><span>Add</span>
-            </button>
-          </div>
-          <div class="members" #scrollContainer>
-            <ng-container *ngIf="roomMembers.length > 0; else noMembers">
-              <div
-                (keydown)="handleKeyboardEvent($event)"
-                class="member"
-                *ngFor="let member of roomMembers"
-                [class.memberIsSelected]="member.tenantID === selectedMember"
-                (click)="defSelectedMember(member.tenantID)"
-              >
-                <img [src]="member.urlAvatar" alt="" />
+            <mat-card-content class="owner-building-info-card-content">
+              <div class="owner-info">
                 <div>
-                  <div class="row-info">
-                    <span class="material-symbols-outlined"> person </span>
-                    <span>{{ member.fullName }}</span>
+                  <span class="material-symbols-outlined"> person </span>
+                  <span>{{_roomDetail.ownerFullName}}</span>
+                </div>
+                <div>
+                  <span class="material-symbols-outlined"> call</span>
+                  <span>{{_roomDetail.ownerPhoneNumber}}</span>
+                </div>
+              </div>
+
+              <div class="building-info">
+                <div>
+                  <span class="material-symbols-outlined"> apartment </span>
+                  <span>{{_roomDetail.buildingName}}</span>
+                </div>
+
+                <div>
+                  <span class="material-symbols-outlined"> location_on </span>
+                  <span>{{_roomDetail.buildingAddress}}</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="room-info-container">
+          <mat-card class="room-info-card">
+            <mat-card-content class="room-info-card-content">
+              <div class="room-info-part1">
+                <!-- mã phòng -->
+                <div>
+                  <label for="roomCode">Room code</label>
+                  <input
+                    id="roomCode"
+                    type="text"
+                    placeholder="d"
+                    [(ngModel)]="_roomDetail.roomNumber"
+                  />
+                </div>
+
+                <!-- diện tích -->
+                <div>
+                  <label for="roomArea">Area</label>
+                  <input
+                    id="roomArea"
+                    type="text"
+                    placeholder="20m2"
+                    [(ngModel)]="_roomDetail.area"
+                  />
+                </div>
+
+                <!-- tiền -->
+                <div>
+                  <label for="roomPricePerMonth">Price per month</label>
+                  <input
+                    id="roomPricePerMonth"
+                    type="text"
+                    placeholder="13000000"
+                    [(ngModel)]="_roomDetail.price"
+                  />
+                </div>
+              </div>
+
+              <!-- description -->
+              <div class="room-info-description">
+                <label for="roomDescription">Description</label>
+                <textarea
+                  name="roomDescription"
+                  id="roomDescription"
+                  rows="3"
+                  [(ngModel)]="_roomDetail.description"
+                >
+              <!-- Phòng có ma -->
+                </textarea>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="members-container">
+          <mat-card class="card members-card">
+            <mat-card-header class="card-header members-header">
+              <mat-card-title class="card-header-title members-title">
+                <mat-icon>group</mat-icon>
+                Members
+              </mat-card-title>
+              <button class="btn-add" (click)="onAddMember()">
+                <mat-icon>add</mat-icon>
+                Add
+              </button>
+            </mat-card-header>
+
+            <mat-card-content class="card-content members-content">
+              <ng-container
+                *ngIf="_roomDetail.members.length > 0; else noMembers"
+              >
+                <div
+                  (keydown)="handleKeyboardEvent($event)"
+                  class="member"
+                  *ngFor="let member of _roomDetail.members"
+                  [class.memberIsSelected]="member.id === _selectedMember"
+                  (click)="defSelectedMember(member.id)"
+                >
+                  <img [src]="member.urlAvatar" alt="" />
+                  <div>
+                    <div class="row-info">
+                      <span class="material-symbols-outlined"> person </span>
+                      <span>{{ member.fullName }}</span>
+                    </div>
+                    <div class="row-info">
+                      <span class="material-symbols-outlined"> call</span>
+                      <span> {{ member.phoneNumber }}</span>
+                    </div>
+                    <div class="row-info">
+                      <span class="material-symbols-outlined"> cake </span>
+                      <span>{{ member.bdate | date: 'dd/MM/yyyy' }}</span>
+                    </div>
                   </div>
-                  <div class="row-info">
-                    <span class="material-symbols-outlined"> call</span>
-                    <span> {{ member.phoneNumber }}</span>
-                  </div>
-                  <div class="row-info">
-                    <span class="material-symbols-outlined"> cake </span>
-                    <span>{{ member.bdate | date: 'dd/MM/yyyy' }}</span>
+                </div>
+              </ng-container>
+
+              <ng-template #noMembers>
+                <div style="padding: 1rem; color: #888">No member</div>
+              </ng-template>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="assets-container">
+          <mat-card class="assets-card">
+            <mat-card-header class="assets-header">
+              <mat-card-title class="assets-title">
+                <mat-icon>inventory_2</mat-icon>
+                Assets
+              </mat-card-title>
+              <button class="btn-add" (click)="onAddAsset()">
+                <mat-icon>add</mat-icon>
+                Add
+              </button>
+            </mat-card-header>
+
+            <mat-card-content class="assets-content">
+              <!-- Empty state -->
+              <div
+                *ngIf="_roomDetail.assetData.length === 0"
+                class="empty-state"
+              >
+                <mat-icon class="empty-icon">inventory_2</mat-icon>
+                <p>No assets in this room</p>
+              </div>
+
+              <!-- Assets grid -->
+              <div
+                *ngIf="_roomDetail.assetData.length > 0"
+                class="assets-container"
+              >
+                <!-- Grid layout -->
+                <div class="assets-grid">
+                  <div *ngFor="let asset of getAssetData" class="asset-item">
+                    <span class="asset-name">{{ asset.assetName }}</span>
+                    <mat-chip class="quantity-chip"
+                      >x{{ asset.quantity }}</mat-chip
+                    >
                   </div>
                 </div>
               </div>
-            </ng-container>
-            <ng-template #noMembers>
-              <div style="padding: 1rem; color: #888">Chưa có thành viên</div>
-            </ng-template>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- /* thông tin đơn giản của tòa nhà, chủ trọ */ -->
-    <div class="other-infor">
-      <!-- /* info chủ trọ */ -->
-      <div class="first-block">
-        <h4 class="title">Owner-Building information</h4>
-        <div class="owner-building-info">
-          <div class="owner-info-content">
-            <div>
-              <span class="material-symbols-outlined"> person </span>
-              <span>Tên chủ nhà</span>
-            </div>
-            <div>
-              <span class="material-symbols-outlined"> call</span>
-              <span>SĐT</span>
-            </div>
-          </div>
-
-          <div class="building-info-content">
-            <div>
-              <span class="material-symbols-outlined"> apartment </span>
-              <span>sunrise city</span>
-            </div>
-
-            <div>
-              <span class="material-symbols-outlined"> location_on </span>
-              <span>Địa chỉ</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- /* thông tin của tòa nhà */ -->
-      <div class="second-block">
-        <h4 class="title">Assets</h4>
-        <div class="assets">
-          <label *ngFor="let asset of assets" class="asset">
-            {{ asset.name }} [x{{ asset.quantity}}]
-          </label>
+            </mat-card-content>
+          </mat-card>
         </div>
       </div>
     </div>
