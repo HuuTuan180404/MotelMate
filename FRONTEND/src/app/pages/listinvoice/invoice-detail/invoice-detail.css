@@ -1,18 +1,59 @@
-.close-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: 14px;
+  padding: 1rem 2rem;
+}
+
+.invoice-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 16px;
+}
+
+.section h4 {
+  margin: 8px 0;
+  font-size: 16px;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 4px;
 }
 
 .service-table {
   width: 100%;
   border-collapse: collapse;
-  margin: 10px 0;
+  font-size: 13px;
 }
 
 .service-table th,
 .service-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
+  border: 1px solid #e0e0e0;
+  padding: 6px 8px;
+  text-align: center;
+}
+
+.initial-total-row td {
+  font-weight: bold;
+  background-color: #f8f8f8;
+}
+
+.summary {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 16px;
+}
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 2rem;
+  gap: 12px;
+}
+
+.close-btn {
+  position: absolute;
+  right: 16px;
+  top: 16px;
 }

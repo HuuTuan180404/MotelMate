@@ -27,7 +27,7 @@ export interface Invoice {
   periodStart: string;
   periodEnd: string;
   extraCosts: { description: string; amount: number }[];
-  services: { name: string; quantity: string; initialPrice: number; finalPrice: number }[];
+  services: { name: string; quantity: number; unit: string; initialPrice: number; customerPrice: number }[];
   total: number;
   status: 'Paid' | 'Unpaid' | 'Overdue';
 }
@@ -72,9 +72,9 @@ export class Listinvoice {
       { description: 'Maintenance fee', amount: 500000 }
     ],
     services: [
-      { name: 'Electricity', quantity: '50kWh', initialPrice: 100000, finalPrice: 150000 },
-      { name: 'WiFi', quantity: '1 tháng', initialPrice: 50000, finalPrice: 100000 }
-    ],
+  { name: 'Electricity', quantity: 50, unit: 'kWh', initialPrice: 100000, customerPrice: 150000 },
+  { name: 'WiFi', quantity: 1, unit: 'tháng', initialPrice: 50000, customerPrice: 100000 }
+],
     total: 2000000,
     status: 'Unpaid'
   },
@@ -88,10 +88,11 @@ export class Listinvoice {
     periodStart: '06/01/2025',
     periodEnd: '06/30/2025',
     extraCosts: [],
-    services: [
-      { name: 'Electricity', quantity: '30kWh', initialPrice: 60000, finalPrice: 90000 },
-      { name: 'Water', quantity: '10m³', initialPrice: 30000, finalPrice: 45000 }
-    ],
+   services: [
+  { name: 'Electricity', quantity: 50, unit: 'kWh', initialPrice: 100000, customerPrice: 150000 },
+  { name: 'WiFi', quantity: 1, unit: 'tháng', initialPrice: 50000, customerPrice: 100000 }
+]
+,
     total: 1200000,
     status: 'Paid'
   },
@@ -107,11 +108,11 @@ export class Listinvoice {
     extraCosts: [
       { description: 'Repair', amount: 300000 }
     ],
-    services: [
-      { name: 'Electricity', quantity: '60kWh', initialPrice: 120000, finalPrice: 180000 },
-      { name: 'WiFi', quantity: '1 tháng', initialPrice: 50000, finalPrice: 100000 },
-      { name: 'Parking', quantity: '1 xe', initialPrice: 50000, finalPrice: 50000 }
-    ],
+   services: [
+  { name: 'Electricity', quantity: 50, unit: 'kWh', initialPrice: 100000, customerPrice: 150000 },
+  { name: 'WiFi', quantity: 1, unit: 'tháng', initialPrice: 50000, customerPrice: 100000 }
+]
+,
     total: 2500000,
     status: 'Overdue'
   }
@@ -229,14 +230,7 @@ export class Listinvoice {
   }
   openCreateForm() {
     const dialogRef = this.dialog.open(InvoiceCreateForm, {
-      width: '400px',
-      data: {
-        building: '',
-        room: 0,
-        month: '',
-        due: '',
-        total: 0
-      }
+      panelClass: 'custom-dialog-panel',
     });
 
     dialogRef.afterClosed().subscribe(result => {

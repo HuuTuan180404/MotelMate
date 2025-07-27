@@ -14,6 +14,16 @@ export class InvoiceDetail {
     public dialogRef: MatDialogRef<InvoiceDetail>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
+  totalInitialPrice = 0;
+  totalCustomerPrice = 0;
+
+  ngOnInit() {
+  if (this.data.services?.length) {
+    this.totalInitialPrice = this.data.services.reduce((sum: number, s: { initialPrice: number }) => sum + s.initialPrice, 0);
+    this.totalCustomerPrice = this.data.services.reduce((sum: number, s: { customerPrice: number }) => sum + s.customerPrice, 0);
+  }
+}
+
 
   close(): void {
     this.dialogRef.close();
@@ -28,5 +38,9 @@ export class InvoiceDetail {
       this.dialogRef.close({ action: 'delete', invoice: this.data });
     }
   }
+  getTotalInitialPrice(services: any[]) {
+  return services.reduce((sum, s) => sum + s.initialPrice, 0);
+}
+
 
 }
