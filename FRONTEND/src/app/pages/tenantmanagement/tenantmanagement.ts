@@ -14,6 +14,8 @@ import {
   HttpClientJsonpModule,
   HttpClientModule,
 } from '@angular/common/http';
+import { MatDialog } from '@angular/material/dialog';
+import { TenantDetail } from '../tenantdetail/tenantdetail';
 
 @Component({
   selector: 'app-tenantmanagement',
@@ -37,36 +39,41 @@ export class TenantManagement implements AfterViewInit, OnInit {
   _tenants: TenantModel[] = [];
   _displayedColumns: string[] = [
     'cccd',
-    // 'urlAvatar',
     'fullName',
     'bdate',
     'phoneNumber',
     'status',
   ];
 
-  constructor(private tenantService: TenantService) {}
+  constructor(
+    private dialog: MatDialog,
+    private tenantService: TenantService
+  ) {}
 
   ngOnInit(): void {
     this.tenantService.getAllTenants().subscribe((data) => {
-      this._tenants = data.map(
-        (x: any): TenantModel => ({
-          tenantID: x.tenantID,
-          fullName: x.fullName,
-          phoneNumber: x.phoneNumber,
-          bdate: x.bdate,
-          urlAvatar: x.urlAvatar,
-          status: x.status,
-          cccd: x.cccd,
-        })
-      );
-      this.dataSource.data = this._tenants; // ✅
+      this._tenants = data;
+      this.dataSource.data = this._tenants;
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
   }
 
   onClick_btnCreate() {
-    console.log('create new tenant');
+    // console.log('create new tenant');
+    const dialogRef = this.dialog.open(TenantDetail, {
+      height: 'auto',
+      maxHeight: '90vh',
+      minWidth: '60vw',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log(result);
+        // Reload data sau khi thêm mới
+        // this.loadRooms();
+      }
+    });
   }
 
   dataSource: MatTableDataSource<TenantModel> = new MatTableDataSource(
