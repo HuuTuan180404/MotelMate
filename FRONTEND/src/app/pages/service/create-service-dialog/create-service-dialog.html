@@ -1,58 +1,107 @@
-<div class="custom-dialog-container">
-  <h2>Add New Service</h2>
-
-  <mat-form-field appearance="outline" floatLabel="auto">
-    <mat-label>Name</mat-label>
-    <input matInput [(ngModel)]="newService.name" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" floatLabel="auto">
-    <mat-label>Unit</mat-label>
-    <input matInput [(ngModel)]="newService.unit" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" floatLabel="auto">
-    <mat-label>Customer Price</mat-label>
-    <input matInput type="number" [(ngModel)]="newService.customerPrice" required />
-  </mat-form-field>
-
-  <mat-checkbox [(ngModel)]="newService.isTiered">Tiered Pricing</mat-checkbox>
-
-  <ng-container *ngIf="newService.isTiered">
-  <div
-    class="tier-row"
-    *ngFor="let tier of newService.serviceTier; let i = index"
-  >
-    <mat-form-field appearance="outline" floatLabel="auto">
-      <mat-label>From Quantity</mat-label>
-      <input matInput type="number" [(ngModel)]="tier.fromQuantity" />
-    </mat-form-field>
-    <mat-form-field appearance="outline" floatLabel="auto">
-      <mat-label>To Quantity</mat-label>
-      <input matInput type="number" [(ngModel)]="tier.toQuantity" />
-    </mat-form-field>
-    <mat-form-field appearance="outline" floatLabel="auto">
-      <mat-label>Gov Unit Price</mat-label>
-      <input matInput type="number" [(ngModel)]="tier.govUnitPrice" />
-    </mat-form-field>
-    <button mat-icon-button color="warn" (click)="removeTier(i)">
-      <mat-icon>delete</mat-icon>
-    </button>
+<form [formGroup]="serviceForm" (ngSubmit)="save()" class="custom-dialog-container">
+  <div class="dialog-header">
+    <h2>Add New Service</h2>
   </div>
 
-  <button mat-stroked-button color="primary" (click)="addTier()">
-    <mat-icon>add</mat-icon> Add Tier
-  </button>
-</ng-container>
-  <ng-container *ngIf="!newService.isTiered">
+  <div class="dialog-body">
+    <!-- Name Field -->
     <mat-form-field appearance="outline" floatLabel="auto">
-      <mat-label>Initial Price</mat-label>
-      <input matInput type="number" [(ngModel)]="newService.initialPrice" required />
+      <mat-label>Name</mat-label>
+      <input matInput formControlName="name" />
+      <mat-error *ngIf="serviceForm.get('name')?.hasError('required') && serviceForm.get('name')?.touched">
+        Name is required
+      </mat-error>
     </mat-form-field>
-  </ng-container>
+
+    <!-- Unit Field -->
+    <mat-form-field appearance="outline" floatLabel="auto">
+      <mat-label>Unit</mat-label>
+      <input matInput formControlName="unit" />
+      <mat-error *ngIf="serviceForm.get('unit')?.hasError('required') && serviceForm.get('unit')?.touched">
+        Unit is required
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Customer Price -->
+    <mat-form-field appearance="outline" floatLabel="auto">
+      <mat-label>Customer Price</mat-label>
+      <input matInput type="number" formControlName="customerPrice" />
+      <mat-error *ngIf="serviceForm.get('customerPrice')?.hasError('required') && serviceForm.get('customerPrice')?.touched">
+        Customer Price is required
+      </mat-error>
+      <mat-error *ngIf="serviceForm.get('customerPrice')?.hasError('min') && serviceForm.get('customerPrice')?.touched">
+        Must be greater than 0
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Tiered Checkbox -->
+    <mat-checkbox formControlName="isTiered" (change)="onTieredToggle()">
+      Tiered Pricing
+    </mat-checkbox>
+
+
+    <!-- Tier Rows -->
+    <ng-container *ngIf="serviceForm.get('isTiered')?.value">
+      <div formArrayName="serviceTier">
+        <div *ngFor="let tier of tiers.controls; let i = index" [formGroupName]="i" class="tier-row">
+          <mat-form-field appearance="outline" floatLabel="always" class="tier-input">
+            <mat-label>From Quantity</mat-label>
+            <input matInput type="number" formControlName="fromQuantity" />
+            <mat-error *ngIf="tier.get('fromQuantity')?.hasError('min') && tier.get('fromQuantity')?.touched">
+              >= 0
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" floatLabel="always" class="tier-input">
+            <mat-label>To Quantity</mat-label>
+            <input matInput type="number" formControlName="toQuantity" />
+            <mat-error *ngIf="tier.errors?.['invalidRange'] && (tier.dirty || tier.touched)">
+            To Quantity must be greater than From Quantity
+          </mat-error>
+
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" floatLabel="always" class="tier-input">
+            <mat-label>Gov Unit Price</mat-label>
+            <input matInput type="number" formControlName="govUnitPrice" />
+            <mat-error *ngIf="tier.get('govUnitPrice')?.hasError('min') && tier.get('govUnitPrice')?.touched">
+              > 0
+            </mat-error>
+          </mat-form-field>
+
+          <button mat-icon-button color="warn" type="button" (click)="removeTier(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Overlap Error -->
+      <mat-error *ngIf="serviceForm.get('serviceTier')?.errors?.['overlap']">
+        Tier ranges are overlapping!
+      </mat-error>
+
+      <button mat-stroked-button color="primary" type="button" (click)="addTier()">
+        <mat-icon>add</mat-icon> Add Tier
+      </button>
+    </ng-container>
+
+    <!-- Initial Price if not Tiered -->
+    <ng-container *ngIf="!serviceForm.get('isTiered')?.value">
+      <mat-form-field appearance="outline" floatLabel="auto">
+        <mat-label>Initial Price</mat-label>
+        <input matInput type="number" formControlName="initialPrice" />
+        <mat-error *ngIf="serviceForm.get('initialPrice')?.hasError('required') && serviceForm.get('initialPrice')?.touched">
+          Initial Price is required
+        </mat-error>
+        <mat-error *ngIf="serviceForm.get('initialPrice')?.hasError('min') && serviceForm.get('initialPrice')?.touched">
+          Must be greater than 0
+        </mat-error>
+      </mat-form-field>
+    </ng-container>
+  </div>
 
   <div class="button-group">
-    <button class="btn-cancel" (click)="cancel()">Cancel</button>
-    <button class="btn-submit" (click)="save()">+ Add</button>
+    <button class="btn-cancel" type="button" (click)="cancel()">Cancel</button>
+    <button class="btn-submit" type="submit">+ Add</button>
   </div>
-</div>
+</form>

@@ -1,4 +1,4 @@
-namespace BACKEND.DTOs
+namespace BACKEND.DTOs.ServiceDTO
 {
     using System.Collections.Generic;
 

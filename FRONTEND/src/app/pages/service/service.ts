@@ -106,24 +106,30 @@ export class Service implements OnInit{
 
   openCreateForm() {
     const dialogRef = this.dialog.open(CreateServiceDialog, {
-      panelClass: 'custom-dialog-panel'
+      panelClass: 'custom-dialog-panel',
     });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {// Call API to create service here
-        // For now, add to list (demo)
-        const newId = Math.max(...this.services.map(s => s.serviceID), 0) + 1;
-        const newService = {
-          ...result,
-          serviceID: newId
-        };
-        this.services.push(newService);
-        this.dataSource.data = [...this.services];
-        this.applyFilters();
-        this.snackBar.open('Service created successfully.', 'Close', {
-          duration: 2000,
-          verticalPosition: 'top',
-          panelClass: 'custom-snackbar-success'
+      dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        console.log('Sending CreateService:', result); 
+        this.serviceService.createService(result).subscribe({
+          next: (newService) => {
+            this.services.push(newService);
+            this.dataSource.data = [...this.services];
+            this.applyFilters();
+            this.snackBar.open('Service created successfully.', 'Close', {
+              duration: 2000,
+              verticalPosition: 'top',
+              panelClass: 'custom-snackbar-success'
+            });
+          },
+          error: (err) => {
+            console.error('Failed to create service', err);
+            this.snackBar.open('Failed to create service.', 'Close', {
+              duration: 3000,
+              verticalPosition: 'top',
+              panelClass: 'custom-snackbar'
+            });
+          }
         });
       }
     });
