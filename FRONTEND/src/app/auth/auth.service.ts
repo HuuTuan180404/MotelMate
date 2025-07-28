@@ -2,7 +2,7 @@ import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 @Injectable({
@@ -10,6 +10,9 @@ import { environment } from '../../environments/environment';
 })
 export class AuthService {
   private isBrowser: boolean;
+  private isAuthenticatedSubject: BehaviorSubject<boolean>;
+  isAuthenticated$: Observable<boolean>;
+
   constructor(
     private router: Router,
     private http: HttpClient,
@@ -17,15 +20,8 @@ export class AuthService {
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
     this.isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
-
-    if (this.isBrowser) {
-      this.tryRefreshToken();
-    }
-    
     this.isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
   }
-  private isAuthenticatedSubject: BehaviorSubject<boolean>;
-  isAuthenticated$: Observable<boolean>;
 
   login(credentials: { username: string; password: string }): Observable<any> {
     return this.http
@@ -48,7 +44,6 @@ export class AuthService {
     if (!this.isBrowser) return;
 
     sessionStorage.removeItem('accessToken');
-
     this.isAuthenticatedSubject.next(false);
     this.router.navigate(['/login']);
   }
@@ -59,11 +54,17 @@ export class AuthService {
   }
 
   refreshToken(): Observable<any> {
+    // Thêm header để skip interceptor
+    const headers = { 'Skip-Auth-Interceptor': 'true' };
+
     return this.http
       .post<{ accessToken: string }>(
         `${environment.apiUrl}/api/Account/refresh`,
         {},
-        { withCredentials: true }
+        {
+          withCredentials: true,
+          headers: headers
+        }
       )
       .pipe(
         tap((response) => {
@@ -71,12 +72,21 @@ export class AuthService {
             this.storeToken(response.accessToken);
             this.isAuthenticatedSubject.next(true);
           }
+        }),
+        catchError((error) => {
+          this.isAuthenticatedSubject.next(false);
+          if (this.isBrowser) {
+            sessionStorage.removeItem('accessToken');
+          }
+          throw error;
         })
       );
   }
 
   storeToken(accessToken: string): void {
-    sessionStorage.setItem('accessToken', accessToken);
+    if (this.isBrowser) {
+      sessionStorage.setItem('accessToken', accessToken);
+    }
   }
 
   hasToken(): boolean {
@@ -86,13 +96,8 @@ export class AuthService {
   isAuthenticated(): Observable<boolean> {
     return this.isAuthenticated$;
   }
-  private tryRefreshToken(): void {
-    this.refreshToken().subscribe({
-      next: (res) => {},
-      error: (err) => {
-        console.warn('Refresh token failed:', err);
-        this.isAuthenticatedSubject.next(false);
-      },
-    });
+
+  setAuthenticationState(isAuthenticated: boolean): void {
+    this.isAuthenticatedSubject.next(isAuthenticated);
   }
 }
