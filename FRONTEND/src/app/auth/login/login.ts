@@ -19,7 +19,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class Login {
   form!: FormGroup;
-  private apiUrl = environment.apiUrl; // Ví dụ: https://domain.com
+  private apiUrl = environment.apiUrl;
 
   constructor(
     private http: HttpClient,
