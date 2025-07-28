@@ -1,134 +1,335 @@
-<div class="dialog-container">
-  <!-- Header -->
-  <div class="dialog-header">Add a new room</div>
+<div class="create-room-dialog">
+  <div class="dialog-header">
+    <h2 mat-dialog-title>
+      <mat-icon>add_home</mat-icon>
+      Tạo phòng mới
+    </h2>
+    <button mat-icon-button mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
 
-  <!-- Body -->
-  <div class="dialog-body">
-    <div class="dialog-element">
-      <div class="room-info">
-        <div class="input-info">
-          <div class="room-location">
-            <span class="input-info-label">Room Location</span>
-            <div class="input-info-container">
-              <!-- building -->
-              <mat-form-field appearance="outline">
-                <mat-select
-                  [(ngModel)]="formData.buildingID"
-                  placeholder="Building"
-                >
-                  <mat-option *ngFor="let b of buildings" [value]="b">
-                    {{b}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="roomForm" class="room-form">
+      <!-- Thông tin cơ bản -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <mat-icon>info</mat-icon>
+          Thông tin cơ bản
+        </h3>
 
-              <!-- room number -->
-              <mat-form-field appearance="outline">
-                <input
-                  matInput
-                  type="number"
-                  [(ngModel)]="formData.roomNumber"
-                  placeholder="Room"
-                  #roomCtrl="ngModel"
-                />
-              </mat-form-field>
-            </div>
+        <div class="form-row">
+          <!-- Chọn tòa nhà (Multiple Select) -->
+          <mat-form-field
+            appearance="outline"
+            class="form-field selectBuilding"
+          >
+            <mat-label>Tòa nhà</mat-label>
+            <mat-select formControlName="buildingID">
+              <mat-select-trigger>
+                {{ selectedBuildingName }}
+              </mat-select-trigger>
+              <mat-option
+                *ngFor="let building of buildings"
+                [value]="building.buildingID"
+              >
+                <div class="building-option">
+                  <span class="building-name">
+                    {{ building.buildingName }}
+                  </span>
+
+                  <span class="building-address">
+                    {{ building.buildingAddress }}
+                  </span>
+                </div>
+              </mat-option>
+            </mat-select>
+            <mat-hint>Có thể chọn nhiều tòa nhà</mat-hint>
+            <mat-error *ngIf="roomForm.get('buildingID')?.hasError('required')">
+              Vui lòng chọn ít nhất một tòa nhà
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Số phòng -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Số phòng</mat-label>
+            <input
+              matInput
+              formControlName="roomNumber"
+              placeholder="VD: P101, A201"
+            />
+            <mat-error *ngIf="roomForm.get('roomNumber')?.hasError('required')">
+              Số phòng là bắt buộc
+            </mat-error>
+            <mat-error *ngIf="roomForm.get('roomNumber')?.hasError('pattern')">
+              Số phòng chỉ được chứa chữ và số
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <div class="form-row">
+          <!-- Diện tích -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Diện tích (m²)</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="area"
+              placeholder="25"
+            />
+            <mat-hint>Diện tích tính bằng mét vuông</mat-hint>
+            <mat-error *ngIf="roomForm.get('area')?.hasError('required')">
+              Diện tích là bắt buộc
+            </mat-error>
+            <mat-error *ngIf="roomForm.get('area')?.hasError('min')">
+              Diện tích phải lớn hơn 0
+            </mat-error>
+            <mat-error *ngIf="roomForm.get('area')?.hasError('max')">
+              Diện tích không được vượt quá 1000m²
+            </mat-error>
+          </mat-form-field>
+
+          <!-- Giá tiền -->
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Giá thuê (VNĐ/tháng)</mat-label>
+            <input
+              matInput
+              type="number"
+              formControlName="price"
+              placeholder="3500000"
+            />
+            <mat-hint>Giá thuê hàng tháng</mat-hint>
+            <mat-error *ngIf="roomForm.get('price')?.hasError('required')">
+              Giá thuê là bắt buộc
+            </mat-error>
+            <mat-error *ngIf="roomForm.get('price')?.hasError('min')">
+              Giá thuê phải lớn hơn hoặc bằng 0
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <!-- Mô tả -->
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Mô tả</mat-label>
+          <textarea
+            matInput
+            formControlName="description"
+            rows="3"
+            placeholder="Mô tả chi tiết về phòng..."
+          >
+          </textarea>
+          <mat-hint
+            >{{ roomForm.get('description')?.value?.length || 0 }}/1000 ký
+            tự</mat-hint
+          >
+          <mat-error *ngIf="roomForm.get('description')?.hasError('maxlength')">
+            Mô tả không được vượt quá 1000 ký tự
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Hình ảnh -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <mat-icon>photo_library</mat-icon>
+          Hình ảnh phòng ({{ roomImages.length }}/{{ maxImages }})
+        </h3>
+
+        <!-- Upload area -->
+        <div class="upload-area">
+          <input
+            type="file"
+            #fileInput
+            (change)="onFileSelected($event)"
+            multiple
+            accept="image/*"
+            style="display: none"
+          />
+
+          <button
+            type="button"
+            mat-raised-button
+            color="primary"
+            (click)="fileInput.click()"
+            [disabled]="roomImages.length >= maxImages"
+          >
+            <mat-icon>cloud_upload</mat-icon>
+            Upload
+          </button>
+
+          <div class="upload-info">
+            <p>Chọn tối đa {{ maxImages }} ảnh</p>
+            <p>Định dạng: JPG, PNG, WEBP. Tối đa 5MB/ảnh</p>
           </div>
+        </div>
 
-          <div class="room-information">
-            <span class="input-info-label">Room information</span>
-            <div class="input-info-container">
-              <!-- area -->
-              <mat-form-field appearance="outline">
-                <input
-                  matInput
-                  type="number"
-                  [(ngModel)]="formData.area"
-                  placeholder="Area"
-                  #roomCtrl="ngModel"
+        <!-- Image preview -->
+        <div class="image-preview" *ngIf="roomImages.length > 0">
+          <div class="image-grid">
+            <div
+              *ngFor="let image of roomImages"
+              class="image-item"
+              [class.thumb-image]="image.isThumb"
+            >
+              <div class="image-container">
+                <img
+                  aria-label="room image"
+                  [src]="image.url"
+                  [alt]="image.name"
                 />
-              </mat-form-field>
 
-              <!-- price -->
-              <mat-form-field appearance="outline">
-                <input
-                  matInput
-                  type="number"
-                  [(ngModel)]="formData.price"
-                  placeholder="Price"
-                  #roomCtrl="ngModel"
-                />
-              </mat-form-field>
+                <!-- Image overlay -->
+                <div class="image-overlay">
+                  <button
+                    type="button"
+                    mat-icon-button
+                    class="thumb-btn"
+                    [class.active]="image.isThumb"
+                    (click)="setAsThumb(image.id)"
+                    matTooltip="Đặt làm ảnh đại diện"
+                  >
+                    <mat-icon
+                      >{{ image.isThumb ? 'star' : 'star_border' }}</mat-icon
+                    >
+                  </button>
 
-              <!-- max guests -->
-              <mat-form-field appearance="outline">
-                <input
-                  matInput
-                  type="number"
-                  [(ngModel)]="formData.price"
-                  placeholder="Price"
-                  #roomCtrl="ngModel"
-                />
-              </mat-form-field>
-            </div>
-          </div>
+                  <button
+                    type="button"
+                    mat-icon-button
+                    class="delete-btn"
+                    (click)="removeImage(image.id)"
+                    matTooltip="Xóa ảnh"
+                  >
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
 
-          <div class="room-description">
-            <div class="input-info-container">
-              <!-- description -->
-              <mat-form-field appearance="outline" class="full-width">
-                <mat-label>Description</mat-label>
-                <textarea
-                  matInput
-                  placeholder="Description"
-                  [(ngModel)]="formData.description"
-                  placeholder="Max guests"
-                  rows="2"
-                ></textarea>
-              </mat-form-field>
+              <div class="image-info">
+                <span class="image-name">{{ image.name }}</span>
+                <span class="image-size">{{ formatFileSize(image.size) }}</span>
+                <mat-chip *ngIf="image.isThumb" color="primary" selected>
+                  <mat-icon>star</mat-icon>
+                  Ảnh đại diện
+                </mat-chip>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="add-item">
-          <div class="add add-image">
-            <span>Add images</span>
-            <div>
-              <input
-                type="file"
-                accept="image/*"
-                multiple
-                (change)="onFileChange($event)"
-                hidden
-                #fileInput
-              />
-              <button matButton (click)="fileInput.click()">
-                <span class="material-symbols-outlined">
-                  add_photo_alternate
-                </span>
-              </button>
-              <div class="images"></div>
+        <!-- Empty state -->
+        <div class="empty-images" *ngIf="roomImages.length === 0">
+          <mat-icon>photo_library</mat-icon>
+          <p>Chưa có ảnh nào được tải lên</p>
+        </div>
+      </div>
+
+      <!-- Tài sản -->
+      <div class="form-section">
+        <h3 class="section-title">
+          <mat-icon>inventory_2</mat-icon>
+          Tài sản trong phòng ({{ selectedAssets.length }} đã chọn)
+        </h3>
+
+        <div class="assets-container">
+          <div
+            *ngFor="let assetType of getAssetTypes()"
+            class="asset-type-group"
+          >
+            <h4 class="asset-type-title">{{ assetType }}</h4>
+
+            <div class="asset-grid">
+              <mat-checkbox
+                *ngFor="let asset of getAssetsByType(assetType)"
+                [checked]="isAssetSelected(asset.assetID)"
+                (change)="onAssetChange(asset.assetID, $event.checked)"
+                class="asset-checkbox"
+              >
+                <div class="asset-info">
+                  <span class="asset-name">{{ asset.assetName }}</span>
+                </div>
+              </mat-checkbox>
             </div>
           </div>
-          <div class="add add-asset">
-            <span>Add assets</span>
-            <div>
-              <button matButton>
-                <span class="material-symbols-outlined"> box_add </span>
-              </button>
-              <div class="images"></div>
-            </div>
+        </div>
+
+        <!-- Selected assets summary -->
+        <div class="selected-assets" *ngIf="selectedAssets.length > 0">
+          <h4>Tài sản đã chọn:</h4>
+          <div class="selected-asset-chips">
+            <mat-chip
+              *ngFor="let assetId of selectedAssets"
+              color="primary"
+              selected
+              (removed)="onAssetChange(assetId, false)"
+              removable
+            >
+              {{ getAssetName(assetId) }}
+              <mat-icon matChipRemove>cancel</mat-icon>
+            </mat-chip>
           </div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- Footer -->
-  <div class="dialog-footer">
-    <button mat-button (click)="onCancel()">Cancel</button>
-    <button mat-raised-button color="primary" (click)="onConfirm()">
-      Confirm
+      <!-- Preview -->
+      <div class="form-section" *ngIf="roomForm.valid">
+        <h3 class="section-title">
+          <mat-icon>preview</mat-icon>
+          Xem trước
+        </h3>
+
+        <mat-card class="preview-card">
+          <mat-card-content>
+            <div class="preview-item">
+              <strong>Building:</strong>
+              {{ getSelectedBuildingName() }}
+            </div>
+            <div class="preview-item">
+              <strong>Room number:</strong>
+              {{ roomForm.get('roomNumber')?.value }}
+            </div>
+            <div class="preview-item">
+              <strong>Area:</strong> {{ roomForm.get('area')?.value }}m²
+            </div>
+            <div class="preview-item">
+              <strong>Price per month:</strong>
+              {{ formatPrice(roomForm.get('price')?.value) }}
+            </div>
+            <div
+              class="preview-item"
+              *ngIf="roomForm.get('description')?.value"
+            >
+              <strong>Mô tả:</strong>
+              {{ roomForm.get('description')?.value }}
+            </div>
+            <div class="preview-item">
+              <strong>Số ảnh:</strong>
+              {{ roomImages.length }}
+            </div>
+            <div class="preview-item">
+              <strong>Số tài sản:</strong>
+              {{ selectedAssets.length }}
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()" [disabled]="isLoading">
+      <mat-icon>cancel</mat-icon>
+      Cancel
     </button>
-  </div>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSave()"
+      [disabled]="!roomForm.valid || isLoading"
+    >
+      <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+      <mat-icon *ngIf="!isLoading">save</mat-icon>
+      {{ isLoading ? 'Creating...' : 'Create' }}
+    </button>
+  </mat-dialog-actions>
 </div>
