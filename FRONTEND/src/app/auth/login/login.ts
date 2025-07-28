@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angula
 import { RouterLink, RouterModule, Router } from '@angular/router';
 import { environment } from '../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-login',
@@ -24,43 +25,27 @@ export class Login {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private authService: AuthService
   ) {
     this.form = this.fb.group({
       username: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      remember: [false]
+      password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
 
-  login(username: string, password: string) {
-    return this.http.post<{ accessToken: string }>(`${this.apiUrl}/api/Account/login`, {
-      username,
-      password,
-    });
+  ngOnInit() {
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate(['/dashboard']);
+    }
   }
-
-  saveToken(token: string) {
-    localStorage.setItem('accessToken', token);
-  }
-
-  logout() {
-    localStorage.removeItem('accessToken');
-    this.router.navigate(['/login']);
-  }
-
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('accessToken');
-  }
-
   onSubmit() {
     if (this.form.invalid) return;
 
     const { username, password } = this.form.value;
 
-    this.login(username, password).subscribe({
-      next: (res) => {
-        this.saveToken(res.accessToken);
+    this.authService.login({ username, password }).subscribe({
+      next: () => {
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {

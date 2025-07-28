@@ -11,14 +11,16 @@ import { Dashboard } from './pages/dashboard/dashboard';
 import { AssetManagement } from './pages/assetmanagement/assetmanagement';
 import { Service } from './pages/service/service';
 import { Register } from './pages/register/register';
+import { AuthGuard } from './auth/auth.guard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: Login },
-  { path: 'register', component: Register },
+  { path: 'login', component: Login},
+  { path: 'register', component: Register},
   {
     path: '',
     component: Layout,
+    canActivate: [AuthGuard],
     children: [
       { path: 'invoices', component: Listinvoice },
       { path: 'rooms', component: RoomManagement },
