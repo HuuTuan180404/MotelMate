@@ -104,7 +104,6 @@ namespace BACKEND.Controllers
 
             await _tokenService.StoreRefreshTokenAsync(user, refreshToken);
 
-            // Gửi refresh token qua HTTP-only cookie
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
@@ -113,7 +112,6 @@ namespace BACKEND.Controllers
             };
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
 
-            // Trả access token qua body
             return Ok(new
             {
                 accessToken
