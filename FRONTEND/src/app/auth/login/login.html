@@ -5,18 +5,18 @@
     <img src="/assets/images/logo.svg" alt="Logo" class="logo" />
     <p style="margin-top: 0; margin-bottom: 1rem">Please Login your account.</p>
 
-    <!-- Email -->
-    <input type="email" formControlName="email" placeholder="Email" />
+    <!-- username -->
+    <input type="text" formControlName="username" placeholder="username" />
     <div class="error-feedback">
       <small
-        *ngIf="form.controls['email'].errors?.['required'] && form.controls['email'].touched"
+        *ngIf="form.controls['username'].errors?.['required'] && form.controls['username'].touched"
       >
-        Email is required
+        username is required
       </small>
       <small
-        *ngIf="form.controls['email'].errors?.['email'] && form.controls['email'].touched"
+        *ngIf="form.controls['username'].errors?.['username'] && form.controls['username'].touched"
       >
-        Invalid email
+        Invalid username
       </small>
     </div>
 
