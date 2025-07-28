@@ -8,23 +8,23 @@ import { environment } from '../../environments/environment';
   providedIn: 'root'
 })
 export class ServiceService {
-  private apiService = `${environment.apiURL.serviceApi}`;
+  private apiUrl = `${environment.apiUrl}/api/service`;
+
   constructor(private http: HttpClient) {}
 
   getAllServices(): Observable<ServiceItem[]> {
-    return this.http.get<ServiceItem[]>(this.apiService);
+    return this.http.get<ServiceItem[]>(this.apiUrl);
   }
   
   deleteService(id: number): Observable<any> {
-    return this.http.delete(`${this.apiService}/${id}`);
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
   editService(service: ServiceItem): Observable<any> {
-    return this.http.put(`${this.apiService}/${service.serviceID}`, service);
+    return this.http.put(`${this.apiUrl}/${service.serviceID}`, service);
   }
   
   createService(service: ServiceItem): Observable<any> {
-  return this.http.post(`${this.apiService}`, service);
-}
-
+    return this.http.post(this.apiUrl, service);
+  }
 }

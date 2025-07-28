@@ -36,9 +36,10 @@ namespace BACKEND.Mappers
                 .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.Service.Name))
                 .ForMember(dest => dest.Unit, opt => opt.MapFrom(src => src.Service.Unit))
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
-                .ForMember(dest => dest.InitialPrice, opt => opt.MapFrom(src => src.InitialPrice)) // <-- Lấy từ DB
-                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));               // <-- Lấy từ DB
+                .ForMember(dest => dest.InitialPrice, opt => opt.MapFrom(src => src.InitialPrice))
+                .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.Price));               
 
+            
         }
         
     }

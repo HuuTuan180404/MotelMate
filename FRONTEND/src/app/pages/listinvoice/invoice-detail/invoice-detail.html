@@ -16,46 +16,43 @@
     <div><strong>Created At:</strong> {{ data.createAt }}</div>
   </div>
 
-  <div *ngIf="data.extraCosts?.length" class="section">
-    <h4>Extra Costs</h4>
-    <ul>
-      <li *ngFor="let cost of data.extraCosts">
-        {{ cost.description }} - {{ cost.amount | number }} VND
-      </li>
-    </ul>
-  </div>
-
-  <div *ngIf="data.services?.length" class="section">
-    <h4>Services</h4>
+  <div *ngIf="(data.services?.length || data.extraCosts?.length)" class="section">
+    <h4>Details</h4>
     <table class="service-table">
       <thead>
         <tr>
-          <th>Service</th>
+          <th>Description</th>
           <th>Quantity</th>
           <th>Unit</th>
           <th>Initial Price</th>
-          <th>Customer Price</th>
+          <th>Price</th>
         </tr>
       </thead>
       <tbody>
+        <!-- Service Details -->
         <tr *ngFor="let s of data.services">
           <td>{{ s.name }}</td>
           <td>{{ s.quantity }}</td>
           <td>{{ s.unit }}</td>
           <td>{{ s.initialPrice | number }}</td>
-          <td>{{ s.customerPrice | number }}</td>
+          <td>{{ s.price | number }}</td>
         </tr>
+
+        <tr *ngFor="let cost of data.extraCosts">
+          <td>{{ cost.description }} <span class="extra-cost-tag">(Extra Cost)</span></td>
+          <td colspan="2"></td>
+          <td>{{ cost.amount | number }}</td>
+          <td>{{ cost.amount | number }}</td>
+        </tr>
+
+        <!-- Total Row -->
         <tr class="total-row">
           <td colspan="3"><strong>Total</strong></td>
-          <td>{{ totalInitialPrice | number }}</td>
-          <td>{{ totalCustomerPrice | number }}</td>
+          <td>{{ data.totalInitialAmount | number }}</td>
+          <td>{{ data.total | number }}</td>
         </tr>
       </tbody>
     </table>
-  </div>
-
-  <div class="invoice-summary">
-    <strong>Total Amount:</strong> {{ data.total | number }} VND
   </div>
 
   <div class="invoice-status">
@@ -64,10 +61,10 @@
 </div>
 
 <div mat-dialog-actions align="end" *ngIf="data.status !== 'Paid'">
-  <button mat-icon-button color="warn" matTooltip="Delete" (click)="delete()">
-    <mat-icon>delete</mat-icon>
-  </button>
   <button mat-icon-button color="primary" matTooltip="Update" (click)="edit()">
-    <mat-icon>edit</mat-icon>
+    <mat-icon style="color: #45a9ea;">edit</mat-icon>
+  </button>
+  <button mat-icon-button color="warn" matTooltip="Delete" (click)="delete()">
+     <mat-icon style="color: #f44336;">delete</mat-icon>
   </button>
 </div>

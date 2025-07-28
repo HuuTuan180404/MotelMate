@@ -5,6 +5,7 @@ using BACKEND.Models;
 using BACKEND.DTOs.InvoiceDTO;
 using BACKEND.Data;
 using AutoMapper.QueryableExtensions;
+using BACKEND.Enums;
 
 namespace BACKEND.Controllers
 {
@@ -52,5 +53,114 @@ namespace BACKEND.Controllers
             return Ok(invoiceDetailDTO);
         }
 
+        // DELETE: api/Invoice/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteInvoice(int id)
+        {
+            var invoice = await _context.Invoice.FindAsync(id);
+
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            _context.InvoiceDetails.RemoveRange(invoice.InvoiceDetail);
+
+            _context.Invoice.Remove(invoice);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+         // PUT: api/Invoice/{id}
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateInvoice(int id, UpdateInvoiceDTO dto)
+        {
+            var invoice = await _context.Invoice
+                .Include(i => i.ExtraCosts)
+                .Include(i => i.InvoiceDetail)
+                    .ThenInclude(d => d.Service)
+                .FirstOrDefaultAsync(i => i.InvoiceID == id);
+
+            if (invoice == null)
+            {
+                return NotFound();
+            }
+
+            // Update DueDate
+            invoice.DueDate = dto.DueDate;
+
+            // Update Status (Validate Enum)
+            if (!Enum.TryParse<EInvoiceStatus>(dto.Status, out var statusEnum))
+            {
+                return BadRequest("Invalid status value.");
+            }
+            invoice.Status = statusEnum;
+
+            // Update ExtraCosts
+            foreach (var ecDto in dto.ExtraCosts)
+            {
+                var extraCost = invoice.ExtraCosts.FirstOrDefault(e => e.ExtraCostID == ecDto.ExtraCostID);
+                if (extraCost != null)
+                {
+                    extraCost.Description = ecDto.Description;
+                    extraCost.Amount = ecDto.Amount;
+                }
+            }
+
+            foreach (var detailDto in dto.InvoiceDetails)
+            {
+                var detail = invoice.InvoiceDetail.FirstOrDefault(d => d.ServiceID == detailDto.ServiceID);
+                if (detail != null)
+                {
+                    detail.Quantity = detailDto.Quantity;
+
+                    var service = await _context.Services
+                        .Include(s => s.ServiceTier)
+                        .FirstOrDefaultAsync(s => s.ServiceID == detailDto.ServiceID);
+
+                    if (service != null)
+                    {
+                        if (service.IsTiered == true && service.ServiceTier != null && service.ServiceTier.Any())
+                        {
+                            decimal initialPrice = 0;
+                            decimal customerPrice = 0;
+                            decimal remainingQuantity = detail.Quantity;
+
+                            var tiers = service.ServiceTier.OrderBy(t => t.FromQuantity).ToList();
+
+                            foreach (var tier in tiers)
+                            {
+                                if (remainingQuantity <= 0) break;
+
+                                var tierRange = tier.ToQuantity - tier.FromQuantity + 1;
+                                var applicableQty = Math.Min(remainingQuantity, tierRange);
+
+                                initialPrice += applicableQty * tier.GovUnitPrice;
+                                customerPrice += applicableQty * service.CustomerPrice; // giả sử CustomerPrice cố định
+
+                                remainingQuantity -= applicableQty;
+                            }
+
+                            detail.InitialPrice = initialPrice;
+                            detail.Price = customerPrice;
+                        }
+                        else
+                        {
+                            // Non-tiered Service
+                            detail.InitialPrice = detail.Quantity * service.InitialPrice;
+                            detail.Price = detail.Quantity * service.CustomerPrice;
+                        }
+                    }
+                }
+            }
+            // Recalculate TotalInitialAmount & TotalAmount
+            invoice.TotalInitialAmount = invoice.InvoiceDetail.Sum(d => d.InitialPrice) + invoice.ExtraCosts.Sum(e => e.Amount);
+            invoice.TotalAmount = invoice.InvoiceDetail.Sum(d => d.Price) + invoice.ExtraCosts.Sum(e => e.Amount);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
     }
 }
