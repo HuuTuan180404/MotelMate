@@ -54,7 +54,7 @@ export class AuthService {
   }
 
   refreshToken(): Observable<any> {
-    // Thêm header để skip interceptor
+    // Thêm header để skip interceptor  
     const headers = { 'Skip-Auth-Interceptor': 'true' };
 
     return this.http
