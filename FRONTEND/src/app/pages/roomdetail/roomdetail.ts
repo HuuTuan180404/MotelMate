@@ -3,6 +3,7 @@ import {
   ElementRef,
   HostListener,
   Inject,
+  Input,
   ViewChild,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
@@ -15,160 +16,75 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
+import { RoomDetailModel } from '../../models/RoomDetail.model';
+import { FormsModule } from '@angular/forms';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatCardModule } from '@angular/material/card';
 import { TenantModel } from '../../models/Tenant.model';
-
 @Component({
   selector: 'app-roomdetail',
   imports: [
+    MatChipsModule,
+    MatCardModule,
     CommonModule,
     MatButtonModule,
     MatIconModule,
     MatFormFieldModule,
     MatInputModule,
     MatDialogModule,
+    FormsModule,
   ],
   templateUrl: './roomdetail.html',
   styleUrl: './roomdetail.css',
 })
 export class RoomDetail {
-  @ViewChild('scrollContainer', { static: true }) scrollContainer!: ElementRef;
   @ViewChild('scrollContainerThumbnails', { static: true })
-  scrollContainerThumbnails!: ElementRef;
-  selectedMember: number | null = null;
+  _scrollContainerThumbnails!: ElementRef;
 
-  roomMembers: TenantModel[] = [];
-  //   {
-  //     tenantID: 1,
-  //     urlAvatar:
-  //       'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-  //     name: 'Nguyễn Văn A',
-  //     fullName: 'Active',
-  //     phoneNumber: '0987654321',
-  //     room: '101A',
-  //     bdate: new Date('1995-03-15'),
-  //   },
-  //   {
-  //     tenantID: 2,
-  //     urlAvatar:
-  //       'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-  //     name: 'Nguyễn Văn A',
-  //     fullName: 'Active',
-  //     phoneNumber: '0987654321',
-  //     room: '101A',
-  //     bdate: new Date('1995-03-15'),
-  //   },
-  //   {
-  //     tenantID: 3,
-  //     urlAvatar:
-  //       'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-  //     name: 'Nguyễn Văn A',
-  //     fullName: 'Active',
-  //     phoneNumber: '0987654321',
-  //     room: '101A',
-  //     bdate: new Date('1995-03-15'),
-  //   },
-  //   {
-  //     tenantID: 4,
-  //     urlAvatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-  //     name: 'Trần Thị B',
-  //     fullName: 'Terminate',
-  //    phoneNumber: '0912345678',
-  //     room: '102B',
-  //     bdate: new Date('1990-07-20'),
-  //   },
-  //   {
-  //     tenantID: 5,
-  //     urlAvatar: 'https://randomuser.me/api/portraits/women/21.jpg',
-  //     name: 'Trần Thị B',
-  //     fullName: 'Terminate',
-  //     phoneNumber: '0912345678',
-  //     room: '102B',
-  //     bdate: new Date('1990-07-20'),
-  //   },
-  // ];
+  _roomDetail: RoomDetailModel;
+  _selectedMember: number | null = null;
+  _currentImage = '../../assets/images/avatar_error.png';
+
+  constructor(
+    @Inject(MAT_DIALOG_DATA) private roomDetail: RoomDetailModel,
+    public dialogRef: MatDialogRef<RoomDetail>
+  ) {
+    this._roomDetail = JSON.parse(JSON.stringify(roomDetail));
+    if (this.roomDetail.urlRoomImages.length > 0) {
+      this._currentImage = this.roomDetail.urlRoomImages[0];
+    }
+  }
 
   defSelectedMember(id: number) {
-    this.selectedMember = id;
+    this._selectedMember = id;
   }
 
   defDeleteMember() {
-    if (this.selectedMember !== null) {
-      this.roomMembers = this.roomMembers.filter(
-        (item) => item.tenantID !== this.selectedMember
-      );
-      this.selectedMember = null; // Clear selection
-    }
+    if (!this._roomDetail?.members || this._selectedMember === null) return;
+
+    this._roomDetail = {
+      ...this._roomDetail,
+      members: this._roomDetail.members.filter(
+        (item) => item.id !== this._selectedMember
+      ),
+    };
+
+    this._selectedMember = null;
+
+    console.log('Deleted member ID:', this._selectedMember);
   }
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    public dialogRef: MatDialogRef<RoomDetail>
-  ) {}
 
-  staticImages = [
-    'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1607746882042-944635dfe10e?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&h=600&q=80',
-    'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&h=600&q=80',
-  ];
-
-  assets = [
-    { code: 1, name: 'Máy lạnh', quantity: 1 },
-    { code: 2, name: 'Giường', quantity: 2 },
-    { code: 3, name: 'Giường', quantity: 3 },
-    { code: 4, name: 'Giường', quantity: 4 },
-    { code: 5, name: 'Giường', quantity: 5 },
-    { code: 6, name: 'Giường', quantity: 6 },
-    { code: 7, name: 'Giường', quantity: 7 },
-    { code: 5, name: 'Giường', quantity: 5 },
-    { code: 6, name: 'Giường', quantity: 6 },
-    { code: 7, name: 'Giường', quantity: 7 },
-    { code: 5, name: 'g', quantity: 5 },
-    { code: 6, name: 'Giường', quantity: 6 },
-    { code: 7, name: 'Giường', quantity: 7 },
-    { code: 5, name: 'Giường', quantity: 5 },
-    { code: 6, name: 'Giường', quantity: 6 },
-    { code: 7, name: 'Giường', quantity: 7 },
-    { code: 5, name: 'Giường', quantity: 5 },
-    { code: 6, name: 'Giường', quantity: 6 },
-    { code: 7, name: 'Giường', quantity: 7 },
-  ];
-
-  currentImage = this.staticImages[0];
+  get getAssetData(): any[] {
+    return this.roomDetail.assetData as any[];
+  }
 
   changeImage(image: string) {
-    this.currentImage = image;
+    this._currentImage = image;
   }
 
   ngAfterViewInit() {
-    const el = this.scrollContainer.nativeElement;
     const scrollContainerThumbnails =
-      this.scrollContainerThumbnails.nativeElement;
-
-    el.addEventListener(
-      'wheel',
-      (event: WheelEvent) => {
-        if (event.deltaY !== 0) {
-          event.preventDefault();
-          el.scrollLeft += event.deltaY;
-        }
-      },
-      { passive: false }
-    );
+      this._scrollContainerThumbnails.nativeElement;
 
     scrollContainerThumbnails.addEventListener(
       'wheel',
@@ -184,17 +100,13 @@ export class RoomDetail {
 
   room = {};
 
-  onClick_btnAddMember() {
-    console.log('dads');
+  onAddMember() {
+    console.log('onAddMember()');
   }
 
-  // component.ts
-  // @HostListener('document:keydown.delete', ['$event'])
-  // handleDeleteKey(event: KeyboardEvent) {
-  //   if (this.selectedMember !== null) {
-  //     this.defDeleteMember();
-  //   }
-  // }
+  onAddAsset() {
+    console.log('onAddAsset()');
+  }
 
   @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {

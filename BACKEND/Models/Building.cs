@@ -27,7 +27,7 @@ namespace BACKEND.Models
 
         [ForeignKey(nameof(Owner))]
         public int OwnerID { get; set; }
-        public virtual Owner? Owner { get; set; }
+        public required virtual Owner Owner { get; set; }
         public virtual ICollection<Room> Room { get; set; }
     }
 }

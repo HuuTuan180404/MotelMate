@@ -162,13 +162,14 @@
 }
 
 .rooms {
-  overflow-y: auto;
   display: grid;
-  grid-template-columns: repeat(4, minmax(20%, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(30%, 1fr));
   gap: var(--padding-margin);
-  margin-top: var(--padding-margin);
+  margin-top: calc(var(--padding-margin) * 3);
   padding-bottom: 16px;
-  min-width: 70%;
+  gap: calc(var(--padding-margin) * 3);
+  overflow-y: auto;
+  width: 100%;
 }
 
 .rooms::-webkit-scrollbar {
@@ -181,4 +182,132 @@
   display: flex;
   align-items: center;
   gap: 0 5px;
+}
+
+/* ================= */
+.card {
+  display: flex;
+  flex-direction: row;
+  max-height: 180px;
+  box-shadow: var(--box-shadow);
+  background-color: #fff;
+  border-radius: var(--border-radius);
+  padding: var(--padding-margin);
+}
+
+.image {
+  height: 100%;
+  aspect-ratio: 3 / 4;
+  margin: auto;
+  border-radius: var(--border-radius);
+}
+
+/* main pic */
+.image img {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius);
+}
+
+/*  */
+.info {
+  /* background-color: #b5b7c0; */
+  flex: 1;
+  height: 100%;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: var(--padding-margin);
+  overflow: hidden;
+}
+
+.section-price {
+  display: flex;
+}
+
+.price {
+  flex: 1 1 0;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: block;
+}
+
+.section-avatars {
+  margin-top: auto;
+  width: 100%;
+}
+
+.section-avatars::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 3px;
+}
+
+.imgs {
+  display: flex;
+  gap: var(--padding-margin);
+}
+
+.imgs > img {
+  height: 32px;
+  width: 32px;
+  margin-right: -10px;
+  object-fit: cover;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.imgs > img:hover {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.more-avatars {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  width: 32px;
+  background-color: #e0e0e0;
+  border-radius: 50%;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+}
+
+.more-avatars:hover {
+  background-color: #ccc;
+}
+
+/* status */
+.section-room-status {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  gap: 0 5px;
+  margin-left: auto;
+}
+
+.icon-status {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+}
+
+.status-Available {
+  background-color: #16c09861;
+}
+
+.status-Occupied {
+  background-color: #b5b7c0;
+}
+
+.status-Maintenance {
+  background-color: #ffc5c5;
 }

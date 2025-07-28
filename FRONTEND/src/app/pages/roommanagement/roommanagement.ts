@@ -1,4 +1,12 @@
-import { Component, ElementRef, HostListener, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatInputModule } from '@angular/material/input';
@@ -10,13 +18,13 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RoomDetail } from '../roomdetail/roomdetail';
 import { MatSliderModule } from '@angular/material/slider';
 import { RoomModel } from '../../models/Room.model';
-import { Room } from './room/room';
 import { AddRoom } from './addroom/addroom';
+import { RoomService } from '../../services/roomservice';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-roommanagement',
   imports: [
-    Room,
     CommonModule,
     MatInputModule,
     MatSelectModule,
@@ -26,14 +34,21 @@ import { AddRoom } from './addroom/addroom';
     MatTooltip,
     MatDialogModule,
     MatSliderModule,
+    ScrollingModule,
   ],
   templateUrl: './roommanagement.html',
   styleUrl: './roommanagement.css',
 })
-export class RoomManagement {
+export class RoomManagement implements OnInit, AfterViewInit {
   isFilterPanelOpen = false;
+  _rooms: RoomModel[] = [];
+  isLoading = false; // Thêm loading state
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private roomService: RoomService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   filterRooms: RoomModel[] = [];
   options = [
@@ -42,6 +57,88 @@ export class RoomManagement {
     { name: 'Two', code: 2 },
     { name: 'Three', code: 3 },
   ];
+
+  ngOnInit(): void {
+    this.loadRooms();
+  }
+
+  ngAfterViewInit(): void {
+    // Trigger change detection sau khi view init
+    setTimeout(() => {
+      this.cdr.detectChanges();
+    }, 0);
+  }
+
+  private loadRooms(): void {
+    this.isLoading = true;
+    this.cdr.detectChanges();
+
+    this.roomService.getAllRooms().subscribe({
+      next: (data) => {
+        this._rooms = data.map(
+          (x: any): RoomModel => ({
+            roomID: x.roomID,
+            roomNumber: x.roomNumber,
+            price: x.price,
+            status: x.status,
+            buildingID: x.buildingID,
+            buildingName: x.buildingName,
+            urlImage: x.roomImageUrl,
+            urlAvatars: x.urlAvatars ?? [],
+          })
+        );
+
+        this.isLoading = false;
+
+        // Force change detection sau khi load xong data
+        this.cdr.detectChanges();
+
+        // Thêm một delay nhỏ để đảm bảo virtual scroll render
+        setTimeout(() => {
+          this.cdr.detectChanges();
+        }, 100);
+      },
+      error: (error) => {
+        console.error('Error loading rooms:', error);
+        this.isLoading = false;
+        this.cdr.detectChanges();
+      },
+    });
+  }
+
+  handleImageError(room: RoomModel) {
+    // room.urlImage = '../../../assets/images/avatar_error.svg'; // ảnh lỗi trong local
+    // this.cdr.detectChanges();
+  }
+
+  handleAvatarError(room: RoomModel, index: number) {
+    room.urlAvatars[index] = '../../../assets/images/avatar_error.svg'; // ảnh lỗi trong local
+    this.cdr.detectChanges();
+  }
+
+  showMoreAvatars(room: RoomModel) {
+    // Hiển thị dialog hoặc tooltip để xem toàn bộ avatar
+    // console.log('More avatars for room:', room.urlAvatars);
+    // Ví dụ: Mở dialog với danh sách đầy đủ
+    // this.dialog.open(AvatarDialogComponent, { data: room.urlAvatars });
+  }
+
+  roomDetail?: RoomDetail;
+  viewRoomDetail(id: number) {
+    this.roomService.getRoomById(id).subscribe({
+      next: (data) => {
+        this.dialog.open(RoomDetail, {
+          maxWidth: '90vw',
+          maxHeight: '90vh',
+          data: data,
+        });
+      },
+
+      error: (error) => {
+        console.error('Error loading rooms:', error);
+      },
+    });
+  }
 
   // init filter panel
   sliderMin = 0;
@@ -55,27 +152,7 @@ export class RoomManagement {
   showFilterPanel: boolean = false;
   filteredRooms: any[] = [];
 
-  ngOnInit() {
-    this.buildingCode = this.options[0].code;
-    this.filteredRooms = [...this.rooms];
-  }
-
-  onClick_btnView() {
-    this.dialog.open(RoomDetail, {
-      disableClose: true,
-      minWidth: '90vw',
-      maxHeight: '90vh',
-      data: { roomId: 123, mode: 'edit' },
-    });
-  }
-
   onClick_btnCreate() {
-    // this.dialog.open(AddRoom, {
-    //   disableClose: true,
-    //   minWidth: '90vw',
-    //   maxHeight: '90vh',
-    // });
-
     const dialogRef = this.dialog.open(AddRoom, {
       height: 'auto',
       maxHeight: '90vh',
@@ -96,178 +173,26 @@ export class RoomManagement {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        // this.contracts.push(result);
-        // this.applyFilters();
         console.log(result);
+        // Reload data sau khi thêm mới
+        this.loadRooms();
       }
     });
   }
 
-  rooms = [
-    {
-      images: [],
-      name: 'R201',
-      price: '1.300.000đ',
-      priceValue: 1300000,
-      maxGuest: 3,
-      avatars: [],
-      status: 'Available',
-    },
-    // {
-    //   images: [],
-    //   name: 'R201',
-    //   price: '1.300.000đ',
-    //   priceValue: 1300000,
-    //   maxGuest: 3,
-    //   avatars: [],
-    //   status: 'Available',
-    // },
-    // {
-    //   images: [],
-    //   name: 'R201',
-    //   price: '1.300.000đ',
-    //   priceValue: 1300000,
-    //   maxGuest: 3,
-    //   avatars: [],
-    //   status: 'Available',
-    // },
-    // {
-    //   images: [],
-    //   name: 'R201',
-    //   price: '1.300.000đ',
-    //   priceValue: 1300000,
-    //   maxGuest: 3,
-    //   avatars: [],
-    //   status: 'Available',
-    // },
-    // {
-    //   images: [],
-    //   name: 'R201',
-    //   price: '1.300.000đ',
-    //   priceValue: 1300000,
-    //   maxGuest: 3,
-    //   avatars: [],
-    //   status: 'Maintenance',
-    // },
-    {
-      images: [],
-      name: 'R201',
-      price: '1.300.000đ',
-      priceValue: 1300000,
-      maxGuest: 3,
-      avatars: [],
-      status: 'Occupied',
-    },
-  ];
-
   onSearchBar(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
-
-    
-
-    // this.rooms.filter = filterValue.trim().toLowerCase();
+    // Implement search logic here
+    this.cdr.detectChanges(); // Trigger change detection khi search
   }
 
   applyFilter() {
-    this.filters.minPrice = this.minPrice;
-    this.filters.maxPrice = this.maxPrice;
-    this.filters.selectedBuildingCode = this.buildingCode;
-    console.log('Áp dụng lọc:', this.filters);
+    // Implement filter logic
+    this.cdr.detectChanges();
   }
 
-  _rooms: RoomModel[] = [
-    {
-      roomID: 1,
-      area: 30,
-      price: 5000000,
-      status: 'Available',
-      description: 'Phòng có ban công, hướng Đông Nam, tầng 3',
-      buildingID: 101,
-    },
-    {
-      roomID: 2,
-      area: 25,
-      price: 4500000,
-      status: 'Occupied',
-      description: 'Phòng đã được thuê, đầy đủ nội thất',
-      buildingID: 101,
-    },
-    {
-      roomID: 3,
-      area: 35,
-      price: 6000000,
-      status: 'Available',
-      description: 'Phòng rộng, ánh sáng tốt, gần thang máy',
-      buildingID: 102,
-    },
-    {
-      roomID: 4,
-      area: 28,
-      price: 4700000,
-      status: 'Maintenance',
-      description: 'Đang sửa chữa hệ thống điện',
-      buildingID: 103,
-    },
-    {
-      roomID: 5,
-      area: 40,
-      price: 7000000,
-      status: 'Available',
-      description: 'Phòng VIP, có điều hòa, máy giặt riêng',
-      buildingID: 101,
-    },
-    {
-      roomID: 6,
-      area: 20,
-      price: 3900000,
-      status: 'Available',
-      description: 'Phòng nhỏ phù hợp sinh viên, gần cửa sổ',
-      buildingID: 102,
-    },
-    {
-      roomID: 7,
-      area: 32,
-      price: 5500000,
-      status: 'Occupied',
-      description: 'Phòng vừa được thuê, nội thất mới',
-      buildingID: 103,
-    },
-    {
-      roomID: 8,
-      area: 45,
-      price: 7500000,
-      status: 'Available',
-      description: 'Phòng rộng, view thành phố, có ban công lớn',
-      buildingID: 101,
-    },
-    {
-      roomID: 9,
-      area: 26,
-      price: 4300000,
-      status: 'Maintenance',
-      description: 'Đang nâng cấp trần và hệ thống đèn',
-      buildingID: 102,
-    },
-    {
-      roomID: 10,
-      area: 38,
-      price: 6200000,
-      status: 'Available',
-      description: 'Phòng yên tĩnh, gần thang bộ, nhiều ánh sáng tự nhiên',
-      buildingID: 103,
-    },
-  ];
-
   _applyFilters() {
-    this.filterRooms = this._rooms.filter((room) => {
-      const isPrice =
-        room.price >= this.filters.minPrice &&
-        room.price <= this.filters.maxPrice;
-
-      const isBuildingCode =
-        room.buildingID === this.filters.selectedBuildingCode;
-      return isPrice && isBuildingCode;
-    });
+    // Implementation for applying filters
   }
 
   filters = {
@@ -279,8 +204,9 @@ export class RoomManagement {
   @ViewChild('filterPanel') filterPanelRef!: ElementRef;
 
   toggleFilter(event?: MouseEvent) {
-    if (event) event.stopPropagation(); // Ngăn click lan ra ngoài
+    if (event) event.stopPropagation();
     this.isFilterPanelOpen = !this.isFilterPanelOpen;
+    this.cdr.detectChanges(); // Force update UI
   }
 
   applyFilters() {
@@ -289,13 +215,17 @@ export class RoomManagement {
     this.filters.selectedBuildingCode = this.buildingCode;
     console.log('Áp dụng lọc:', this.filters);
     this.isFilterPanelOpen = false;
+    this.cdr.detectChanges();
   }
 
   clearFilters() {
+    this.minPrice = this.sliderMin;
+    this.maxPrice = this.sliderMax;
+    this.buildingCode = null;
     this.filters.minPrice = this.minPrice;
     this.filters.maxPrice = this.maxPrice;
     this.filters.selectedBuildingCode = this.buildingCode;
-    console.log('Áp dụng lọc:', this.filters);
+    this.cdr.detectChanges();
   }
 
   @HostListener('document:click', ['$event'])
@@ -303,9 +233,11 @@ export class RoomManagement {
     const target = event.target as HTMLElement;
     if (
       this.isFilterPanelOpen &&
-      !this.filterPanelRef?.nativeElement.contains(target)
+      this.filterPanelRef?.nativeElement &&
+      !this.filterPanelRef.nativeElement.contains(target)
     ) {
       this.isFilterPanelOpen = false;
+      this.cdr.detectChanges();
     }
   }
 }

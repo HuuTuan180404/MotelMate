@@ -1,8 +1,8 @@
 using AutoMapper;
 using BACKEND.Data;
 using BACKEND.DTOs.RoomDTO;
+using BACKEND.Enums;
 using BACKEND.RoomDTO.DTOs;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,16 +23,36 @@ namespace BACKEND.Controllers
         }
 
         // GET: api/room
-        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadRoomDTO>>> GetRooms()
         {
             var rooms = await _context.Room
                                     .Include(r => r.Building)
                                     .Include(r => r.RoomImages)
+                                    .Include(r => r.Contracts.Where(c => c.Status == EContractStatus.Active)) // hợp đồng active
+                                        .ThenInclude(c => c.ContractDetail)
+                                            .ThenInclude(cd => cd.Tenant)
                                     .ToListAsync();
 
             return Ok(_mapper.Map<List<ReadRoomDTO>>(rooms));
+        }
+
+        // GET: api/Rooms/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ReadRoomDetailDTO>> GetRoomDetail(int id)
+        {
+            var room = await _context.Room
+                                    .Include(r => r.Building)
+                                        .ThenInclude(b => b.Owner)
+                                    .Include(r => r.RoomImages)
+                                    .Include(r => r.Contracts.Where(c => c.Status == EContractStatus.Active)) // hợp đồng active
+                                        .ThenInclude(c => c.ContractDetail)
+                                            .ThenInclude(cd => cd.Tenant)
+                                    .Include(ra => ra.RoomAssets)
+                                        .ThenInclude(a => a.Asset)
+                                    .FirstOrDefaultAsync(r => r.RoomID == id);
+
+            return Ok(_mapper.Map<ReadRoomDetailDTO>(room));
         }
 
         private bool RoomIsExists(int id)

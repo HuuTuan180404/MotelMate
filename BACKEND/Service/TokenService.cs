@@ -38,7 +38,7 @@ namespace BACKEND.Service
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["JWT:SigningKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var expires = DateTime.Now.AddMinutes(double.Parse(_config["JWT:AccessTokenExpireMinutes"] ?? "15"));
+            var expires = DateTime.UtcNow.AddMinutes(double.Parse(_config["JWT:AccessTokenExpireMinutes"] ?? "15"));
 
             var token = new JwtSecurityToken(
                 issuer: _config["JWT:Issuer"],

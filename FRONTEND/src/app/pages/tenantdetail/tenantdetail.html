@@ -1,0 +1,149 @@
+<div class="tenant-detail-container">
+  <mat-card class="tenant-card">
+    <!-- Header với avatar và thông tin cơ bản -->
+    <mat-card-header class="tenant-header">
+      <div mat-card-avatar class="tenant-avatar">
+        <img
+          aria-label="avatar"
+          [src]="tenant.avatar"
+          [alt]="tenant.fullName"
+          class="avatar-image"
+        />
+      </div>
+      <mat-card-title>{{ tenant.fullName }}</mat-card-title>
+      <mat-card-subtitle>Khách thuê trọ</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="tenant-content">
+      <!-- Thông tin chi tiết -->
+      <div class="info-section">
+        <h3 class="section-title">
+          <mat-icon>person</mat-icon>
+          Thông tin cá nhân
+        </h3>
+
+        <div class="info-grid">
+          <div class="info-item">
+            <mat-icon class="info-icon">badge</mat-icon>
+            <div class="info-details">
+              <span class="info-label">ID:</span>
+              <span class="info-value">{{ tenant.cccd }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon class="info-icon">person_outline</mat-icon>
+            <div class="info-details">
+              <span class="info-label">Full name:</span>
+              <span class="info-value">{{ tenant.fullName }}</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon class="info-icon">phone</mat-icon>
+            <div class="info-details">
+              <span class="info-label">Phone number:</span>
+              <span class="info-value">0364626275</span>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <mat-icon class="info-icon">cake</mat-icon>
+            <div class="info-details">
+              <span class="info-label">Date of birth:</span>
+              <span class="info-value">{{ formatDate(tenant.bDate) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lịch sử thuê trọ -->
+      <div class="history-section">
+        <h3 class="section-title">
+          <mat-icon>history</mat-icon>
+          Rental History [ {{ tenant.rentalHistory.length }} Contract(s) ]
+        </h3>
+
+        <!--  -->
+
+        <div class="history-list">
+          <mat-card
+            *ngFor="let history of tenant.rentalHistory"
+            class="history-card"
+            [class.active-contract]="history.status === 'active'"
+          >
+            <mat-card-header class="history-header">
+              <div class="contract-info">
+                <mat-card-title class="contract-code">
+                  {{ history.contractCode }}
+                </mat-card-title>
+              </div>
+
+              <div class="status-badge">
+                <mat-chip
+                  [color]="history.status === 'active' ? 'primary' : 'accent'"
+                  selected
+                >
+                  <mat-icon>
+                    {{ history.status === 'active' ? 'home' : 'check_circle' }}
+                  </mat-icon>
+                  {{ history.status === 'active' ? 'Đang thuê' : 'Đã kết thúc'}}
+                </mat-chip>
+              </div>
+            </mat-card-header>
+
+            <mat-card-content class="history-content">
+              <div class="date-duration-row">
+                <div class="date-item">
+                  <mat-icon class="date-icon checkin">login</mat-icon>
+                  <div class="date-details">
+                    <span class="date-label">Move-in Date:</span>
+                    <span class="date-value">
+                      {{ formatDate(history.checkInDate) }}
+                    </span>
+                  </div>
+                </div>
+                <div class="date-item">
+                  <mat-icon class="date-icon checkout">logout</mat-icon>
+                  <div class="date-details">
+                    <span class="date-label">Move-out Date:</span>
+                    <span class="date-value">
+                      {{ history.checkOutDate ? formatDate(history.checkOutDate)
+                      : 'Đang ở' }}
+                    </span>
+                  </div>
+                </div>
+                <div class="duration-rent">
+                  <div class="duration-info">
+                    <mat-icon>schedule</mat-icon>
+                    <div class="duration-details">
+                      <span class="duration-label">Duration of Stay:</span>
+                      <span class="duration-value">
+                        {{ calculateDuration(history.checkInDate,
+                        history.checkOutDate) }}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+
+          <!-- Empty state -->
+          <div *ngIf="tenant.rentalHistory.length === 0" class="empty-history">
+            <mat-icon class="empty-icon">history_toggle_off</mat-icon>
+            <h4>Chưa có lịch sử thuê trọ</h4>
+            <p>Khách hàng này chưa có hợp đồng thuê trọ nào.</p>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions class="card-actions">
+      <button mat-raised-button>
+        <mat-icon>done_outline</mat-icon>
+        Done
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

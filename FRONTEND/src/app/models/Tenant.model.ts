@@ -1,5 +1,5 @@
 export interface TenantModel {
-  tenantID: number;
+  id: number;
   fullName: string;
   cccd: string;
   bdate: string;

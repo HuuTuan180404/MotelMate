@@ -1,8 +1,10 @@
 export interface RoomModel {
   roomID: number;
-  area: number;
+  roomNumber: string;
   price: number;
   status: string;
-  description: string;
   buildingID: number;
+  buildingName: string;
+  urlImage: string;
+  urlAvatars: string[];
 }

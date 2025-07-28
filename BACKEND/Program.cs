@@ -62,7 +62,6 @@ builder.Services.AddAutoMapper(typeof(ContractMapper));
 builder.Services.AddAutoMapper(typeof(TenantMapper));
 builder.Services.AddAutoMapper(typeof(RoomMapper));
 
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme =
@@ -82,9 +81,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
             System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"])
-        ),
-        ValidateLifetime = true,
-        ClockSkew = TimeSpan.Zero
+        )
     };
 });
 builder.Services.AddAuthentication(options =>
@@ -133,7 +130,6 @@ if (app.Environment.IsDevelopment())
         // MotelDbSeeder.Seed(context);
     }
 }
-// IdentityModelEventSource.ShowPII = true;
 
 app.UseHttpsRedirection();
 

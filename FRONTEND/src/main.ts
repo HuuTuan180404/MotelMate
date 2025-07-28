@@ -3,7 +3,6 @@ import { App } from './app/app';
 import { appConfig } from './app/app.config';
 import { importProvidersFrom } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient } from '@angular/common/http';
 
 bootstrapApplication(App, {
   ...appConfig,
@@ -11,6 +10,5 @@ bootstrapApplication(App, {
     ...appConfig.providers,
     importProvidersFrom(),
     provideAnimations(),
-    provideHttpClient(),
   ],
 });

@@ -1,6 +1,7 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 ::ng-deep .mat-mdc-dialog-surface {
@@ -9,9 +10,11 @@
 
 .room-detail {
   width: 90vw;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-color);
+  background-color: #fff;
+  overflow: hidden;
 }
 
 .dialog-title {
@@ -39,18 +42,18 @@
 .content {
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
 .room-info {
   display: grid;
-  box-sizing: border-box;
-  grid-template-columns: 40% 60%;
+  grid-template-columns: 30% 70%;
   gap: var(--padding-margin);
   width: 100%;
   padding: var(--padding-margin);
   align-items: center;
   flex-grow: 0;
+  overflow: hidden;
 }
 
 /* images */
@@ -97,104 +100,149 @@
   border-color: #007bff;
 }
 
-/* tthông tin phòng */
 .info {
+  height: 100%;
   width: calc(100% - 8px);
   display: flex;
   flex-direction: column;
+  gap: var(--padding-margin);
+  overflow-y: auto;
+}
+.info::-webkit-scrollbar {
+  display: none;
 }
 
-.info-part1-2 {
+/* info chủ trọ */
+.owner-building-info-container {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.owner-building-info-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.owner-building-info-card {
+  padding: var(--padding-margin);
+}
+
+.owner-building-info-card-content {
+  display: flex;
+  flex-direction: row;
+  margin-top: var(--padding-margin);
+}
+
+.owner-building-info {
+  display: flex;
+}
+
+.owner-info {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.building-info {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.owner-info > div,
+.building-info > div {
+  display: inline-flex;
+  gap: 0 var(--padding-margin);
+  margin-top: var(--padding-margin);
+}
+
+.room-info-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-margin);
+}
+
+.room-info-card-content label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.room-info-part1 {
   display: flex;
   flex-direction: row;
 }
 
-.info-part1-2 > div {
-  flex: 1;
-  display: flex;
-  gap: 10px;
-  flex-direction: column;
-  align-items: center;
+.room-info-part1 > div {
+  margin: auto;
 }
 
-.info input {
-  margin-left: 2rem;
-  padding: 0 calc(var(--padding-margin) * 2);
-  border-radius: var(--border-radius);
-  border: none;
-  height: 2rem;
-  font-size: larger;
+.room-info-part1 input {
+  max-width: 400px;
+  padding: 14px 16px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-.info-part3 {
-  display: flex;
-  flex-direction: column;
-  padding: 0 15%;
-  margin-top: 10px;
+.room-info-part1 input :focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2);
 }
 
-.info-part3 textarea {
-  margin-left: 2rem;
-  padding: 0 calc(var(--padding-margin) * 2);
-  border: none;
-  height: 4rem;
-  font-size: larger;
-  width: 90%;
-  resize: none;
+.room-info-description {
+  margin: auto;
+  width: 60%;
 }
 
-.info-part4 {
+.room-info-description > textarea {
   width: 100%;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 0;
-  padding: 0 var(--padding-margin);
-  margin-top: 10px;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  padding: 0 16px;
+  font-size: 16px;
 }
 
-.info-part4-header {
+/* members */
+.members-card {
+  width: 100%;
+  padding: var(--padding-margin);
+  overflow: hidden;
+}
+
+.members-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: var(--padding-margin);
+  padding: 0 !important ;
+  padding-bottom: 16px !important;
+  width: 100%;
 }
 
-.info-part4-header > button {
+.members-title {
   display: flex;
-  border-radius: var(--border-radius);
-  background-color: var(--create-btn);
-  border: none;
-  color: white;
-  padding: 12px 24px;
-  font-size: 16px;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
   font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
 }
 
-.info-part4-header > button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(99, 102, 241, 0.5);
-  background: linear-gradient(135deg, #4338ca, #4f46e5);
-}
-
-.info-part4-header > button:active {
-  transform: scale(0.98);
-  box-shadow: 0 3px 8px rgba(99, 102, 241, 0.3);
-}
-
-.members {
+.members-content {
+  width: 100%;
   display: flex;
   gap: 0 calc(var(--padding-margin) * 2);
-  width: 95%;
-  margin: 0 auto;
   overflow-x: auto;
-  /* scrollbar-width: thin; */
-}
-
-.members::-webkit-scrollbar {
-  display: none;
+  scrollbar-width: thin;
+  padding: 0 !important;
 }
 
 .member {
@@ -208,8 +256,8 @@
 }
 
 .member > img {
-  height: 60px;
-  width: 60px;
+  height: 40px;
+  width: 40px;
   border-radius: 50%;
   object-fit: cover;
   align-self: center;
@@ -233,69 +281,113 @@
   gap: 0 calc(var(--padding-margin) * 2);
 }
 
-/* thông tin đơn giản của tòa nhà, chủ trọ */
-.other-infor {
+/* assets  */
+.assets-card {
+  width: 100%;
+  padding: var(--padding-margin);
+}
+
+.assets-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 !important;
+  padding-bottom: 16px !important;
+}
+
+.assets-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.assets-content {
+  padding-top: 0;
+}
+
+.empty-state {
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.empty-icon {
+  font-size: 48px;
+  width: 48px;
+  height: 48px;
+  opacity: 0.5;
+}
+
+.assets-container {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.assets-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.asset-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+}
+
+.asset-name {
+  font-weight: 500;
+  font-size: 14px;
   flex: 1;
-  box-sizing: border-box;
-  display: grid;
-  grid-template-columns:
-    calc(50% - var(--padding-margin) / 2)
-    calc(50% - var(--padding-margin) / 2);
-  gap: 0 var(--padding-margin);
-  padding: var(--padding-margin);
-}
-
-/* info chủ trọ */
-.first-block {
-  border-radius: var(--border-radius);
-  padding: var(--padding-margin);
-  display: flex;
-  flex-direction: column;
-}
-
-.owner-building-info {
-  display: flex;
-}
-
-.owner-info-content {
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-}
-
-.building-info-content {
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-}
-
-.owner-info-content > div,
-.building-info-content > div {
-  display: inline-flex;
-  gap: 0 var(--padding-margin);
-  margin-top: var(--padding-margin);
-}
-
-/* thông tin của tòa nhà */
-.second-block {
-  border-radius: var(--border-radius);
-  padding: var(--padding-margin);
-  display: inline;
-}
-
-.assets {
-  display: grid;
-  grid-auto-flow: column; /* Các item sẽ xếp theo chiều ngang (cột) */
-  grid-template-rows: repeat(2, auto); /* Tối đa 2 hàng */
-  overflow-x: auto;
-  scrollbar-width: thin;
-}
-
-.assets > label {
-  border-radius: var(--border-radius);
-  border: 1px solid #000;
-  padding: 0 5px;
-  margin: 5px;
+  margin-right: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: fit-content;
+}
+
+.quantity-chip {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* button add */
+.btn-add {
+  display: flex;
+  border-radius: var(--border-radius);
+  background-color: var(--create-btn);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+}
+
+.btn-add:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(99, 102, 241, 0.5);
+  background: linear-gradient(135deg, #4338ca, #4f46e5);
 }

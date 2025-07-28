@@ -7,11 +7,11 @@ import { TenantModel } from '../models/Tenant.model';
 @Injectable({
   providedIn: 'root',
 })
-export class TenantService {
-  private apiTenant = `${environment.apiURL.getTenant}`;
+export class AssetService {
+  private apiTenant = `${environment.apiURL.getAsset}/asset`;
   constructor(private http: HttpClient) {}
 
-  getAllTenants(): Observable<TenantModel[]> {
+  getAllAssets(): Observable<TenantModel[]> {
     return this.http.get<TenantModel[]>(this.apiTenant);
   }
 }

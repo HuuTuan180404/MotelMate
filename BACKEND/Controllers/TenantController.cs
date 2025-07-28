@@ -28,20 +28,6 @@ namespace BACKEND.Controllers
             return Ok(_mapper.Map<List<ReadTenantDTO>>(tenants));
         }
 
-        // GET: api/Tenant/5
-        // [HttpGet("{id}")]
-        // public async Task<ActionResult<Tenant>> GetTenant(int id)
-        // {
-        //     var tenant = await _context.Tenants.FindAsync(id);
-
-        //     if (tenant == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     return tenant;
-        // }
-
         private bool TenantIsExists(int id)
         {
             return _context.Tenant.Any(e => e.Id == id);
