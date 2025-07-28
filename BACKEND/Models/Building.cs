@@ -25,6 +25,8 @@ namespace BACKEND.Models
         [StringLength(255)]
         public required string Address { get; set; }
 
+        public required string ImageURL { get; set; }
+
         [ForeignKey(nameof(Owner))]
         public int OwnerID { get; set; }
         public required virtual Owner Owner { get; set; }

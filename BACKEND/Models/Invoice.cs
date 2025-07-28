@@ -26,22 +26,27 @@ namespace BACKEND.Models
         public DateOnly PeriodEnd { get; set; }
 
         [Required]
+        public DateOnly DueDate { get; set; }
+
+        [Required]
         public EInvoiceStatus Status { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal ExtraCosts { get; set; } = 0;
+        public decimal TotalAmount { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(18,2)")]
-        public decimal TotalAmount { get; set; }
+        public decimal TotalInitialAmount { get; set; }
 
         [ForeignKey(nameof(Contract))]
         public Nullable<int> ContractID { get; set; }
 
         public string? Description { get; set; }
 
-        public virtual Contract ?Contract { get; set; }
+        public virtual Contract? Contract { get; set; }
         public virtual ICollection<InvoiceDetail> InvoiceDetail { get; set; }
+        public virtual ICollection<ExtraCost> ExtraCosts { get; set; } = new HashSet<ExtraCost>();
+
     }
 }

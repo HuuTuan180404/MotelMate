@@ -19,6 +19,8 @@ namespace BACKEND.Data
         public DbSet<ContractDetail> ContractDetail { get; set; }
         public DbSet<Invoice> Invoice { get; set; }
         public DbSet<InvoiceDetail> InvoiceDetails { get; set; }
+        public DbSet<ExtraCost> ExtraCosts { get; set; }
+
         public DbSet<Noti> Noti { get; set; }
         public DbSet<NotiRecipient> NotiRecipient { get; set; }
         public DbSet<Owner> Owner { get; set; }
@@ -53,6 +55,18 @@ namespace BACKEND.Data
             modelBuilder.Entity<RoomAsset>().HasKey(id => new { id.AssetID, id.RoomID });
             modelBuilder.Entity<RoomImage>().HasKey(id => new { id.RoomID, id.ImageURL });
             modelBuilder.Entity<NotiRecipient>().HasKey(id => new { id.NotiID, id.TenantID });
+
+            modelBuilder.Entity<ExtraCost>()
+                .HasOne(e => e.Invoice)
+                .WithMany(i => i.ExtraCosts)
+                .HasForeignKey(e => e.InvoiceID)
+                .OnDelete(DeleteBehavior.Cascade);
+            
+            modelBuilder.Entity<InvoiceDetail>()
+                .HasOne(id => id.Invoice)
+                .WithMany(i => i.InvoiceDetail)
+                .HasForeignKey(id => id.InvoiceID)
+                .OnDelete(DeleteBehavior.Cascade);
 
             base.OnModelCreating(modelBuilder);
         }
