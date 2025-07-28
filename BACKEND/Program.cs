@@ -84,18 +84,18 @@ builder.Services.AddAuthentication(options =>
         )
     };
 });
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = "Cookies";
-    options.DefaultChallengeScheme = "Google";
-})
-.AddCookie()
-.AddGoogle(options =>
-{
-    options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
-    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
-    options.CallbackPath = "/signin-google";
-});
+// builder.Services.AddAuthentication(options =>
+// {
+//     options.DefaultScheme = "Cookies";
+//     options.DefaultChallengeScheme = "Google";
+// })
+// .AddCookie()
+// .AddGoogle(options =>
+// {
+//     options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+//     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+//     options.CallbackPath = "/signin-google";
+// });
 
 builder.Services.AddAuthorization(options =>
 {

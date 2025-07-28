@@ -105,7 +105,7 @@ namespace BACKEND.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                SameSite = SameSiteMode.None, 
+                SameSite = SameSiteMode.Strict, 
                 Expires = DateTime.UtcNow.AddYears(100)
             };
             Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
@@ -137,7 +137,7 @@ namespace BACKEND.Controllers
             var cookieOptions = new CookieOptions
             {
                 HttpOnly = true,
-                SameSite = SameSiteMode.None, 
+                SameSite = SameSiteMode.Strict, 
                 Expires = DateTime.UtcNow.AddYears(100)
             };
             Response.Cookies.Append("refreshToken", newRefreshToken, cookieOptions);
