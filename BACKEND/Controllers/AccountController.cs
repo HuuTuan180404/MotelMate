@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using BACKEND.Data;
 using BACKEND.DTOs.AuthDTO;
 using BACKEND.Enums;
 using BACKEND.Interfaces;
@@ -10,6 +11,7 @@ using BACKEND.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BACKEND.Controllers
 {
@@ -19,11 +21,12 @@ namespace BACKEND.Controllers
     {
         private readonly UserManager<Account> _userManager;
         private readonly ITokenService _tokenService;
-
-        public AccountController(UserManager<Account> userManager, ITokenService tokenService, IConfiguration config)
+        private readonly MotelMateDbContext _context;
+        public AccountController(UserManager<Account> userManager, ITokenService tokenService, IConfiguration config, MotelMateDbContext context)
         {
             _userManager = userManager;
             _tokenService = tokenService;
+            _context = context;
         }
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
@@ -117,19 +120,20 @@ namespace BACKEND.Controllers
             });
         }
 
-        [Authorize]
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(userId);
-
-            var storedRefreshToken = await _tokenService.GetRefreshTokenAsync(user);
-            string? refreshTokenFromCookie = Request.Cookies["refreshToken"];
-
-            if (storedRefreshToken != refreshTokenFromCookie)
-                return Unauthorized(refreshTokenFromCookie);
-
+            var refreshTokenFromCookie = Request.Cookies["refreshToken"];
+            var user = await _context.Users
+            .Join(_context.UserTokens,
+                u => u.Id,
+                t => t.UserId,
+                (u, t) => new { User = u, Token = t })
+            .Where(x => x.Token.Name == "RefreshToken" && x.Token.Value == refreshTokenFromCookie)
+            .Select(x => x.User)
+            .FirstOrDefaultAsync();
+            if (user == null)
+                return Unauthorized("Invalid refresh token");
             var newAccessToken = await _tokenService.GenerateAccessTokenAsync(user);
             var newRefreshToken = _tokenService.GenerateRefreshToken();
 
