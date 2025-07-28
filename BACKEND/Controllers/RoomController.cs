@@ -1,8 +1,10 @@
+using System.Security.Claims;
 using AutoMapper;
 using BACKEND.Data;
 using BACKEND.DTOs.RoomDTO;
 using BACKEND.Enums;
 using BACKEND.RoomDTO.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -38,9 +40,11 @@ namespace BACKEND.Controllers
         }
 
         // GET: api/Rooms/5
-        [HttpGet("{id}")]
+        // [Authorize]
+        [HttpGet("{id}")]        
         public async Task<ActionResult<ReadRoomDetailDTO>> GetRoomDetail(int id)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var room = await _context.Room
                                     .Include(r => r.Building)
                                         .ThenInclude(b => b.Owner)
@@ -60,4 +64,5 @@ namespace BACKEND.Controllers
             return _context.Room.Any(e => e.RoomID == id);
         }
     }
+
 }

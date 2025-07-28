@@ -21,6 +21,9 @@ namespace BACKEND.Controllers
             _mapper = mapper;
         }
 
+
+
+
         // GET: api/tenant
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadTenantDTO>>> GetTenants()
@@ -30,14 +33,16 @@ namespace BACKEND.Controllers
         }
 
         // GET: api/tenant/1
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ReadTenantDetailDTO>> GetTenantDetail(int id)
-        {
-            var tenant = await _context.Tenant.Include(t => t.ContractDetails).FirstOrDefaultAsync(t => t.Id == id);
+        // [HttpGet("{id}")]
+        // public async Task<ActionResult<ReadTenantDetailDTO>> GetTenantDetail(int id)
+        // {
+        //     var tenant = await _context.Tenant.Include(t => t.ContractDetails).FirstOrDefaultAsync(t => t.Id == id);
 
-            if (tenant == null)
-                return NotFound();
-            return Ok(_mapper.Map<ReadTenantDTO>(tenant));
-        }
+        //     if (tenant == null)
+        //         return NotFound();
+        //     return Ok(_mapper.Map<ReadTenantDTO>(tenant));
+        // }
     }
+
+
 }

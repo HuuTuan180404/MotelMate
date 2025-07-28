@@ -26,7 +26,10 @@ import { TenantModel } from '../../models/Tenant.model';
 export class TenantDetail {
   _tenantDetail?: TenantModel;
 
-  constructor(@Inject(MAT_DIALOG_DATA) private tenantDetail: TenantModel) {
+  constructor(
+    private dialogRef: MatDialogRef<TenantDetail>,
+    @Inject(MAT_DIALOG_DATA) private tenantDetail: TenantModel
+  ) {
     this._tenantDetail = { ...tenantDetail };
   }
 
@@ -53,5 +56,9 @@ export class TenantDetail {
       return `${months} tháng ${days} ngày`;
     }
     return `${days} ngày`;
+  }
+
+  onClickDone() {
+    this.dialogRef.close();
   }
 }
