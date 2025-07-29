@@ -21,6 +21,21 @@ import { RoomModel } from '../../models/Room.model';
 import { AddRoom } from './addroom/addroom';
 import { RoomService } from '../../services/roomservice';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatMenuModule } from '@angular/material/menu';
+import {
+  MatProgressSpinner,
+  MatProgressSpinnerModule,
+} from '@angular/material/progress-spinner';
+import { MatButtonModule } from '@angular/material/button';
+
+export enum RoomStatus {
+  AVAILABLE = 'available',
+  OCCUPIED = 'occupied',
+  MAINTAIN = 'maintain',
+}
 
 @Component({
   selector: 'app-roommanagement',
@@ -35,209 +50,264 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     MatDialogModule,
     MatSliderModule,
     ScrollingModule,
+    MatCardModule,
+    MatProgressSpinnerModule,
+    MatMenuModule,
+    MatChipsModule,
+    MatButtonModule,
   ],
   templateUrl: './roommanagement.html',
   styleUrl: './roommanagement.css',
 })
-export class RoomManagement implements OnInit, AfterViewInit {
-  isFilterPanelOpen = false;
-  _rooms: RoomModel[] = [];
-  isLoading = false; // Thêm loading state
+export class RoomManagement implements OnInit {
+  // rooms: RoomModel[] = [];
+  filteredRooms: RoomModel[] = [];
+  selectedStatus = 'all';
+  selectedBuilding = 'all';
+  searchTerm = '';
+  isLoading = true;
+
+  statusOptions = [
+    { value: 'all', label: 'Tất cả trạng thái', icon: 'list' },
+    { value: RoomStatus.AVAILABLE, label: 'Có sẵn', icon: 'check_circle' },
+    { value: RoomStatus.OCCUPIED, label: 'Đã thuê', icon: 'person' },
+    { value: RoomStatus.MAINTAIN, label: 'Bảo trì', icon: 'build' },
+  ];
+
+  rooms: RoomModel[] = [
+    {
+      roomID: 1,
+      roomNumber: '101',
+      price: 5000000,
+      status: RoomStatus.AVAILABLE,
+      buildingID: 1,
+      buildingName: 'Tòa A',
+      urlImage:
+        'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=400',
+      urlAvatars: [],
+    },
+    {
+      roomID: 2,
+      roomNumber: '102',
+      price: 6000000,
+      status: RoomStatus.OCCUPIED,
+      buildingID: 1,
+      buildingName: 'Tòa A',
+      urlImage:
+        'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400',
+      urlAvatars: [
+        'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100',
+        'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=100',
+      ],
+    },
+    {
+      roomID: 3,
+      roomNumber: '201',
+      price: 5500000,
+      status: RoomStatus.MAINTAIN,
+      buildingID: 2,
+      buildingName: 'Tòa B',
+      urlImage:
+        'https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=400',
+      urlAvatars: [],
+    },
+    {
+      roomID: 4,
+      roomNumber: '202',
+      price: 7000000,
+      status: RoomStatus.OCCUPIED,
+      buildingID: 2,
+      buildingName: 'Tòa B',
+      urlImage:
+        'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400',
+      urlAvatars: [
+        'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100',
+      ],
+    },
+    {
+      roomID: 5,
+      roomNumber: '301',
+      price: 6500000,
+      status: RoomStatus.AVAILABLE,
+      buildingID: 3,
+      buildingName: 'Tòa C',
+      urlImage:
+        'https://images.unsplash.com/photo-1484154218962-a197022b5858?w=400',
+      urlAvatars: [],
+    },
+    {
+      roomID: 6,
+      roomNumber: '302',
+      price: 8000000,
+      status: RoomStatus.OCCUPIED,
+      buildingID: 3,
+      buildingName: 'Tòa C',
+      urlImage:
+        'https://images.unsplash.com/photo-1493809842364-78817add7ffb?w=400',
+      urlAvatars: [
+        'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100',
+        'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100',
+        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100',
+      ],
+    },
+  ];
+
+  buildings: { value: string; label: string }[] = [];
 
   constructor(
-    private dialog: MatDialog,
     private roomService: RoomService,
-    private cdr: ChangeDetectorRef
+    private snackBar: MatSnackBar
   ) {}
-
-  filterRooms: RoomModel[] = [];
-  options = [
-    { name: 'All', code: -1 },
-    { name: 'One', code: 1 },
-    { name: 'Two', code: 2 },
-    { name: 'Three', code: 3 },
-  ];
 
   ngOnInit(): void {
     this.loadRooms();
   }
 
-  ngAfterViewInit(): void {
-    // Trigger change detection sau khi view init
-    setTimeout(() => {
-      this.cdr.detectChanges();
-    }, 0);
-  }
-
-  private loadRooms(): void {
+  loadRooms(): void {
     this.isLoading = true;
-    this.cdr.detectChanges();
-
-    this.roomService.getAllRooms().subscribe({
-      next: (data) => {
-        this._rooms = data.map(
-          (x: any): RoomModel => ({
-            roomID: x.roomID,
-            roomNumber: x.roomNumber,
-            price: x.price,
-            status: x.status,
-            buildingID: x.buildingID,
-            buildingName: x.buildingName,
-            urlImage: x.roomImageUrl,
-            urlAvatars: x.urlAvatars ?? [],
-          })
-        );
-
+    setTimeout(() => {
+      this.roomService.getRooms().subscribe((rooms) => {
+        this.rooms = rooms;
+        this.filteredRooms = rooms;
+        this.extractBuildings();
         this.isLoading = false;
+      });
+    }, 1000); // Simulate loading
+  }
 
-        // Force change detection sau khi load xong data
-        this.cdr.detectChanges();
+  extractBuildings(): void {
+    const uniqueBuildings = [
+      ...new Set(this.rooms.map((room) => room.buildingName)),
+    ];
+    this.buildings = [
+      { value: 'all', label: 'Tất cả tòa nhà' },
+      ...uniqueBuildings.map((building) => ({
+        value: building,
+        label: building,
+      })),
+    ];
+  }
 
-        // Thêm một delay nhỏ để đảm bảo virtual scroll render
-        setTimeout(() => {
-          this.cdr.detectChanges();
-        }, 100);
-      },
-      error: (error) => {
-        console.error('Error loading rooms:', error);
-        this.isLoading = false;
-        this.cdr.detectChanges();
-      },
+  filterRooms(): void {
+    this.filteredRooms = this.rooms.filter((room) => {
+      const matchesStatus =
+        this.selectedStatus === 'all' || room.status === this.selectedStatus;
+      const matchesBuilding =
+        this.selectedBuilding === 'all' ||
+        room.buildingName === this.selectedBuilding;
+      const matchesSearch =
+        room.roomNumber.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
+        room.buildingName.toLowerCase().includes(this.searchTerm.toLowerCase());
+
+      return matchesStatus && matchesBuilding && matchesSearch;
     });
   }
 
-  handleImageError(room: RoomModel) {
-    // room.urlImage = '../../../assets/images/avatar_error.svg'; // ảnh lỗi trong local
-    // this.cdr.detectChanges();
+  onStatusChange(): void {
+    this.filterRooms();
   }
 
-  handleAvatarError(room: RoomModel, index: number) {
-    room.urlAvatars[index] = '../../../assets/images/avatar_error.svg'; // ảnh lỗi trong local
-    this.cdr.detectChanges();
+  onBuildingChange(): void {
+    this.filterRooms();
   }
 
-  showMoreAvatars(room: RoomModel) {
-    // Hiển thị dialog hoặc tooltip để xem toàn bộ avatar
-    // console.log('More avatars for room:', room.urlAvatars);
-    // Ví dụ: Mở dialog với danh sách đầy đủ
-    // this.dialog.open(AvatarDialogComponent, { data: room.urlAvatars });
+  onSearchChange(): void {
+    this.filterRooms();
   }
 
-  roomDetail?: RoomDetail;
-  viewRoomDetail(id: number) {
-    this.roomService.getRoomById(id).subscribe({
-      next: (data) => {
-        this.dialog.open(RoomDetail, {
-          maxWidth: '90vw',
-          maxHeight: '90vh',
-          data: data,
-        });
-      },
-
-      error: (error) => {
-        console.error('Error loading rooms:', error);
-      },
-    });
+  updateRoomStatus(room: RoomModel, newStatus: string): void {
+    // const oldStatus = room.status;
+    // this.roomService
+    //   .updateRoomStatus(room.roomID, newStatus)
+    //   .subscribe((success) => {
+    //     if (success) {
+    //       room.status = newStatus;
+    //       this.filterRooms();
+    //       this.snackBar.open(
+    //         `Đã cập nhật trạng thái phòng ${
+    //           room.roomNumber
+    //         } thành ${this.roomService.getStatusText(newStatus)}`,
+    //         'Đóng',
+    //         {
+    //           duration: 3000,
+    //           horizontalPosition: 'right',
+    //           verticalPosition: 'top',
+    //         }
+    //       );
+    //     } else {
+    //       this.snackBar.open('Có lỗi xảy ra khi cập nhật trạng thái', 'Đóng', {
+    //         duration: 3000,
+    //         panelClass: ['error-snackbar'],
+    //       });
+    //     }
+    //   });
   }
 
-  // init filter panel
-  sliderMin = 0;
-  sliderMax = 2000000;
-  minPrice = 1000000;
-  maxPrice = 2000000;
-
-  buildingCode: any = null;
-  searchText: string = '';
-
-  showFilterPanel: boolean = false;
-  filteredRooms: any[] = [];
-
-  onClick_btnCreate() {
-    const dialogRef = this.dialog.open(AddRoom, {
-      height: 'auto',
-      maxHeight: '90vh',
-      minWidth: '60vw',
-      data: {
-        formData: {
-          buildingID: 1,
-          roomNumber: 1,
-          maxGuests: 2,
-          area: 2.4,
-          price: 1300000,
-          images: [],
-          description: '',
-          assets: [],
-        },
-      },
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log(result);
-        // Reload data sau khi thêm mới
-        this.loadRooms();
-      }
-    });
-  }
-
-  onSearchBar(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    // Implement search logic here
-    this.cdr.detectChanges(); // Trigger change detection khi search
-  }
-
-  applyFilter() {
-    // Implement filter logic
-    this.cdr.detectChanges();
-  }
-
-  _applyFilters() {
-    // Implementation for applying filters
-  }
-
-  filters = {
-    minPrice: this.minPrice,
-    maxPrice: this.maxPrice,
-    selectedBuildingCode: this.buildingCode,
-  };
-
-  @ViewChild('filterPanel') filterPanelRef!: ElementRef;
-
-  toggleFilter(event?: MouseEvent) {
-    if (event) event.stopPropagation();
-    this.isFilterPanelOpen = !this.isFilterPanelOpen;
-    this.cdr.detectChanges(); // Force update UI
-  }
-
-  applyFilters() {
-    this.filters.minPrice = this.minPrice;
-    this.filters.maxPrice = this.maxPrice;
-    this.filters.selectedBuildingCode = this.buildingCode;
-    console.log('Áp dụng lọc:', this.filters);
-    this.isFilterPanelOpen = false;
-    this.cdr.detectChanges();
-  }
-
-  clearFilters() {
-    this.minPrice = this.sliderMin;
-    this.maxPrice = this.sliderMax;
-    this.buildingCode = null;
-    this.filters.minPrice = this.minPrice;
-    this.filters.maxPrice = this.maxPrice;
-    this.filters.selectedBuildingCode = this.buildingCode;
-    this.cdr.detectChanges();
-  }
-
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    const target = event.target as HTMLElement;
-    if (
-      this.isFilterPanelOpen &&
-      this.filterPanelRef?.nativeElement &&
-      !this.filterPanelRef.nativeElement.contains(target)
-    ) {
-      this.isFilterPanelOpen = false;
-      this.cdr.detectChanges();
+  getStatusColor(status: string): string {
+    switch (status) {
+      case RoomStatus.AVAILABLE:
+        return 'primary';
+      case RoomStatus.OCCUPIED:
+        return 'warn';
+      case RoomStatus.MAINTAIN:
+        return 'accent';
+      default:
+        return '';
     }
+  }
+
+  getStatusText(status: string): string {
+    switch (status) {
+      case RoomStatus.AVAILABLE:
+        return 'Có sẵn';
+      case RoomStatus.OCCUPIED:
+        return 'Đã thuê';
+      case RoomStatus.MAINTAIN:
+        return 'Bảo trì';
+      default:
+        return 'Không xác định';
+    }
+  }
+
+  getStatusIcon(status: string): string {
+    switch (status) {
+      case RoomStatus.AVAILABLE:
+        return 'check_circle';
+      case RoomStatus.OCCUPIED:
+        return 'person';
+      case RoomStatus.MAINTAIN:
+        return 'build';
+      default:
+        return 'help';
+    }
+  }
+
+  formatPrice(price: number): string {
+    return new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    }).format(price);
+  }
+
+  getRoomStats() {
+    const total = this.rooms.length;
+    const available = this.rooms.filter(
+      (r) => r.status === RoomStatus.AVAILABLE
+    ).length;
+    const occupied = this.rooms.filter(
+      (r) => r.status === RoomStatus.OCCUPIED
+    ).length;
+    const maintain = this.rooms.filter(
+      (r) => r.status === RoomStatus.MAINTAIN
+    ).length;
+
+    return { total, available, occupied, maintain };
+  }
+
+  clearFilters(): void {
+    this.selectedStatus = 'all';
+    this.selectedBuilding = 'all';
+    this.searchTerm = '';
+    this.filterRooms();
   }
 }
