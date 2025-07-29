@@ -13,27 +13,15 @@ namespace Backend.Data
 
             List<string> avatarUrls = new List<string>
                 {
-                    "https://images.unsplash.com/photo-1502685104226-ee32379fefbe",
                     "https://images.pexels.com/photos/415071/pexels-photo-415071.jpeg",
-                    "https://api.dicebear.com/9.x/pixel-art/svg?seed=David",
-                    "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7",
                     "https://images.pexels.com/photos/834863/pexels-photo-834863.jpeg",
-                    "https://api.dicebear.com/9.x/avataaars/svg?seed=Emma",
-                    "https://images.unsplash.com/photo-1522552557455-0f9b42a4c1d3",
                     "https://images.pexels.com/photos/1542085/pexels-photo-1542085.jpeg",
-                    "https://api.dicebear.com/9.x/bottts/svg?seed=Lucas",
-                    "https://images.unsplash.com/photo-1532074205217-d0e1f4b87368",
                     "https://images.pexels.com/photos/1065084/pexels-photo-1065084.jpeg",
-                    "https://api.dicebear.com/9.x/identicon/svg?seed=Olivia",
-                    "https://images.unsplash.com/photo-1488161628813-04466f872be2",
                     "https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg",
-                    "https://api.dicebear.com/9.x/micah/svg?seed=James",
-                    "https://images.unsplash.com/photo-1492106040403-4d27b8bd8a69",
                     "https://images.pexels.com/photos/1674752/pexels-photo-1674752.jpeg",
-                    "https://api.dicebear.com/9.x/adventurer/svg?seed=Sophia",
-                    "https://images.unsplash.com/photo-1519345182560-3f2917c472ef",
                     "https://images.pexels.com/photos/1036623/pexels-photo-1036623.jpeg"
                 };
+
             List<string> roomImageUrls = new List<string>
             {
     "https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg",
@@ -49,12 +37,10 @@ namespace Backend.Data
     "https://images.pexels.com/photos/2079246/pexels-photo-2079246.jpeg",
     "https://images.pexels.com/photos/2062426/pexels-photo-2062426.jpeg",
     "https://images.pexels.com/photos/2467285/pexels-photo-2467285.jpeg",
-    "https://images.pexels.com/photos/2526965/pexels-photo-2526965.jpeg",
     "https://images.pexels.com/photos/259962/pexels-photo-259962.jpeg",
     "https://images.pexels.com/photos/206172/pexels-photo-206172.jpeg",
     "https://images.pexels.com/photos/2082087/pexels-photo-2082087.jpeg",
     "https://images.pexels.com/photos/2062427/pexels-photo-2062427.jpeg",
-    "https://images.pexels.com/photos/2082247/pexels-photo-2082247.jpeg",
     "https://images.pexels.com/photos/439227/pexels-photo-439227.jpeg",
     "https://images.pexels.com/photos/1571459/pexels-photo-1571459.jpeg",
     "https://images.pexels.com/photos/1571460/pexels-photo-1571460.jpeg",
@@ -66,16 +52,6 @@ namespace Backend.Data
     "https://images.pexels.com/photos/1571473/pexels-photo-1571473.jpeg",
     "https://images.pexels.com/photos/1571474/pexels-photo-1571474.jpeg",
     "https://images.pexels.com/photos/1571475/pexels-photo-1571475.jpeg",
-    "https://images.pexels.com/photos/1571476/pexels-photo-1571476.jpeg",
-    "https://images.pexels.com/photos/1571477/pexels-photo-1571477.jpeg",
-    "https://images.pexels.com/photos/1571478/pexels-photo-1571478.jpeg",
-    "https://images.pexels.com/photos/1571479/pexels-photo-1571479.jpeg",
-    "https://images.pexels.com/photos/1571480/pexels-photo-1571480.jpeg",
-    "https://images.pexels.com/photos/1571481/pexels-photo-1571481.jpeg",
-    "https://images.pexels.com/photos/1571482/pexels-photo-1571482.jpeg",
-    "https://images.pexels.com/photos/1571483/pexels-photo-1571483.jpeg",
-    "https://images.pexels.com/photos/1571484/pexels-photo-1571484.jpeg",
-    "https://images.pexels.com/photos/1571485/pexels-photo-1571485.jpeg",
     "https://images.pexels.com/photos/1571486/pexels-photo-1571486.jpeg",
     "https://images.pexels.com/photos/1571487/pexels-photo-1571487.jpeg",
     "https://images.pexels.com/photos/1571488/pexels-photo-1571488.jpeg",
@@ -84,57 +60,19 @@ namespace Backend.Data
     "https://images.pexels.com/photos/1571491/pexels-photo-1571491.jpeg",
     "https://images.pexels.com/photos/1571492/pexels-photo-1571492.jpeg",
     "https://images.pexels.com/photos/1571493/pexels-photo-1571493.jpeg",
-    "https://images.pexels.com/photos/1571494/pexels-photo-1571494.jpeg",
-    "https://images.pexels.com/photos/1571495/pexels-photo-1571495.jpeg",
-    "https://images.pexels.com/photos/1571496/pexels-photo-1571496.jpeg",
-    "https://images.pexels.com/photos/1571497/pexels-photo-1571497.jpeg",
-    "https://images.pexels.com/photos/1571498/pexels-photo-1571498.jpeg",
-    "https://images.pexels.com/photos/1571499/pexels-photo-1571499.jpeg",
-    "https://images.pexels.com/photos/1571500/pexels-photo-1571500.jpeg",
-    "https://images.pexels.com/photos/1571501/pexels-photo-1571501.jpeg",
     "https://images.pexels.com/photos/1571502/pexels-photo-1571502.jpeg",
     "https://images.pexels.com/photos/1571503/pexels-photo-1571503.jpeg",
     "https://images.pexels.com/photos/1571504/pexels-photo-1571504.jpeg",
-    "https://images.pexels.com/photos/1571505/pexels-photo-1571505.jpeg",
     "https://images.pexels.com/photos/1571506/pexels-photo-1571506.jpeg",
-    "https://images.pexels.com/photos/1571507/pexels-photo-1571507.jpeg",
-    "https://images.pexels.com/photos/1571508/pexels-photo-1571508.jpeg",
-    "https://images.pexels.com/photos/1571509/pexels-photo-1571509.jpeg",
     "https://images.pexels.com/photos/1571510/pexels-photo-1571510.jpeg",
-    "https://images.pexels.com/photos/1571511/pexels-photo-1571511.jpeg",
-    "https://images.pexels.com/photos/1571512/pexels-photo-1571512.jpeg",
-    "https://images.pexels.com/photos/1571513/pexels-photo-1571513.jpeg",
     "https://images.pexels.com/photos/1571514/pexels-photo-1571514.jpeg",
-    "https://images.pexels.com/photos/1571515/pexels-photo-1571515.jpeg",
-    "https://images.pexels.com/photos/1571516/pexels-photo-1571516.jpeg",
     "https://images.pexels.com/photos/1571517/pexels-photo-1571517.jpeg",
-    "https://images.pexels.com/photos/1571518/pexels-photo-1571518.jpeg",
-    "https://images.pexels.com/photos/1571519/pexels-photo-1571519.jpeg",
-    "https://images.pexels.com/photos/1571520/pexels-photo-1571520.jpeg",
-    "https://images.pexels.com/photos/1571521/pexels-photo-1571521.jpeg",
     "https://images.pexels.com/photos/1571522/pexels-photo-1571522.jpeg",
-    "https://images.pexels.com/photos/1571523/pexels-photo-1571523.jpeg",
     "https://images.pexels.com/photos/1571524/pexels-photo-1571524.jpeg",
-    "https://images.pexels.com/photos/1571525/pexels-photo-1571525.jpeg",
-    "https://images.pexels.com/photos/1571526/pexels-photo-1571526.jpeg",
-    "https://images.pexels.com/photos/1571527/pexels-photo-1571527.jpeg",
-    "https://images.pexels.com/photos/1571528/pexels-photo-1571528.jpeg",
     "https://images.pexels.com/photos/1571529/pexels-photo-1571529.jpeg",
-    "https://images.pexels.com/photos/1571530/pexels-photo-1571530.jpeg",
-    "https://images.pexels.com/photos/1571531/pexels-photo-1571531.jpeg",
     "https://images.pexels.com/photos/1571532/pexels-photo-1571532.jpeg",
     "https://images.pexels.com/photos/1571533/pexels-photo-1571533.jpeg",
-    "https://images.pexels.com/photos/1571534/pexels-photo-1571534.jpeg",
-    "https://images.pexels.com/photos/1571535/pexels-photo-1571535.jpeg",
     "https://images.pexels.com/photos/1571536/pexels-photo-1571536.jpeg",
-    "https://images.pexels.com/photos/1571537/pexels-photo-1571537.jpeg",
-    "https://images.pexels.com/photos/1571538/pexels-photo-1571538.jpeg",
-    "https://images.pexels.com/photos/1571539/pexels-photo-1571539.jpeg",
-    "https://images.pexels.com/photos/1571540/pexels-photo-1571540.jpeg",
-    "https://images.pexels.com/photos/1571541/pexels-photo-1571541.jpeg",
-    "https://images.pexels.com/photos/1571542/pexels-photo-1571542.jpeg",
-    "https://images.pexels.com/photos/1571543/pexels-photo-1571543.jpeg",
-    "https://images.pexels.com/photos/1571544/pexels-photo-1571544.jpeg"
             };
 
             // Seed Owner
@@ -285,25 +223,25 @@ namespace Backend.Data
 
 
             // Seed ContractDetail
-            if (!context.ContractDetail.Any())
-            {
-                var contractDetailFaker = new Faker<ContractDetail>("vi")
-                    .RuleFor(c => c.ContractID, f => f.PickRandom(contractIds))
-                    .RuleFor(c => c.TenantID, f => f.PickRandom(tenantIds))
-                    .RuleFor(c => c.StartDate, f => DateOnly.FromDateTime(f.Date.Between(
-                                                            new DateTime(2023, 1, 1),
-                                                            new DateTime(2023, 6, 30)
-                                                        )))
-                    .RuleFor(c => c.EndDate, f => DateOnly.FromDateTime(f.Date.Between(
-                                                            new DateTime(2023, 7, 30),
-                                                            new DateTime(2024, 7, 30)
-                                                        )))
-                    .RuleFor(c => c.IsRoomRepresentative, f => f.Random.Bool());
+            // if (!context.ContractDetail.Any())
+            // {
+            //     var contractDetailFaker = new Faker<ContractDetail>("vi")
+            //         .RuleFor(c => c.ContractID, f => f.PickRandom(contractIds))
+            //         .RuleFor(c => c.TenantID, f => f.PickRandom(tenantIds))
+            //         .RuleFor(c => c.StartDate, f => DateOnly.FromDateTime(f.Date.Between(
+            //                                                 new DateTime(2023, 1, 1),
+            //                                                 new DateTime(2023, 6, 30)
+            //                                             )))
+            //         .RuleFor(c => c.EndDate, f => DateOnly.FromDateTime(f.Date.Between(
+            //                                                 new DateTime(2023, 7, 30),
+            //                                                 new DateTime(2024, 7, 30)
+            //                                             )))
+            //         .RuleFor(c => c.IsRoomRepresentative, f => f.Random.Bool());
 
-                    var contractDetails = contractDetailFaker.Generate(400);
-                    context.ContractDetail.AddRange(contractDetails);
-                    context.SaveChanges();
-            }
+            //     var contractDetails = contractDetailFaker.Generate(400);
+            //     context.ContractDetail.AddRange(contractDetails);
+            //     context.SaveChanges();
+            // }
 
 
             // Seed Assets
@@ -447,19 +385,62 @@ namespace Backend.Data
             // }
 
             // Seed RoomImage
-            // if (!context.RoomImage.Any())
+            if (!context.RoomImage.Any())
+            {
+                var roomImages = new List<RoomImage>();
+                var usedKeys = new HashSet<(int RoomID, string ImageURL)>();
+                var random = new Random();
+
+                int maxAttempts = 500; // để tránh vòng lặp vô hạn nếu danh sách ít
+                int i = 0;
+                while (roomImages.Count < 180 && maxAttempts-- > 0)
+                {
+                    var roomId = roomIds[random.Next(roomIds.Count)];
+                    var imageUrl = roomImageUrls[random.Next(roomImageUrls.Count)];
+
+                    var key = (roomId, imageUrl);
+
+                    if (!usedKeys.Contains(key))
+                    {
+                        usedKeys.Add(key);
+                        roomImages.Add(new RoomImage
+                        {
+                            RoomID = roomId,
+                            ImageURL = imageUrl
+                        });
+                    }
+                }
+
+                context.RoomImage.AddRange(roomImages);
+                context.SaveChanges();
+            }
+
+
+            // if (context.RoomImage.Any())
             // {
-            //     var roomImages = new List<RoomImage>();
+            //     var roomImages = context.RoomImage.ToList();
             //     var random = new Random();
-            //     for (int i = 0; i < 180; i++)
+
+            //     foreach (var roomImage in roomImages)
             //     {
-            //         roomImages.Add(new RoomImage
-            //         {
-            //             RoomID = roomIds[random.Next(roomIds.Count)],
-            //             ImageURL = roomImageUrls[random.Next(roomImageUrls.Count)]
-            //         });
+            //         roomImage.ImageURL = roomImageUrls[random.Next(roomImageUrls.Count)];
             //     }
-            //     context.RoomImage.AddRange(roomImages);
+
+            //     context.RoomImage.UpdateRange(roomImages);
+            //     context.SaveChanges();
+            // }
+
+            // if (context.Tenant.Any())
+            // {
+            //     var roomImages = context.Tenant.ToList();
+            //     var random = new Random();
+
+            //     foreach (var roomImage in roomImages)
+            //     {
+            //         roomImage. = roomImageUrls[random.Next(roomImageUrls.Count)];
+            //     }
+
+            //     context.RoomImage.UpdateRange(roomImages);
             //     context.SaveChanges();
             // }
         }
