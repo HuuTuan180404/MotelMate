@@ -1,6 +1,7 @@
 using AutoMapper;
 using BACKEND.Data;
 using BACKEND.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,11 +22,17 @@ namespace MyApp.Namespace
         }
 
         // GET: api/contract
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ContractDTO>>> GetContracts()
         {
-            var contracts = await _context.Contract.ToListAsync();
-            return Ok(_mapper.Map<List<ContractDTO>>(contracts));
+            var contracts = await _context.Contract
+                .Include(c => c.ContractDetail)
+                    .ThenInclude(cd => cd.Tenant)
+                .ToListAsync();
+
+            var result = _mapper.Map<List<ContractDTO>>(contracts);
+            return Ok(result);
         }
     }
 }
