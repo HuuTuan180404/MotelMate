@@ -22,17 +22,19 @@ namespace MyApp.Namespace
         }
 
         // GET: api/contract
-        [Authorize]
+        // [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ContractDTO>>> GetContracts()
         {
             var contracts = await _context.Contract
-                .Include(c => c.ContractDetail)
-                    .ThenInclude(cd => cd.Tenant)
-                .ToListAsync();
-
+                    .Include(c => c.ContractDetail)
+                        .ThenInclude(cd => cd.Tenant)
+                    .Include(c => c.Room)
+                        .ThenInclude(r => r.Building)
+                    .ToListAsync();
             var result = _mapper.Map<List<ContractDTO>>(contracts);
             return Ok(result);
         }
+        
     }
 }

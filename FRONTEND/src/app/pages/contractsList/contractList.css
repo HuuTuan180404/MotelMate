@@ -185,10 +185,10 @@ th {
 .status.active {
   background-color: #4fd1c5;
 }
-.status.expire {
+.status.expired {
   background-color: #f56565;
 }
-.status.terminate {
+.status.terminated {
   background-color: #a0aec0;
 }
 .status.unsigned {

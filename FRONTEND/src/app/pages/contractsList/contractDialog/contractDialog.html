@@ -19,7 +19,7 @@
         </mat-form-field>
         <mat-form-field appearance="outline" hideRequiredMarker="true">
           <mat-label>Room</mat-label>
-          <input matInput type="number" [formControl]="roomCtrl" placeholder="101" (blur)="updateErrorMessage()">
+          <input matInput [formControl]="roomCtrl" placeholder="A-101" (blur)="updateErrorMessage()">
           <mat-icon matSuffix>meeting_room</mat-icon>
           <mat-error *ngIf="roomCtrl.errors">{{errorMessage()}}</mat-error>
         </mat-form-field>
@@ -30,13 +30,13 @@
       <div class= "dialog-element-container">
         <mat-form-field appearance="outline">
           <mat-label>Start Day</mat-label>
-          <input matInput [matDatepicker]="startPicker" [(ngModel)]="formData.start" placeholder="Start Day">
+          <input matInput [matDatepicker]="startPicker" [(ngModel)]="formData.start" placeholder="01/01/1111">
           <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
           <mat-datepicker #startPicker></mat-datepicker>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <mat-label>End Day</mat-label>
-          <input matInput [matDatepicker]="endPicker" [(ngModel)]="formData.end" placeholder="End Day">
+          <input matInput [matDatepicker]="endPicker" [(ngModel)]="formData.end" placeholder="01/01/1111">
           <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
           <mat-datepicker #endPicker></mat-datepicker>
         </mat-form-field>
@@ -47,25 +47,22 @@
       <div class= "dialog-element-container">
         <mat-form-field appearance="outline">
           <mat-label>Deposit</mat-label>
-          <input matInput type="number" step="1000" [(ngModel)]="formData.deposit" placeholder="Deposit">
+          <input matInput type="number" step="1000" [(ngModel)]="formData.deposit" placeholder="100000">
           <mat-icon matSuffix>savings</mat-icon>
         </mat-form-field>
         <mat-form-field appearance="outline">
-          <mat-label>Total</mat-label>
-          <input matInput type="number" step="1000" [(ngModel)]="formData.total" placeholder="Total">
+          <mat-label>Price</mat-label>
+          <input matInput type="number" step="1000" [(ngModel)]="formData.total" placeholder="100000">
           <mat-icon matSuffix>attach_money</mat-icon>
         </mat-form-field>
       </div>
     </div>
     <div class="dialog-element">
-      <span class="dialog-element-label">Status</span>
+      <span class="dialog-element-label">Contract Holder CCCD</span>
       <div class= "dialog-element-container">
         <mat-form-field appearance="outline">
-          <mat-label>Status</mat-label>
-          <mat-select [(ngModel)]="formData.status" placeholder="Status">
-            <mat-option [value]="null">-- None --</mat-option>
-            <mat-option *ngFor="let b of statuses" [value]="b">{{b}}</mat-option>
-          </mat-select>
+          <mat-label>CCCD</mat-label>
+            <input matInput type="number" [(ngModel)]="formData.total" placeholder="0522...">
           <mat-icon matSuffix>info</mat-icon>
         </mat-form-field>
       </div>
