@@ -47,22 +47,6 @@ namespace BACKEND.Controllers
             return Ok(_mapper.Map<List<ReadRoomDTO>>(rooms));
         }
 
-        [HttpGet("userinfo")]
-        public IActionResult GetUserInfo()
-        {
-            // var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            var username = User.Identity?.Name; // hoặc: User.FindFirst(ClaimTypes.Name)?.Value;
-            var role = User.FindFirst(ClaimTypes.Role)?.Value;
-
-            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!long.TryParse(userIdStr, out var userId))
-            {
-                return Unauthorized("User ID not found or invalid");
-            }
-
-            return Ok(new { userId, username, role });
-        }
-
         // GET: api/Rooms/5
         [Authorize]
         [HttpGet("{id}")]
