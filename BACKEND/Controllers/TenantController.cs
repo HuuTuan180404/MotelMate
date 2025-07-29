@@ -1,7 +1,9 @@
+using System.Security.Claims;
 using AutoMapper;
 using BACKEND.Data;
 using BACKEND.DTOs;
 using BACKEND.DTOs.RoomDTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,7 @@ namespace BACKEND.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TenantController : ControllerBase
     {
         private readonly MotelMateDbContext _context;
@@ -25,7 +28,21 @@ namespace BACKEND.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadTenantDTO>>> GetTenants()
         {
-            var tenants = await _context.Tenant.Include(t => t.ContractDetails).ToListAsync();
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!long.TryParse(userIdStr, out var ownerId))
+            {
+                return Unauthorized("User ID not found or invalid");
+            }
+
+            var tenants = await _context.Tenant
+                        .Include(t => t.ContractDetails)
+                            .ThenInclude(cd => cd.Contract)
+                                .ThenInclude(c => c.Room)
+                                    .ThenInclude(r => r.Building)
+                        .Where(t => t.ContractDetails.Any(cd =>
+                            cd.Contract.Room.Building.OwnerID == ownerId))
+                        .ToListAsync();
+
             return Ok(_mapper.Map<List<ReadTenantDTO>>(tenants));
         }
 
