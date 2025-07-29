@@ -8,7 +8,7 @@ import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { Auth } from './auth/auth';
+import { AuthInterceptor } from './auth/auth.interceptor';
 import { LoadingInterceptor } from './services/loading.interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -22,7 +22,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: Auth,
+      useClass: AuthInterceptor,
       multi: true
     },
     {
