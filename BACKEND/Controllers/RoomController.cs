@@ -25,6 +25,7 @@ namespace BACKEND.Controllers
         }
 
         // GET: api/room
+        [Authorize]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadRoomDTO>>> GetRooms()
         {

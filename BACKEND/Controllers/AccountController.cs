@@ -1,15 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using BACKEND.DTOs.AuthDTO;
-using BACKEND.Enums;
 using BACKEND.Interfaces;
-using BACKEND.Models;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace BACKEND.Controllers
 {
@@ -17,134 +9,61 @@ namespace BACKEND.Controllers
     [Route("api/[controller]")]
     public class AccountController : ControllerBase
     {
-        private readonly UserManager<Account> _userManager;
-        private readonly ITokenService _tokenService;
+        private readonly IAuthService _authService;
 
-        public AccountController(UserManager<Account> userManager, ITokenService tokenService, IConfiguration config)
+        public AccountController(IAuthService authService)
         {
-            _userManager = userManager;
-            _tokenService = tokenService;
+            _authService = authService;
         }
+
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            Account user;
-
-            if (!string.IsNullOrEmpty(model.AccountName) && model.AccountNo > 0 && model.BankCode > 0)
-            {
-                user = new Owner
-                {
-                    UserName = model.UserName,
-                    Email = model.Email,
-                    CCCD = model.CCCD,
-                    FullName = model.FullName,
-                    Bdate = model.Bdate,
-                    URLAvatar = model.URLAvatar,
-                    Status = EAccountStatus.Active,
-                    AccountNo = model.AccountNo,
-                    AccountName = model.AccountName,
-                    BankCode = model.BankCode,
-                    SecurityStamp = Guid.NewGuid().ToString()
-                };
-            }
-            else
-            {
-                user = new Tenant
-                {
-                    UserName = model.UserName,
-                    Email = model.Email,
-                    CCCD = model.CCCD,
-                    FullName = model.FullName,
-                    Bdate = model.Bdate,
-                    URLAvatar = model.URLAvatar,
-                    Status = EAccountStatus.Active,
-                    SecurityStamp = Guid.NewGuid().ToString()
-                };
-            }
-
-            var result = await _userManager.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
-                return BadRequest(result.Errors);
-
-            if (user is Owner)
-            {
-                await _userManager.AddToRoleAsync(user, "Owner");
-            }
-            else
-            {
-                await _userManager.AddToRoleAsync(user, "Tenant");
-            }
-
-            return Ok(new
-            {
-                Message = "User registered successfully.",
-                UserId = user.Id,
-                Role = user is Owner ? "Owner" : "Tenant"
-            });
+            var (success, result) = await _authService.Register(model);
+            return success ? Ok(result) : BadRequest(result);
         }
-    
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
-            var user = await _userManager.FindByNameAsync(model.Username);
-
-            if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
-                return Unauthorized("Invalid username or password");
-
-            var roles = await _userManager.GetRolesAsync(user);
-
-            var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
-            var refreshToken = _tokenService.GenerateRefreshToken();
-
-            await _tokenService.StoreRefreshTokenAsync(user, refreshToken);
-
-            // Gửi refresh token qua HTTP-only cookie
-            var cookieOptions = new CookieOptions
+            var (success, result) = await _authService.Login(model);
+            
+            if (success && result is { } successResult)
             {
-                HttpOnly = true,
-                SameSite = SameSiteMode.None, 
-                Expires = DateTime.UtcNow.AddYears(100)
-            };
-            Response.Cookies.Append("refreshToken", refreshToken, cookieOptions);
-
-            // Trả access token qua body
-            return Ok(new
-            {
-                accessToken
-            });
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddYears(100)
+                };
+                Response.Cookies.Append("refreshToken", (result as dynamic)?.RefreshToken, cookieOptions);
+                
+                return Ok(new { AccessToken = (result as dynamic)?.AccessToken });
+            }
+                
+            return Unauthorized(result);
         }
 
-        [Authorize]
         [HttpPost("refresh")]
         public async Task<IActionResult> Refresh()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(userId);
-
-            var storedRefreshToken = await _tokenService.GetRefreshTokenAsync(user);
-            string? refreshTokenFromCookie = Request.Cookies["refreshToken"];
-
-            if (storedRefreshToken != refreshTokenFromCookie)
-                return Unauthorized(refreshTokenFromCookie);
-
-            var newAccessToken = await _tokenService.GenerateAccessTokenAsync(user);
-            var newRefreshToken = _tokenService.GenerateRefreshToken();
-
-            await _tokenService.StoreRefreshTokenAsync(user, newRefreshToken);
-            var cookieOptions = new CookieOptions
+            var refreshToken = Request.Cookies["refreshToken"];
+            var (success, result) = await _authService.RefreshToken(refreshToken);
+            
+            if (success && result is { } successResult)
             {
-                HttpOnly = true,
-                SameSite = SameSiteMode.None, 
-                Expires = DateTime.UtcNow.AddYears(100)
-            };
-            Response.Cookies.Append("refreshToken", newRefreshToken, cookieOptions);
-            return Ok(new
-            {
-                accessToken = newAccessToken,
-            });
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.Strict,
+                    Expires = DateTime.UtcNow.AddYears(100)
+                };
+                Response.Cookies.Append("refreshToken", (result as dynamic)?.RefreshToken, cookieOptions);
+                
+                return Ok(new { AccessToken = (result as dynamic)?.AccessToken });
+            }
+            
+            return Unauthorized(result);
         }
     }
 }

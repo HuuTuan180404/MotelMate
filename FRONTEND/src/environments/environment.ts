@@ -11,4 +11,5 @@ export const environment = {
     getAsset: 'http://localhost:5223/api',
     serviceApi: 'http://localhost:5223/api/service',
   },
+  apiUrl:'http://localhost:5223'
 };

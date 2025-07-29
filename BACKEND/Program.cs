@@ -11,6 +11,8 @@ using BACKEND.Service;
 using Microsoft.OpenApi.Models;
 using BACKEND.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Logging;
+using Microsoft.AspNetCore.Authentication.Google;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -79,16 +81,32 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(
             System.Text.Encoding.UTF8.GetBytes(builder.Configuration["JWT:SigningKey"])
-        )
+        ),
+        ValidateLifetime = true,
+        ClockSkew = TimeSpan.Zero
     };
 });
+// builder.Services.AddAuthentication(options =>
+// {
+//     options.DefaultScheme = "Cookies";
+//     options.DefaultChallengeScheme = "Google";
+// })
+// .AddCookie()
+// .AddGoogle(options =>
+// {
+//     options.ClientId = builder.Configuration["Authentication:Google:ClientId"]!;
+//     options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"]!;
+//     options.CallbackPath = "/signin-google";
+// });
+
 builder.Services.AddAuthorization(options =>
 {
-    options.AddPolicy("OwnerPolicy", p => p.RequireRole("Owner"));
-    options.AddPolicy("TenantPolicy", p => p.RequireRole("Tenant"));
+    options.AddPolicy("Owner", p => p.RequireRole("Owner"));
+    options.AddPolicy("Tenant", p => p.RequireRole("Tenant"));
 });
 
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
