@@ -150,7 +150,7 @@ namespace BACKEND.Service
                     (u, t) => new { User = u, Token = t })
                 .Where(x => x.Token.Name == "RefreshToken" && x.Token.Value == refreshToken)
                 .Select(x => x.User)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync() ?? throw new Exception("Invalid refresh token");
         }
     }
 }

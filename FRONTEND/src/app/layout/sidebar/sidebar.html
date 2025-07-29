@@ -38,9 +38,16 @@
 
     <h3><span>Account</span></h3>
     <li *ngFor="let item of accountMenu">
-      <a [routerLink]="item.route" routerLinkActive="active">
-        <span class="material-symbols-outlined">{{item.icon}}</span>
-        {{item.label}}
+      <!-- Nếu có action thì gọi hàm -->
+      <a *ngIf="item.action" (click)="item.action()" class="clickable-link">
+        <span class="material-symbols-outlined">{{ item.icon }}</span>
+        {{ item.label }}
+      </a>
+
+      <!-- Nếu có route thì dùng routerLink -->
+      <a *ngIf="!item.action && item.route" [routerLink]="item.route" routerLinkActive="active">
+        <span class="material-symbols-outlined">{{ item.icon }}</span>
+        {{ item.label }}
       </a>
     </li>
   </ul>
