@@ -57,8 +57,6 @@ export class AssetManagement {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
-
-    console.log(this._assets);
   }
 
   onClick_btnCreate() {
