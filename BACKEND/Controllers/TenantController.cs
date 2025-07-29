@@ -21,9 +21,6 @@ namespace BACKEND.Controllers
             _mapper = mapper;
         }
 
-
-
-
         // GET: api/tenant
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadTenantDTO>>> GetTenants()
@@ -43,6 +40,4 @@ namespace BACKEND.Controllers
         //     return Ok(_mapper.Map<ReadTenantDTO>(tenant));
         // }
     }
-
-
 }
