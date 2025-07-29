@@ -4,6 +4,7 @@ using BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BACKEND.Migrations
 {
     [DbContext(typeof(MotelMateDbContext))]
-    partial class MotelMateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250728025214_AddExtraCost")]
+    partial class AddExtraCost
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,9 +134,6 @@ namespace BACKEND.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AssetID"));
 
-                    b.Property<int?>("BuildingID")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -150,8 +150,6 @@ namespace BACKEND.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AssetID");
-
-                    b.HasIndex("BuildingID");
 
                     b.ToTable("Asset");
                 });
@@ -370,9 +368,6 @@ namespace BACKEND.Migrations
 
                     b.Property<int>("ServiceID")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("InitialPrice")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -758,15 +753,6 @@ namespace BACKEND.Migrations
                     b.HasDiscriminator().HasValue("Tenant");
                 });
 
-            modelBuilder.Entity("BACKEND.Models.Asset", b =>
-                {
-                    b.HasOne("BACKEND.Models.Building", "Building")
-                        .WithMany("Assets")
-                        .HasForeignKey("BuildingID");
-
-                    b.Navigation("Building");
-                });
-
             modelBuilder.Entity("BACKEND.Models.AuditLog", b =>
                 {
                     b.HasOne("BACKEND.Models.Account", "Account")
@@ -902,7 +888,7 @@ namespace BACKEND.Migrations
             modelBuilder.Entity("BACKEND.Models.Room", b =>
                 {
                     b.HasOne("BACKEND.Models.Building", "Building")
-                        .WithMany("Rooms")
+                        .WithMany("Room")
                         .HasForeignKey("BuildingID");
 
                     b.Navigation("Building");
@@ -1010,9 +996,7 @@ namespace BACKEND.Migrations
 
             modelBuilder.Entity("BACKEND.Models.Building", b =>
                 {
-                    b.Navigation("Assets");
-
-                    b.Navigation("Rooms");
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("BACKEND.Models.Contract", b =>

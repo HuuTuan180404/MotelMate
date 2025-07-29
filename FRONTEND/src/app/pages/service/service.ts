@@ -188,12 +188,29 @@ export class Service implements OnInit{
   }
 
   saveEdit(service: ServiceItem) {
+    const hasChanges = JSON.stringify(this.originalService) !== JSON.stringify(service);
+
+    if (!hasChanges) {
+      this.snackBar.open('No changes detected.', 'Close', {
+        duration: 2000,
+        verticalPosition: 'top',
+        panelClass: 'custom-snackbar-success'
+      });
+      this.editingServiceID = null;
+      this.originalService = null;
+      return;
+    }
+
     if (!service.unit.trim()) {
       this.snackBar.open('Unit must not be empty.', 'Close', { duration: 3000, verticalPosition: 'top', panelClass: 'custom-snackbar'});
       return;
     }
     if (service.customerPrice <= 0) {
       this.snackBar.open('Customer price must be greater than 0.', 'Close', { duration: 3000, verticalPosition: 'top', panelClass: 'custom-snackbar' });
+      return;
+    }
+    if (service.initialPrice <= 0) {
+      this.snackBar.open('Initial price must be greater than 0.', 'Close', { duration: 3000, verticalPosition: 'top', panelClass: 'custom-snackbar' });
       return;
     }
     if (service.isTiered && service.serviceTier) {
@@ -222,6 +239,7 @@ export class Service implements OnInit{
       }
       service.serviceTier.sort((a, b) => a.fromQuantity - b.fromQuantity);
     }
+
     this.serviceService.editService(service).subscribe({
       next: () => {
         this.dataSource.data = [...this.services];

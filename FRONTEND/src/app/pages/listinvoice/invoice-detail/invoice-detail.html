@@ -5,51 +5,112 @@
   </button>
 </h2>
 
-<div mat-dialog-content>
-  <p><strong>Invoice Code:</strong> {{ data.invoiceCode }}</p>
-  <p><strong>Building:</strong> {{ data.building }}</p>
-  <p><strong>Room:</strong> {{ data.room }}</p>
-  <p><strong>Month:</strong> {{ data.month }}</p>
-  <p><strong>Period:</strong> {{ data.periodStart }} - {{ data.periodEnd }}</p>
-  <p><strong>Due Date:</strong> {{ data.due }}</p>
-  <p><strong>Created At:</strong> {{ data.createAt }}</p>
+<div mat-dialog-content class="dialog-body">
+  <!-- Invoice Info Section -->
+  <div class="invoice-info">
+    <div><strong>Invoice Code:</strong> {{ data.invoiceCode }}</div>
+    <div><strong>Building:</strong> {{ data.building }}</div>
+    <div><strong>Room:</strong> {{ data.room }}</div>
+    <div><strong>Month:</strong> {{ data.month }}</div>
+    <div><strong>Period:</strong> {{ data.periodStart }} - {{ data.periodEnd }}</div>
 
-  <div *ngIf="data.extraCosts?.length">
-    <h4>Extra Costs</h4>
-    <ul>
-      <li *ngFor="let cost of data.extraCosts">
-        {{ cost.description }} - {{ cost.amount | number }} VND
-      </li>
-    </ul>
+    <div>
+      <strong>Due Date:</strong>
+      <ng-container *ngIf="editing; else viewDueDate">
+        <input matInput [matDatepicker]="picker" [(ngModel)]="data.due" />
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-datepicker #picker></mat-datepicker>
+      </ng-container>
+      <ng-template #viewDueDate>{{ data.due }}</ng-template>
+    </div>
+
+    <div><strong>Created At:</strong> {{ data.createAt }}</div>
+
+    <div>
+      <strong>Status:</strong>
+      <ng-container *ngIf="editing; else viewStatus">
+        <mat-form-field appearance="fill" class="status-field">
+          <mat-label>Status</mat-label>
+          <mat-select [(ngModel)]="data.status">
+            <mat-option *ngFor="let status of statuses" [value]="status">{{ status }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </ng-container>
+      <ng-template #viewStatus>{{ data.status }}</ng-template>
+    </div>
   </div>
 
-  <div *ngIf="data.services?.length">
-    <h4>Services</h4>
+  <!-- Details Table -->
+  <div class="section">
+    <h4>Details</h4>
     <table class="service-table">
       <thead>
         <tr>
-          <th>Service</th>
+          <th>Description</th>
           <th>Quantity</th>
+          <th>Unit</th>
           <th>Initial Price</th>
-          <th>Final Price</th>
+          <th>Price</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let s of data.services">
           <td>{{ s.name }}</td>
-          <td>{{ s.quantity }}</td>
+          <td>
+            <ng-container *ngIf="editing; else readonlyQuantity">
+              <input type="number" [(ngModel)]="s.quantity" min="0" style="width: 60px;" />
+            </ng-container>
+            <ng-template #readonlyQuantity>{{ s.quantity }}</ng-template>
+          </td>
+          <td>{{ s.unit }}</td>
           <td>{{ s.initialPrice | number }}</td>
-          <td>{{ s.finalPrice | number }}</td>
+          <td>{{ s.price | number }}</td>
+        </tr>
+
+        <tr *ngFor="let cost of data.extraCosts">
+          <td>
+            <ng-container *ngIf="editing; else readonlyCostDesc">
+              <input type="text" [(ngModel)]="cost.description" style="width: 100px;" />
+            </ng-container>
+            <ng-template #readonlyCostDesc>{{ cost.description }}</ng-template>
+            <span class="extra-cost-tag">(Extra Cost)</span>
+          </td>
+          <td colspan="2"></td>
+          <td colspan="2">
+            <ng-container *ngIf="editing; else readonlyCostAmount">
+              <input type="number" [(ngModel)]="cost.amount" min="0" />
+            </ng-container>
+            <ng-template #readonlyCostAmount>{{ cost.amount | number }}</ng-template>
+          </td>
+        </tr>
+
+        <tr class="total-row">
+          <td colspan="3"><strong>Total</strong></td>
+          <td>{{ data.totalInitialAmount | number }}</td>
+          <td>{{ data.total | number }}</td>
         </tr>
       </tbody>
     </table>
   </div>
-
-  <p><strong>Total:</strong> {{ data.total | number }} VND</p>
-  <p><strong>Status:</strong> {{ data.status }}</p>
 </div>
 
-<div mat-dialog-actions align="end" *ngIf="data.status !== 'Paid'">
-  <button mat-button color="warn" (click)="delete()">Delete</button>
-  <button mat-button color="primary" (click)="edit()">Update</button>
+<!-- Actions -->
+<div mat-dialog-actions align="end">
+  <ng-container *ngIf="!editing">
+    <button mat-icon-button color="primary" matTooltip="Edit" (click)="editing = true">
+      <mat-icon style="color: #45a9ea;">edit</mat-icon>
+    </button>
+    <button mat-icon-button color="warn" matTooltip="Delete" (click)="delete()">
+      <mat-icon style="color: #f44336;">delete</mat-icon>
+    </button>
+  </ng-container>
+
+  <ng-container *ngIf="editing">
+    <button mat-icon-button color="primary" matTooltip="Save" (click)="save()">
+      <mat-icon style="color: #4CAF50;">check</mat-icon>
+    </button>
+    <button mat-icon-button matTooltip="Cancel" (click)="cancelEdit()">
+      <mat-icon style="color: #a0aec0;">close</mat-icon>
+    </button>
+  </ng-container>
 </div>
