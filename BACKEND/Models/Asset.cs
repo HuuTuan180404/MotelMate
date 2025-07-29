@@ -28,6 +28,8 @@ namespace BACKEND.Models
         [Required]
         public EAssetType Type { get; set; }
 
+        // thêm cột của building id
+
         public virtual ICollection<RoomAsset> RoomAsset { get; set; }
     }
 }

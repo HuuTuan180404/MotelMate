@@ -59,20 +59,17 @@ export class TenantManagement implements AfterViewInit, OnInit {
     });
   }
 
-  onClick_btnCreate() {
-    // console.log('create new tenant');
+  onButtonCreateClick() {
+    console.log('onButtonCreateClick()');
+  }
+
+  onRowDoubleClick(row: TenantModel) {
+    console.log(row);
     const dialogRef = this.dialog.open(TenantDetail, {
       height: 'auto',
       maxHeight: '90vh',
       minWidth: '60vw',
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log(result);
-        // Reload data sau khi thêm mới
-        // this.loadRooms();
-      }
+      data: row,
     });
   }
 

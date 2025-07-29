@@ -21,6 +21,9 @@ namespace BACKEND.Mappers
                             .Select(cd => cd.Tenant.FullName)
                             .FirstOrDefault() ?? string.Empty
                         : string.Empty));
+
+            // created by Tuan
+            CreateMap<ContractDetail, ContractDetailDTO>();
         }
     }
 }

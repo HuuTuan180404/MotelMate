@@ -16,8 +16,17 @@ namespace BACKEND.DTOs
         public decimal Price { get; set; }
         public decimal Deposit { get; set; }
         public EContractStatus Status { get; set; }
-        public string? Description { get; set; } 
-        
+        public string? Description { get; set; }
+
+    }
+
+    // created by Tuan
+    public partial class ContractDetailDTO
+    {
+        public int ContractID { get; set; }
+        public int TenantID { get; set; }
+        public DateOnly StartDate { get; set; }
+        public DateOnly EndDate { get; set; }
+        public bool? IsRoomRepresentative { get; set; }
     }
 }
- 

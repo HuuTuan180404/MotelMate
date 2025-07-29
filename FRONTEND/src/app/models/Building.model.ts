@@ -5,3 +5,13 @@ export interface Building {
   address: string;
   ownerID: number;
 }
+
+export interface BuildingWithRoomsModel {
+  buildingID: number;
+  buildingName: string;
+  buildingAddress: string;
+  rooms: {
+    roomID: number;
+    roomNumber: string;
+  }[];
+}

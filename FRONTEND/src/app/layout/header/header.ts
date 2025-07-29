@@ -1,4 +1,8 @@
 import { Component } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { SendNotification } from '../../pages/sendrequest/sendnotification';
+import { Observable } from 'rxjs';
+import { TenantModel } from '../../models/Tenant.model';
 
 @Component({
   selector: 'app-header',
@@ -7,7 +11,35 @@ import { Component } from '@angular/core';
   styleUrl: './header.css',
 })
 export class Header {
+  lastNotification: any = null;
+
+  constructor(private dialogSendRequest: MatDialog) {}
   sendMessage() {
-    console.log('send message');
+    this.openNotificationPopup();
+  }
+
+  openNotificationPopup(): void {
+    console.log('Mở popup gửi thông báo');
+
+    const dialogRef = this.dialogSendRequest.open(SendNotification, {
+      width: '50%',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('Kết quả từ popup:', result);
+        this.lastNotification = result;
+        this.showSuccessMessage();
+      } else {
+        console.log('Người dùng đã hủy');
+      }
+    });
+  }
+
+  showSuccessMessage(): void {
+    console.log('Hiển thị thông báo thành công');
+    alert('Gửi thông báo thành công!');
   }
 }
