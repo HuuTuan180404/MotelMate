@@ -10,11 +10,13 @@ export interface ReadInvoice {
 }
 
 export interface ExtraCost {
+  extraCostID: number;
   description: string;
   amount: number;
 }
 
 export interface ServiceDetail {
+  serviceID: number;
   name: string;
   quantity: number;
   unit: string;
@@ -23,6 +25,7 @@ export interface ServiceDetail {
 }
 
 export interface ReadInvoiceDetail {
+  invoiceID: number;
   invoiceCode: string;
   building: string;
   room: string;
@@ -37,3 +40,22 @@ export interface ReadInvoiceDetail {
   extraCosts: ExtraCost[];
   services: ServiceDetail[];
 }
+
+export interface UpdateInvoice {
+  dueDate: string; // yyyy-MM-dd (DateOnly bên backend => string ở frontend)
+  status: string;  // Enum dạng string (Paid, Unpaid, Overdue...)
+  extraCosts: UpdateExtraCost[];
+  invoiceDetails: UpdateInvoiceDetail[];
+}
+
+export interface UpdateExtraCost {
+  extraCostID: number;
+  description: string;
+  amount: number;
+}
+
+export interface UpdateInvoiceDetail {
+  serviceID: number;
+  quantity: number;
+}
+

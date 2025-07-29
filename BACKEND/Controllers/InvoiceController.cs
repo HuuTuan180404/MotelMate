@@ -6,6 +6,8 @@ using BACKEND.DTOs.InvoiceDTO;
 using BACKEND.Data;
 using AutoMapper.QueryableExtensions;
 using BACKEND.Enums;
+using System.Security.Claims;
+
 
 namespace BACKEND.Controllers
 {
@@ -16,14 +18,17 @@ namespace BACKEND.Controllers
         private readonly MotelMateDbContext _context = context;
         private readonly IMapper _mapper = mapper;
 
-        // GET: api/Invoice
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadInvoiceDTO>>> GetInvoices()
         {
+            int currentAccountId = GetCurrentAccountId();
+            Console.WriteLine($"[DEBUG] Current Account ID: {currentAccountId}");
             var invoices = await _context.Invoice
                 .Include(i => i.Contract)
                     .ThenInclude(c => c.Room)
                         .ThenInclude(r => r.Building)
+                            .ThenInclude(b => b.Owner)
+                .Where(i => i.Contract.Room.Building.OwnerID == currentAccountId)
                 .ProjectTo<ReadInvoiceDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
@@ -72,7 +77,7 @@ namespace BACKEND.Controllers
             return NoContent();
         }
 
-         // PUT: api/Invoice/{id}
+        // PUT: api/Invoice/{id}
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateInvoice(int id, UpdateInvoiceDTO dto)
         {
@@ -137,7 +142,7 @@ namespace BACKEND.Controllers
                                 var applicableQty = Math.Min(remainingQuantity, tierRange);
 
                                 initialPrice += applicableQty * tier.GovUnitPrice;
-                                customerPrice += applicableQty * service.CustomerPrice; // giả sử CustomerPrice cố định
+                                customerPrice += applicableQty * service.CustomerPrice; 
 
                                 remainingQuantity -= applicableQty;
                             }
@@ -162,5 +167,15 @@ namespace BACKEND.Controllers
 
             return NoContent();
         }
+        private int GetCurrentAccountId()
+        {
+            var accountIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out int accountId))
+            {
+                return accountId;
+            }
+            return 0;
+        }
+
     }
 }

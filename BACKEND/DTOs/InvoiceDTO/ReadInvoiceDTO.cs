@@ -13,6 +13,7 @@ namespace BACKEND.DTOs.InvoiceDTO
     }
     public class ReadInvoiceDetailDTO
     {
+        public int InvoiceID { get; set; }
         public string InvoiceCode { get; set; } = string.Empty;
         public string Building { get; set; } = string.Empty;
         public string Room { get; set; } = string.Empty;
@@ -31,12 +32,14 @@ namespace BACKEND.DTOs.InvoiceDTO
 
     public class ExtraCostDTO
     {
+        public int ExtraCostID { get; set; }
         public string Description { get; set; } = string.Empty;
         public decimal Amount { get; set; }
     }
 
     public class ServiceDetailDTO
     {
+        public int ServiceID { get; set; }
         public string Name { get; set; } = string.Empty;
         public int Quantity { get; set; }
         public string Unit { get; set; } = string.Empty;
