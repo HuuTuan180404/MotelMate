@@ -41,8 +41,9 @@ export class AuthService {
   }
 
   logout(): void {
+    const headers = { 'Skip-Auth-Interceptor': 'true' };
     if (!this.isBrowser) return;
-
+    this.http.post(`${environment.apiUrl}/api/Account/logout`, {}, { withCredentials: true, headers }).subscribe();
     sessionStorage.removeItem('accessToken');
     this.isAuthenticatedSubject.next(false);
     this.router.navigate(['/login']);
@@ -54,7 +55,7 @@ export class AuthService {
   }
 
   refreshToken(): Observable<any> {
-    // Thêm header để skip interceptor  
+    // Thêm header để skip interceptor
     const headers = { 'Skip-Auth-Interceptor': 'true' };
 
     return this.http
@@ -63,7 +64,7 @@ export class AuthService {
         {},
         {
           withCredentials: true,
-          headers: headers
+          headers: headers,
         }
       )
       .pipe(

@@ -27,7 +27,7 @@ namespace BACKEND.Controllers
         public async Task<IActionResult> Login([FromBody] LoginDTO model)
         {
             var (success, result) = await _authService.Login(model);
-            
+
             if (success && result is { } successResult)
             {
                 var cookieOptions = new CookieOptions
@@ -37,10 +37,10 @@ namespace BACKEND.Controllers
                     Expires = DateTime.UtcNow.AddYears(100)
                 };
                 Response.Cookies.Append("refreshToken", (result as dynamic)?.RefreshToken, cookieOptions);
-                
+
                 return Ok(new { AccessToken = (result as dynamic)?.AccessToken });
             }
-                
+
             return Unauthorized(result);
         }
 
@@ -49,7 +49,7 @@ namespace BACKEND.Controllers
         {
             var refreshToken = Request.Cookies["refreshToken"];
             var (success, result) = await _authService.RefreshToken(refreshToken);
-            
+
             if (success && result is { } successResult)
             {
                 var cookieOptions = new CookieOptions
@@ -59,11 +59,24 @@ namespace BACKEND.Controllers
                     Expires = DateTime.UtcNow.AddYears(100)
                 };
                 Response.Cookies.Append("refreshToken", (result as dynamic)?.RefreshToken, cookieOptions);
-                
+
                 return Ok(new { AccessToken = (result as dynamic)?.AccessToken });
             }
-            
+
             return Unauthorized(result);
+        }
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout()
+        {
+            var refreshToken = Request.Cookies["refreshToken"];
+
+            if (refreshToken != null)
+            {
+                Response.Cookies.Delete("refreshToken");
+                return Ok();
+            }
+
+            return Unauthorized();
         }
     }
 }
