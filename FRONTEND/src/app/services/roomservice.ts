@@ -20,4 +20,11 @@ export class RoomService {
       `${environment.apiURL.getTenant}/room/${id}`
     );
   }
+
+  // của building service
+  getBuildingWithRooms(): Observable<object[]> {
+    return this.http.get<object[]>(
+      `${environment.apiURL.getTenant}/noti/with-rooms`
+    );
+  }
 }

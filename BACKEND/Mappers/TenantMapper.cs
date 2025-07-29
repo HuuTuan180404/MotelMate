@@ -10,10 +10,8 @@ namespace BACKEND.Mappers
         public TenantMapper()
         {
             CreateMap<Tenant, ReadTenantDTO>()
-                .ForMember(t => t.Status, opt => opt.MapFrom(src => src.Status.ToString()));
-
-            CreateMap<ReadTenantDTO, Tenant>()
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<EAccountStatus>(src.Status, true)));
+                .ForMember(t => t.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(t => t.ContractDetails, opt => opt.MapFrom(src => src.ContractDetails.ToList()));
         }
     }
 }
