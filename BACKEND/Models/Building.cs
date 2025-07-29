@@ -9,7 +9,8 @@ namespace BACKEND.Models
     {
         public Building()
         {
-            this.Room = new HashSet<Room>();
+            this.Rooms = new HashSet<Room>();
+            this.Assets = new HashSet<Asset>();
         }
 
         [Key]
@@ -28,6 +29,7 @@ namespace BACKEND.Models
         [ForeignKey(nameof(Owner))]
         public int OwnerID { get; set; }
         public required virtual Owner Owner { get; set; }
-        public virtual ICollection<Room> Room { get; set; }
+        public virtual ICollection<Room> Rooms { get; set; }
+        public virtual ICollection<Asset> Assets { get; set; }
     }
 }
