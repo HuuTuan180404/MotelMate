@@ -1,271 +1,280 @@
-<div class="room-management-container">
-  <!-- Header with Stats -->
-  <mat-card class="header-card">
-    <mat-card-header>
-      <mat-icon>home</mat-icon>
-      <h2>Room Management</h2>
-    </mat-card-header>
-
-    <mat-card-content>
-      <div class="stats-grid">
-        <mat-card class="stat-card total">
-          <mat-card-content>
-            <div class="stat-content">
-              <mat-icon>home_work</mat-icon>
-              <div class="stat-info">
-                <div class="stat-number">{{ getRoomStats().total }}</div>
-                <div class="stat-label">Total</div>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="stat-card available">
-          <mat-card-content>
-            <div class="stat-content">
-              <mat-icon>check_circle</mat-icon>
-              <div class="stat-info">
-                <div class="stat-number">{{ getRoomStats().available }}</div>
-                <div class="stat-label">AVAILABLE</div>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="stat-card occupied">
-          <mat-card-content>
-            <div class="stat-content">
-              <mat-icon>person</mat-icon>
-              <div class="stat-info">
-                <div class="stat-number">{{ getRoomStats().occupied }}</div>
-                <div class="stat-label">OCCUPIED</div>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
-        <mat-card class="stat-card maintain">
-          <mat-card-content>
-            <div class="stat-content">
-              <mat-icon>build</mat-icon>
-              <div class="stat-info">
-                <div class="stat-number">{{ getRoomStats().maintain }}</div>
-                <div class="stat-label">MAINTENANCE</div>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
+<div class="room-management">
+  <header class="header">
+    <div class="title">
+      <h2>ROOM MANAGEMENT</h2>
+      <!-- Hiển thị thông tin tổng quan -->
+      <div class="summary-info" *ngIf="!isLoading">
+        <span class="total-rooms">
+          Showing {{ displayedRooms.length }} of {{ totalFilteredRooms }} rooms
+          <span *ngIf="totalFilteredRooms !== allRooms.length">
+            ({{ allRooms.length }} total)
+          </span>
+        </span>
       </div>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Filters -->
-  <mat-card class="filters-card">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>filter_list</mat-icon>
-        Filter
-      </mat-card-title>
-    </mat-card-header>
-
-    <mat-card-content>
-      <div class="filters-grid">
+    </div>
+    <div class="right-section">
+      <button
+        mat-icon-button
+        (click)="toggleFilter($event)"
+        matTooltip="Filter"
+        id="btn-open-filter-panel"
+        [class.active]="isFilterPanelOpen"
+      >
+        <span class="material-symbols-outlined">filter_arrow_right</span>
+      </button>
+      <div class="search-box">
         <mat-form-field appearance="outline" class="search-field">
-          <mat-label>Tìm kiếm</mat-label>
+          <mat-label>Search</mat-label>
           <input
             matInput
-            [(ngModel)]="searchTerm"
-            (input)="onSearchChange()"
-            placeholder="Tìm theo số phòng hoặc tòa nhà..."
+            placeholder="Search rooms, buildings..."
+            [(ngModel)]="searchText"
+            (input)="onSearchBar($event)"
+            #input
           />
           <mat-icon matSuffix>search</mat-icon>
-        </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Trạng thái</mat-label>
-          <mat-select
-            [(ngModel)]="selectedStatus"
-            (selectionChange)="onStatusChange()"
+          <!-- Clear search button -->
+          <button
+            mat-icon-button
+            matSuffix
+            *ngIf="searchText"
+            (click)="resetSearch('',{target: {value: ''}})"
+            matTooltip="Clear search"
           >
-            <mat-option
-              *ngFor="let option of statusOptions"
-              [value]="option.value"
-            >
-              <mat-icon>{{ option.icon }}</mat-icon>
-              {{ option.label }}
-            </mat-option>
-          </mat-select>
+            <mat-icon>close</mat-icon>
+          </button>
         </mat-form-field>
-
-        <mat-form-field appearance="outline">
-          <mat-label>Tòa nhà</mat-label>
-          <mat-select
-            [(ngModel)]="selectedBuilding"
-            (selectionChange)="onBuildingChange()"
-          >
-            <mat-option
-              *ngFor="let building of buildings"
-              [value]="building.value"
-            >
-              {{ building.label }}
-            </mat-option>
-          </mat-select>
-        </mat-form-field>
-
-        <button mat-raised-button color="accent" (click)="clearFilters()">
-          <mat-icon>clear</mat-icon>
-          Xóa bộ lọc
-        </button>
       </div>
-    </mat-card-content>
-  </mat-card>
+      <button
+        mat-flat-button
+        (click)="onClick_btnCreate()"
+        class="button create-btn"
+        matTooltip="Create room"
+      >
+        <mat-icon>add</mat-icon>
+        <span>Create</span>
+      </button>
+    </div>
+  </header>
 
-  <!-- Loading -->
+  <!-- Loading Spinner -->
   <div *ngIf="isLoading" class="loading-container">
     <mat-spinner diameter="50"></mat-spinner>
-    <p>Đang tải dữ liệu...</p>
+    <p>Loading rooms...</p>
   </div>
 
-  <!-- Room Grid -->
-  <div *ngIf="!isLoading" class="room-grid">
-    <mat-card
-      *ngFor="let room of filteredRooms"
-      class="room-card"
-      [class]="'status-' + room.status"
+  <!-- Rooms Grid -->
+  <div class="rooms" *ngIf="!isLoading">
+    <div
+      class="card"
+      (click)="viewRoomDetail(room.roomID)"
+      *ngFor="let room of displayedRooms; trackBy: trackByRoomId"
+      [attr.data-room-id]="room.roomID"
     >
-      <!-- Room Image -->
-      <div class="room-image-container">
+      <div class="image">
         <img
-          aria-label="room image"
-          mat-card-image
+          aria-label="Room image"
           [src]="room.urlImage"
-          [alt]="'Phòng ' + room.roomNumber"
+          [alt]="'Room ' +
+        room.roomNumber"
+          (error)="handleImageError(room)"
+          loading="lazy"
         />
-        <mat-chip-set class="status-chip-container">
-          <mat-chip [color]="getStatusColor(room.status)" selected>
-            <mat-icon matChipAvatar>{{ getStatusIcon(room.status) }}</mat-icon>
-            {{ getStatusText(room.status) }}
-          </mat-chip>
-        </mat-chip-set>
+        <!-- Status badge -->
+        <div class="status-badge" [ngClass]="'status-' + room.status">
+          {{ room.status }}
+        </div>
       </div>
-
-      <!-- Room Content -->
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>meeting_room</mat-icon>
-          Phòng {{ room.roomNumber }}
-        </mat-card-title>
-        <mat-card-subtitle>
-          <mat-icon>business</mat-icon>
-          {{ room.buildingName }}
-        </mat-card-subtitle>
-      </mat-card-header>
-
-      <mat-card-content>
-        <div class="room-price">
-          <mat-icon>attach_money</mat-icon>
-          <span>{{ formatPrice(room.price) }}/tháng</span>
+      <div class="info">
+        <div class="section-room-status">
+          <span
+            class="icon-status"
+            [ngClass]="{
+              'status-Available': room.status === 'Available',
+              'status-Occupied': room.status === 'Occupied',
+              'status-Maintenance': room.status === 'Maintenance'
+            }"
+          ></span>
+          <label>{{ room.status }}</label>
         </div>
-
-        <!-- Avatars -->
-        <div class="avatars-section" *ngIf="room.urlAvatars.length > 0">
-          <div class="avatars-header">
-            <mat-icon>people</mat-icon>
-            <span>Người thuê ({{ room.urlAvatars.length }})</span>
-          </div>
-          <div class="avatars-list">
+        <div class="groupPrice">
+          <h4 class="buildingID">Building: {{ room.buildingName }}</h4>
+        </div>
+        <div class="section-room-number">
+          <h4 class="roomID">Code: {{ room.roomNumber }}</h4>
+        </div>
+        <div class="section-price">
+          <span class="material-symbols-outlined">money_bag</span>
+          <label class="price">{{ room.price | number: "1.0-0" }} VND</label>
+        </div>
+        <div class="section-avatars" *ngIf="room.urlAvatars.length > 0">
+          <div class="imgs">
             <img
-              aria-label="avatar"
-              *ngFor="let avatar of room.urlAvatars; let i = index"
-              [src]="avatar"
-              [alt]="'Người thuê ' + (i + 1)"
-              class="avatar"
-              [matTooltip]="'Người thuê ' + (i + 1)"
+              *ngFor="let item of room.urlAvatars | slice: 0:4; let i = index"
+              [src]="item"
+              alt="Avatar"
+              (error)="handleAvatarError(room, i)"
+              loading="lazy"
             />
+            <span
+              *ngIf="room.urlAvatars.length > 4"
+              class="more-avatars"
+              (click)="showMoreAvatars(room); $event.stopPropagation()"
+              matTooltip="View more avatars"
+            >
+              +{{ room.urlAvatars.length - 4 }}
+            </span>
           </div>
         </div>
+      </div>
+    </div>
 
-        <div
-          class="empty-avatars"
-          *ngIf="room.urlAvatars.length === 0 && room.status === 'occupied'"
-        >
-          <mat-icon>person_outline</mat-icon>
-          <span>Chưa có thông tin người thuê</span>
-        </div>
-      </mat-card-content>
+    <!-- Empty State -->
+    <div *ngIf="displayedRooms.length === 0" class="empty-state">
+      <mat-icon>home</mat-icon>
+      <h3>No rooms found</h3>
+      <p
+        *ngIf="searchText || buildingCode || minPrice > sliderMin || maxPrice < sliderMax"
+      >
+        Try adjusting your search or filter criteria
+      </p>
+      <p
+        *ngIf="!searchText && !buildingCode && minPrice <= sliderMin && maxPrice >= sliderMax"
+      >
+        No rooms available at the moment
+      </p>
+      <button
+        mat-stroked-button
+        (click)="clearFilters()"
+        *ngIf="searchText || buildingCode || minPrice > sliderMin || maxPrice < sliderMax"
+      >
+        Clear Filters
+      </button>
+    </div>
+  </div>
 
-      <!-- Room Actions -->
-      <mat-card-actions>
-        <mat-form-field appearance="fill" class="status-select">
-          <mat-label>Cập nhật trạng thái</mat-label>
-          <mat-select [value]="room.status">
-            <!-- (selectionChange)="updateRoomStatus(room, $event.value)" -->
-            <mat-option value="available">
-              <mat-icon>check_circle</mat-icon>
-              Có sẵn
-            </mat-option>
-            <mat-option value="occupied">
-              <mat-icon>person</mat-icon>
-              Đã thuê
-            </mat-option>
-            <mat-option value="maintain">
-              <mat-icon>build</mat-icon>
-              Bảo trì
+  <!-- Pagination -->
+  <div
+    class="pagination-container"
+    *ngIf="!isLoading && totalFilteredRooms > pageSize"
+  >
+    <mat-paginator
+      [length]="totalFilteredRooms"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="pageSizeOptions"
+      [pageIndex]="currentPage"
+      (page)="onPageChange($event)"
+      showFirstLastButtons
+    >
+    </mat-paginator>
+  </div>
+
+  <!-- Filter Panel -->
+  <div class="filter-panel" [class.open]="isFilterPanelOpen" #filterPanel>
+    <div class="filter-header">
+      <h3>Filter Options</h3>
+      <button mat-icon-button (click)="toggleFilter($event)" class="close-btn">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
+
+    <div class="filter-stats" *ngIf="!isLoading">
+      <p>
+        {{ totalFilteredRooms }} of {{ allRooms.length }} rooms match your
+        criteria
+      </p>
+    </div>
+
+    <div class="btn-container">
+      <button mat-raised-button color="primary" (click)="applyFilters()">
+        <mat-icon>filter_list</mat-icon>
+        Apply Filters
+      </button>
+      <button mat-stroked-button (click)="clearFilters()">
+        <mat-icon>clear</mat-icon>
+        Clear All
+      </button>
+    </div>
+
+    <div class="filter-container">
+      <!-- Building Dropdown -->
+      <div class="filter-section">
+        <h4>Building</h4>
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Select Building</mat-label>
+          <mat-select
+            [(value)]="buildingCode"
+            (selectionChange)="onBuildingChange()"
+          >
+            <mat-option *ngFor="let option of options" [value]="option.code">
+              {{ option.name }}
             </mat-option>
           </mat-select>
         </mat-form-field>
+      </div>
 
-        <button
-          mat-icon-button
-          [matMenuTriggerFor]="roomMenu"
-          matTooltip="Thêm tùy chọn"
+      <!-- Price Range Slider -->
+      <div class="filter-section">
+        <h4>Price Range</h4>
+        <div class="price-display">
+          <span class="price-label">
+            {{ minPrice | number: "1.0-0" }} - {{ maxPrice | number: "1.0-0" }}
+            VND
+          </span>
+        </div>
+        <mat-slider
+          [min]="sliderMin"
+          [max]="sliderMax"
+          [step]="100000"
+          [discrete]="true"
+          class="price-slider"
         >
-          <mat-icon>more_vert</mat-icon>
-        </button>
+          <input
+            aria-label="Minimum price"
+            [(value)]="minPrice"
+            (input)="onPriceRangeChange()"
+            matSliderStartThumb
+          />
+          <input
+            aria-label="Maximum price"
+            [(value)]="maxPrice"
+            (input)="onPriceRangeChange()"
+            matSliderEndThumb
+          />
+        </mat-slider>
+        <div class="price-range-labels">
+          <span>{{ sliderMin | number: "1.0-0" }}</span>
+          <span>{{ sliderMax | number: "1.0-0" }}</span>
+        </div>
+      </div>
 
-        <mat-menu #roomMenu="matMenu">
-          <button mat-menu-item>
-            <mat-icon>edit</mat-icon>
-            <span>Chỉnh sửa</span>
+      <!-- Quick Filters -->
+      <div class="filter-section">
+        <h4>Quick Filters</h4>
+        <div class="quick-filters">
+          <button
+            mat-stroked-button
+            [color]="searchText.includes('Available') ? 'primary' : ''"
+            (click)="resetSearch('Available',{target: {value: 'Available'}})"
+          >
+            Available Only
           </button>
-          <button mat-menu-item>
-            <mat-icon>visibility</mat-icon>
-            <span>Xem chi tiết</span>
+          <button
+            mat-stroked-button
+            [color]="minPrice === sliderMax * 0.8 ? 'primary' : ''"
+            (click)="minPrice = sliderMax * 0.8; onPriceRangeChange()"
+          >
+            Premium Rooms
           </button>
-          <button mat-menu-item>
-            <mat-icon>delete</mat-icon>
-            <span>Xóa</span>
-          </button>
-        </mat-menu>
-      </mat-card-actions>
-    </mat-card>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <!-- Empty State -->
-  <mat-card
-    *ngIf="!isLoading && filteredRooms.length === 0"
-    class="empty-state-card"
-  >
-    <mat-card-content>
-      <div class="empty-state">
-        <mat-icon class="empty-icon">search_off</mat-icon>
-        <h3>Không tìm thấy phòng nào</h3>
-        <p>Thử thay đổi bộ lọc để xem thêm phòng</p>
-        <button mat-raised-button color="primary" (click)="clearFilters()">
-          <mat-icon>refresh</mat-icon>
-          Đặt lại bộ lọc
-        </button>
-      </div>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Floating Action Button -->
-  <button
-    mat-fab
-    color="primary"
-    class="fab-button"
-    matTooltip="Thêm phòng mới"
-  >
-    <mat-icon>add</mat-icon>
-  </button>
+  <!-- Overlay for mobile -->
+  <div
+    class="filter-overlay"
+    [class.show]="isFilterPanelOpen"
+    (click)="toggleFilter()"
+  ></div>
 </div>
