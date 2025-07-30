@@ -9,13 +9,12 @@ namespace BACKEND.Models
     {
         public Building()
         {
-            this.Room = new HashSet<Room>();
+            this.Rooms = new HashSet<Room>();
+            this.Assets = new HashSet<Asset>();
         }
 
         [Key]
         public int BuildingID { get; set; }
-
-        public required string BuildingCode { get; set; }
 
         [Required]
         [StringLength(255)]
@@ -25,9 +24,12 @@ namespace BACKEND.Models
         [StringLength(255)]
         public required string Address { get; set; }
 
+        public required string ImageURL { get; set; }
+
         [ForeignKey(nameof(Owner))]
         public int OwnerID { get; set; }
         public required virtual Owner Owner { get; set; }
-        public virtual ICollection<Room> Room { get; set; }
+        public virtual ICollection<Room> Rooms { get; set; }
+        public virtual ICollection<Asset> Assets { get; set; }
     }
 }

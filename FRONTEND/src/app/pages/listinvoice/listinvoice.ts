@@ -16,22 +16,9 @@ import { InvoiceCreateForm } from './invoice-create-form/invoice-create-form';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatDateRangeInput, MatDateRangePicker } from '@angular/material/datepicker';
-
-export interface Invoice {
-  invoiceCode: string;
-  building: string;
-  room: number;
-  month: string;
-  due: string;
-  createAt: string;
-  periodStart: string;
-  periodEnd: string;
-  extraCosts: { description: string; amount: number }[];
-  services: { name: string; quantity: string; initialPrice: number; finalPrice: number }[];
-  total: number;
-  status: 'Paid' | 'Unpaid' | 'Overdue';
-}
-
+import { InvoiceService } from '../../services/invoice-service';
+import { ReadInvoice } from '../../models/Invoice.model';
+import { ReadInvoiceDetail } from '../../models/Invoice.model';
 
 @Component({
   selector: 'app-listinvoice',
@@ -58,72 +45,13 @@ export interface Invoice {
   styleUrl: './listinvoice.css'
 })
 export class Listinvoice {
-  invoices: Invoice[] = [
-    {
-    invoiceCode: 'INV001',
-    building: 'ABCHome',
-    room: 201,
-    month: '6/2025',
-    due: '07/10/2025',
-    createAt: '07/01/2025',
-    periodStart: '06/01/2025',
-    periodEnd: '06/30/2025',
-    extraCosts: [
-      { description: 'Maintenance fee', amount: 500000 }
-    ],
-    services: [
-      { name: 'Electricity', quantity: '50kWh', initialPrice: 100000, finalPrice: 150000 },
-      { name: 'WiFi', quantity: '1 tháng', initialPrice: 50000, finalPrice: 100000 }
-    ],
-    total: 2000000,
-    status: 'Unpaid'
-  },
-  {
-    invoiceCode: 'INV002',
-    building: 'ABCHome',
-    room: 202,
-    month: '6/2025',
-    due: '07/10/2025',
-    createAt: '07/01/2025',
-    periodStart: '06/01/2025',
-    periodEnd: '06/30/2025',
-    extraCosts: [],
-    services: [
-      { name: 'Electricity', quantity: '30kWh', initialPrice: 60000, finalPrice: 90000 },
-      { name: 'Water', quantity: '10m³', initialPrice: 30000, finalPrice: 45000 }
-    ],
-    total: 1200000,
-    status: 'Paid'
-  },
-  {
-    invoiceCode: 'INV003',
-    building: 'SkyVilla',
-    room: 305,
-    month: '6/2025',
-    due: '07/10/2025',
-    createAt: '07/01/2025',
-    periodStart: '06/01/2025',
-    periodEnd: '06/30/2025',
-    extraCosts: [
-      { description: 'Repair', amount: 300000 }
-    ],
-    services: [
-      { name: 'Electricity', quantity: '60kWh', initialPrice: 120000, finalPrice: 180000 },
-      { name: 'WiFi', quantity: '1 tháng', initialPrice: 50000, finalPrice: 100000 },
-      { name: 'Parking', quantity: '1 xe', initialPrice: 50000, finalPrice: 50000 }
-    ],
-    total: 2500000,
-    status: 'Overdue'
-  }
+  invoices: ReadInvoice[] = [];
 
-  ];
-
-  dataSource = new MatTableDataSource<Invoice>();
+  dataSource = new MatTableDataSource<ReadInvoice>();
   displayedColumns: string[] = ['building', 'room', 'month', 'due', 'total', 'status'];
 
   searchTerm = '';
-  buildings = ['ABCHome', 'QHome'];
-  rooms = [101, 102, 201, 310];
+  buildings = ['Tòa nhà j', 'QHome'];
   statuses = ['Paid', 'Overdue', 'Unpaid'];
 
   filters = {
@@ -137,10 +65,20 @@ export class Listinvoice {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private invoiceService: InvoiceService) {}
 
   ngOnInit(): void {
-    this.applyFilters();
+    this.invoiceService.getInvoices().subscribe({
+      next: (data) => {
+        this.invoices = data;
+        this.applyFilters();
+      },
+      error: (err) => {
+        console.error('Failed to fetch invoices', err);
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -221,22 +159,37 @@ export class Listinvoice {
     document.body.removeChild(link);
   }
 
-  openInvoiceDetail(inv: Invoice) {
-    this.dialog.open(InvoiceDetail, {
-      width: '400px',
-      data: inv
+  
+  openInvoiceDetail(inv: ReadInvoice) {
+    this.invoiceService.getInvoiceDetail(inv.invoiceID).subscribe({
+      next: (detail: ReadInvoiceDetail) => {
+        const dialogRef = this.dialog.open(InvoiceDetail, {
+          width: '600px',
+          data: {
+            ...detail,
+            invoiceID: inv.invoiceID  
+          }
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+          if (result?.action === 'delete') {
+            this.invoices = this.invoices.filter(i => i.invoiceID !== result.invoiceID);
+            this.applyFilters();
+          } else if (result?.action === 'edit') {
+            // Handle edit logic here
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Failed to fetch invoice detail', err);
+      }
     });
   }
+
+
   openCreateForm() {
     const dialogRef = this.dialog.open(InvoiceCreateForm, {
-      width: '400px',
-      data: {
-        building: '',
-        room: 0,
-        month: '',
-        due: '',
-        total: 0
-      }
+      panelClass: 'custom-dialog-panel',
     });
 
     dialogRef.afterClosed().subscribe(result => {

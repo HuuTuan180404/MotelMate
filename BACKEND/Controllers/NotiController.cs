@@ -29,13 +29,13 @@ namespace BACKEND.Controllers
         public async Task<ActionResult<IEnumerable<object>>> GetBuildingsWithRooms()
         {
             var buildingRooms = await _context.Building
-                                                .Include(r => r.Room)
+                                                .Include(r => r.Rooms)
                                                 .Select(b => new
                                                 {
                                                     BuildingID = b.BuildingID,
                                                     BuildingName = b.Name,
                                                     BuildingAddress = b.Address,
-                                                    Rooms = b.Room.Select(r => new
+                                                    Rooms = b.Rooms.Select(r => new
                                                     {
                                                         RoomID = r.RoomID,
                                                         RoomNumber = r.RoomNumber

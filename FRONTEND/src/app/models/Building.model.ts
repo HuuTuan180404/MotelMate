@@ -1,11 +1,14 @@
 export interface Building {
   buildingID: number;
-  buildingCode: string;
   name: string;
   address: string;
-  ownerID: number;
+  imageURL: string;
+  totalRooms: number;
+  availableRooms: number;
+  occupiedRooms: number;
+  maintenanceRooms: number;
+  totalTenants: number;
 }
-
 export interface BuildingWithRoomsModel {
   buildingID: number;
   buildingName: string;

@@ -64,7 +64,6 @@ export class TenantManagement implements AfterViewInit, OnInit {
   }
 
   onRowDoubleClick(row: TenantModel) {
-    console.log(row);
     const dialogRef = this.dialog.open(TenantDetail, {
       height: 'auto',
       maxHeight: '90vh',
