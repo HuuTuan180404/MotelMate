@@ -37,6 +37,7 @@ export interface ReadInvoiceDetail {
   total: number;
   totalInitialAmount: number;
   status: string;
+  roomPrice: number;
   extraCosts: ExtraCost[];
   services: ServiceDetail[];
 }
