@@ -6,6 +6,7 @@ using BACKEND.DTOs.BuildingDTO;
 using BACKEND.Data;
 using AutoMapper.QueryableExtensions;
 using BACKEND.Enums;
+using System.Security.Claims;
 
 namespace BACKEND.Controllers
 {
@@ -65,6 +66,26 @@ namespace BACKEND.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateBuilding([FromBody] CreateBuildingDTO createDTO)
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (userIdClaim == null)
+            {
+                return Unauthorized("User is not authenticated.");
+            }
+
+            int ownerId = int.Parse(userIdClaim);
+            var building = _mapper.Map<Building>(createDTO);
+            building.OwnerID = ownerId;
+
+            _context.Building.Add(building);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetBuildingSummary), new { id = building.BuildingID }, null);
         }
 
 

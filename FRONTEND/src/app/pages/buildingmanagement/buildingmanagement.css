@@ -82,17 +82,7 @@ th {
 .search-field .mat-mdc-form-field-subscript-wrapper {
   display: none;
 }
-.search-container button:not(.create-btn) {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background-color: #f0f0f0;
-  border: 1px solid #e0e0e0;
-  gap: 0.5rem;
-}
+
 
 /* Filters Row */
 .filters-row {
@@ -193,10 +183,31 @@ th {
     font-size: 0.75rem;
   }
 }
+.main {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.building-list-container {
+  /* flex: 1; */
+  flex: 1 1 auto;
+  overflow-y: auto;
+  margin-left: var(--border-radius);
+  margin-right: var(--border-radius);
+  margin-bottom: 10vh;
+  /* overflow: auto; */
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  
+}
+.building-list-container::-webkit-scrollbar {
+  display: none;             /* Chrome, Safari, Opera */
+}
 .building-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
+  
 }
 
 /* Building Card */
@@ -215,7 +226,7 @@ th {
 }
 
 .building-card-header {
-  height: 180px;
+  height: 200px;
   background-size: cover;
   background-position: center;
 }
@@ -224,7 +235,7 @@ th {
   padding: 12px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .building-name {
@@ -260,4 +271,17 @@ th {
 .add-form mat-form-field {
   width: 100%;
   margin-bottom: 12px;
+}
+::ng-deep .mat-mdc-snack-bar-container.custom-snackbar .mdc-snackbar__surface {
+  background-color: #f44336 !important;
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 8px !important;
+}
+
+::ng-deep .mat-mdc-snack-bar-container.custom-snackbar-success .mdc-snackbar__surface {
+  background-color: var(--primary-color) !important;
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 8px !important;
 }

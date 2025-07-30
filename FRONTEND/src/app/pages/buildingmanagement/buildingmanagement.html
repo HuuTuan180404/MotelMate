@@ -17,9 +17,10 @@
 
     </div>
 </div>
+<div class="building-list-container">
 <div class="building-grid">
   <div class="building-card" *ngFor="let b of filteredbuilding">
-    <div class="building-card-header" [style.backgroundImage]="'url(/assets/images/default-building.jpg)'"></div>
+    <div class="building-card-header" [style.backgroundImage]="'url(' + (b.imageURL || '/assets/images/default-building.jpg') + ')'"></div>
     <div class="building-card-body">
       <div class="building-name">{{ b.name }}</div>
       <div class="building-address">{{ b.address }}</div>
@@ -32,12 +33,16 @@
         <div><strong>Maintenance:</strong> {{ b.maintenanceRooms }}</div>
       </div>
       <div class="stats-row">
-        <div><strong>Tenants:</strong> {{ b.totalTenants }}</div>
+        <div><strong>Total Tenants:</strong> {{ b.totalTenants }}</div>
       </div>
     </div>
     <div class="actions">
-      <button mat-icon-button color="primary"><mat-icon>edit</mat-icon></button>
-      <button mat-icon-button color="warn"><mat-icon>delete</mat-icon></button>
+      <button mat-icon-button color="primary"><mat-icon style="color: #45a9ea;">edit</mat-icon></button>
+      <button mat-icon-button color="warn" (click)="deleteBuilding(b.buildingID)">
+        <mat-icon style="color: #f44336;">delete</mat-icon>
+      </button>
+
     </div>
   </div>
+</div>
 </div>

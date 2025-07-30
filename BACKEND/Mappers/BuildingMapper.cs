@@ -25,6 +25,9 @@ namespace BACKEND.Mappers
                 ));
             CreateMap<UpdateBuildingDTO, Building>()
                 .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null));
+
+            CreateMap<CreateBuildingDTO, Building>();
+
         }
     }
 }

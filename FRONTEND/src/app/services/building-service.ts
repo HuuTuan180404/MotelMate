@@ -16,4 +16,7 @@ export class BuildingService {
     return this.http.get<Building[]>(this.apiUrl);
   }
 
+  deleteBuilding(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
 }
