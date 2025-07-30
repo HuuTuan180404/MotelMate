@@ -1,3 +1,4 @@
+
 ::ng-deep .mat-mdc-dialog-surface {
   border-radius: var(--border-radius);
   max-width: 100%;
@@ -59,4 +60,23 @@
 mat-error {
   display: block !important;
   color: red !important;
+}
+.snackbar-error {
+  background-color: #d0f0c0; /* xanh nhạt */
+  color: #1b5e20;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  animation: slideInRight 0.4s ease-in-out;
+}
+
+/* Slide từ phải vào */
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }

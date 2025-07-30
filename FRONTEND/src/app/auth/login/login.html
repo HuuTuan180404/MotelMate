@@ -1,59 +1,43 @@
 <div class="login-wrapper">
   <div class="background-overlay"></div>
-
   <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()">
     <img src="/assets/images/logo.svg" alt="Logo" class="logo" />
-    <p style="margin-top: 0; margin-bottom: 1rem">Please Login your account.</p>
+    <p class="title" style="margin-top: 0; margin-bottom: 1rem">Please Login your account.</p>
 
     <!-- username -->
-    <input type="text" formControlName="username" placeholder="username" />
-    <div class="error-feedback">
-      <small
-        *ngIf="form.controls['username'].errors?.['required'] && form.controls['username'].touched"
-      >
-        username is required
-      </small>
-      <small
-        *ngIf="form.controls['username'].errors?.['username'] && form.controls['username'].touched"
-      >
+    <mat-form-field appearance="outline" class="full-width">
+      <input matInput formControlName="username" placeholder="Username" />
+      <mat-error *ngIf="form.controls['username'].errors?.['required']">
+        Username is required
+      </mat-error>
+      <mat-error *ngIf="form.controls['username'].errors?.['username']">
         Invalid username
-      </small>
-    </div>
+      </mat-error>
+    </mat-form-field>
 
     <!-- Password -->
-    <input type="password" formControlName="password" placeholder="Password" />
-    <div class="error-feedback">
-      <small
-        *ngIf="form.controls['password'].errors?.['required'] && form.controls['password'].touched"
-      >
+    <mat-form-field appearance="outline" class="full-width">
+      <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Password" />
+      <button mat-icon-button matSuffix tabindex="-1" type="button" (click)="hidePassword = !hidePassword">
+        <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-error *ngIf="form.controls['password'].errors?.['required']">
         Password is required
-      </small>
-      <small
-        *ngIf="form.controls['password'].errors?.['minlength'] && form.controls['password'].touched"
-      >
+      </mat-error>
+      <mat-error *ngIf="form.controls['password'].errors?.['minlength']">
         Min 6 characters
-      </small>
-    </div>
-
-    
+      </mat-error>
+    </mat-form-field>
 
     <!-- Login button -->
-    <button class="btn btn-primary" type="submit" [disabled]="form.invalid">
+    <button mat-raised-button color="primary" class="btn btn-primary" type="submit" [disabled]="form.invalid">
       Log In
-    </button>
-
-    <div class="divider">or</div>
-
-    <!-- Google -->
-    <button type="button" class="btn btn-google">
-      <img src="/assets/images/gg.svg" style="width: 15px" alt="Google" />
-      Continue With Google
     </button>
 
     <!-- Register -->
     <p class="register">
       New member here?
-      <a routerLink="/register" style="color: #3591cd">Register Now</a>
+      <a routerLink="/register" class="register-link">Register Now</a>
     </p>
   </form>
 </div>

@@ -65,6 +65,7 @@ namespace BACKEND.Controllers
 
             return Unauthorized(result);
         }
+
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()
         {

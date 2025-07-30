@@ -1,26 +1,42 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
-import { RouterLink, RouterModule, Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
-import { AuthService } from '../auth.service';
+import { Component } from "@angular/core";
+import { CommonModule } from "@angular/common";
+import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from "@angular/forms";
+import { RouterLink, RouterModule, Router } from "@angular/router";
+import { HttpClient } from "@angular/common/http";
+import { environment } from "../../../environments/environment";
+import { AuthService } from "../auth.service";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatButtonModule } from "@angular/material/button";
+import { MatIconModule } from "@angular/material/icon";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatError, MatSuffix } from "@angular/material/form-field";
+import { MatIcon } from "@angular/material/icon";
 
 @Component({
-  selector: 'app-login',
+  selector: "app-login",
   standalone: true,
   imports: [
     CommonModule,
     ReactiveFormsModule,
     RouterLink,
-    RouterModule
+    RouterModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDividerModule,
+    MatError,
+    MatSuffix,
+    MatIcon,
   ],
-  templateUrl: './login.html',
-  styleUrls: ['./login.css']
+  templateUrl: "./login.html",
+  styleUrls: ["./login.css"],
 })
 export class Login {
   form!: FormGroup;
   private apiUrl = environment.apiUrl;
+  hidePassword = true;
 
   constructor(
     private http: HttpClient,
@@ -29,28 +45,28 @@ export class Login {
     private authService: AuthService
   ) {
     this.form = this.fb.group({
-      username: ['', [Validators.required]],
-      password: ['', [Validators.required, Validators.minLength(6)]]
+      username: ["", [Validators.required]],
+      password: ["", [Validators.required, Validators.minLength(6)]],
     });
   }
 
   ngOnInit() {
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/dashboard']);
+      this.router.navigate(["/dashboard"]);
     }
   }
+
   onSubmit() {
     if (this.form.invalid) return;
 
     const { username, password } = this.form.value;
-
     this.authService.login({ username, password }).subscribe({
       next: () => {
-        this.router.navigate(['/dashboard']);
+        this.router.navigate(["/dashboard"]);
       },
       error: (err) => {
-        console.error('Login failed', err);
-      }
+        console.error("Login failed", err);
+      },
     });
   }
 }

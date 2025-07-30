@@ -13,7 +13,7 @@ namespace BACKEND.Mappers
     {
         public ContractMapper()
         {
-            CreateMap<Contract, ContractDTO>()
+            CreateMap<Contract, ContractDTOs>()
                 .ForMember(dest => dest.ContractHolder, opt => opt.MapFrom(src =>
                     src.ContractDetail != null
                         ? src.ContractDetail

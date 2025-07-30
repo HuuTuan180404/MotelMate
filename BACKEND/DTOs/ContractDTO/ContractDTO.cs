@@ -3,7 +3,7 @@ namespace BACKEND.DTOs
     using System;
     using BACKEND.Enums;
 
-    public partial class ContractDTO
+    public partial class ContractDTOs
     {
         public string? ContractCode { get; set; }
         public string ContractHolder { get; set; }

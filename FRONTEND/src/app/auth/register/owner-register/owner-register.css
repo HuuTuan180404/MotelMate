@@ -1,4 +1,4 @@
-.login-wrapper {
+.register-wrapper {
   position: relative;
   min-height: 100vh;
   width: 100%;
@@ -7,6 +7,7 @@
   align-items: center;
   overflow: hidden;
   flex-direction: column;
+  padding: 2rem 0;
 }
 
 .background-overlay {
@@ -20,7 +21,7 @@
   z-index: 0;
 }
 
-.login-form {
+.register-form {
   background-color: white;
   padding: 2rem 3rem;
   width: 100%;
@@ -30,11 +31,25 @@
   text-align: center;
   z-index: 1;
   box-sizing: border-box;
+  margin: 1rem;
 }
 
-.login-form .logo {
-  width: 120px;
+.register-form .logo {
+  width: 80px;
   margin-bottom: 1rem;
+}
+
+.form-title {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 0.5rem 0;
+}
+
+.form-subtitle {
+  color: #666;
+  font-size: 0.9rem;
+  margin: 0 0 1.5rem 0;
 }
 
 /* Angular Material Form Field Styling */
@@ -43,20 +58,21 @@
   margin-bottom: 1rem;
 }
 
-.login-form ::ng-deep .mat-mdc-form-field {
+.register-form ::ng-deep .mat-mdc-form-field {
   width: 100%;
 }
 
-.login-form ::ng-deep .mat-mdc-text-field-wrapper {
+.register-form ::ng-deep .mat-mdc-text-field-wrapper {
   border-radius: 8px;
 }
 
-.login-form ::ng-deep .mat-mdc-form-field-outline {
+.register-form ::ng-deep .mat-mdc-form-field-outline {
   border-radius: 8px;
 }
 
 /* Button Styling */
 .btn {
+  margin-top: 1rem;
   padding: 12px 24px;
   width: 100%;
   border-radius: 8px;
@@ -76,18 +92,14 @@
   color: #666 !important;
 }
 
-.login-form ::ng-deep .mat-mdc-divider {
-  border-top-color: #e0e0e0;
-}
-
-/* Register Link */
-.register {
+/* Login Link */
+.login-link {
   margin-top: 1.5rem;
   font-size: 0.85rem;
   color: #666;
 }
 
-.register-link {
+.back-link {
   color: #3591cd !important;
   text-decoration: none;
   font-weight: 500;
@@ -95,33 +107,33 @@
   min-width: auto !important;
 }
 
-.register-link:hover {
+.back-link:hover {
   text-decoration: underline;
 }
 
 /* Material Icon Styling */
-.login-form ::ng-deep .mat-mdc-form-field-icon-suffix {
+.register-form ::ng-deep .mat-mdc-form-field-icon-suffix {
   color: #666;
 }
 
 /* Error Message Styling */
-.login-form ::ng-deep .mat-mdc-form-field-error {
+.register-form ::ng-deep .mat-mdc-form-field-error {
   font-size: 0.75rem;
   color: #d32f2f;
 }
 
 /* Focus and Hover States */
-.login-form ::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-form-field-outline-thick {
+.register-form ::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-form-field-outline-thick {
   color: #45a9ea;
 }
 
-.login-form ::ng-deep .mat-mdc-form-field:hover .mat-mdc-form-field-outline {
+.register-form ::ng-deep .mat-mdc-form-field:hover .mat-mdc-form-field-outline {
   color: #45a9ea;
 }
 
 /* Responsive Design */
 @media (max-width: 480px) {
-  .login-form {
+  .register-form {
     padding: 1.5rem 2rem;
     margin: 1rem;
   }
