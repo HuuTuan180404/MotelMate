@@ -47,10 +47,10 @@ namespace MyApp.Namespace
                 .FirstOrDefaultAsync(r => r.RoomNumber == request.RoomNumber && r.Building.Name == request.BuildingName);
 
             if (room == null)
-                return NotFound("room not found");
+                return NotFound(new { message = "room not found" });
 
             if (room.Status != ERoomStatus.Available)
-                return BadRequest("room is not available");
+                return BadRequest(new { message = "room is not available" });
 
             // find tenant
             var tenant = await _context.Tenant
@@ -58,14 +58,14 @@ namespace MyApp.Namespace
                 .FirstOrDefaultAsync(t => t.CCCD == request.CCCD);
 
             if (tenant == null)
-                return NotFound("tenant not found");
+                return NotFound(new { message = "tenant not found" });
 
             // check if tenant is in another room
             var isInAnotherRoom = tenant.ContractDetails.Any(cd =>
                 cd.EndDate >= DateOnly.FromDateTime(DateTime.Today));
 
             if (isInAnotherRoom)
-                return BadRequest("tenant is in another room");
+                return BadRequest(new { message = "tenant is in another room" });
 
             // create contract
             var contract = new Contract
@@ -102,7 +102,7 @@ namespace MyApp.Namespace
 
             return Ok(new
             {
-                Message = "Contract created successfully.",
+                message = "Contract created successfully.",
                 ContractID = contract.ContractID
             });
         }

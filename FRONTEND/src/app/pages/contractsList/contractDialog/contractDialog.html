@@ -1,69 +1,89 @@
 <div class="dialog-container">
-  <!-- Header -->
-  <div class="dialog-header">
-    Add Contract
-  </div>
+  <div class="dialog-header">Add Contract</div>
 
-  <!-- Body -->
   <div class="dialog-body">
+    <!-- Building + Room -->
     <div class="dialog-element">
       <span class="dialog-element-label">Room Location</span>
-      <div class= "dialog-element-container">
+      <div class="dialog-element-container">
         <mat-form-field appearance="outline">
           <mat-label>Building</mat-label>
-          <mat-select [(ngModel)]="formData.building" placeholder="ABCHome">
+          <mat-select [(ngModel)]="formData.building">
             <mat-option [value]="null">-- None --</mat-option>
-            <mat-option *ngFor="let b of buildings" [value]="b">{{b}}</mat-option>
+            <mat-option *ngFor="let b of buildings" [value]="b">{{ b }}</mat-option>
           </mat-select>
           <mat-icon matSuffix>apartment</mat-icon>
         </mat-form-field>
-        <mat-form-field appearance="outline" hideRequiredMarker="true">
+
+        <mat-form-field appearance="outline">
           <mat-label>Room</mat-label>
-          <input matInput [formControl]="roomCtrl" placeholder="A-101" (blur)="updateErrorMessage()">
+          <input matInput [formControl]="roomCtrl" placeholder="101" (blur)="updateErrorMessage()">
           <mat-icon matSuffix>meeting_room</mat-icon>
-          <mat-error *ngIf="roomCtrl.errors">{{errorMessage()}}</mat-error>
+          <mat-error *ngIf="roomCtrl.errors">{{ errorMessage() }}</mat-error>
         </mat-form-field>
       </div>
     </div>
+
+    <!-- Dates -->
     <div class="dialog-element">
       <span class="dialog-element-label">Contract Term</span>
-      <div class= "dialog-element-container">
+      <div class="dialog-element-container">
         <mat-form-field appearance="outline">
-          <mat-label>Start Day</mat-label>
-          <input matInput [matDatepicker]="startPicker" [(ngModel)]="formData.start" placeholder="01/01/1111">
+          <mat-label>Start Date</mat-label>
+          <input matInput [matDatepicker]="startPicker" [formControl]="startCtrl">
           <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
           <mat-datepicker #startPicker></mat-datepicker>
+          <mat-error *ngIf="startCtrl.touched && startCtrl.hasError('required')">Start date is required.</mat-error>
         </mat-form-field>
+
         <mat-form-field appearance="outline">
-          <mat-label>End Day</mat-label>
-          <input matInput [matDatepicker]="endPicker" [(ngModel)]="formData.end" placeholder="01/01/1111">
+          <mat-label>End Date</mat-label>
+          <input matInput [matDatepicker]="endPicker" [formControl]="endCtrl">
           <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
           <mat-datepicker #endPicker></mat-datepicker>
+          <mat-error *ngIf="endCtrl.touched && endCtrl.hasError('required')">End date is required.</mat-error>
         </mat-form-field>
       </div>
     </div>
+
+    <!-- Deposit + Price -->
     <div class="dialog-element">
       <span class="dialog-element-label">Payment Info</span>
-      <div class= "dialog-element-container">
+      <div class="dialog-element-container">
         <mat-form-field appearance="outline">
           <mat-label>Deposit</mat-label>
-          <input matInput type="number" step="1000" [(ngModel)]="formData.deposit" placeholder="100000">
+          <input matInput type="number" [formControl]="depositCtrl" step="1000">
           <mat-icon matSuffix>savings</mat-icon>
+          <mat-error *ngIf="depositCtrl.touched && depositCtrl.invalid">
+            <ng-container *ngIf="depositCtrl.hasError('required')">Deposit is required.</ng-container>
+            <ng-container *ngIf="depositCtrl.hasError('min')">Must be ≥ 0.</ng-container>
+          </mat-error>
         </mat-form-field>
+
         <mat-form-field appearance="outline">
-          <mat-label>Price</mat-label>
-          <input matInput type="number" step="1000" [(ngModel)]="formData.total" placeholder="100000">
+          <mat-label>Total Price</mat-label>
+          <input matInput type="number" [formControl]="totalCtrl" step="1000">
           <mat-icon matSuffix>attach_money</mat-icon>
+          <mat-error *ngIf="totalCtrl.touched && totalCtrl.invalid">
+            <ng-container *ngIf="totalCtrl.hasError('required')">Total is required.</ng-container>
+            <ng-container *ngIf="totalCtrl.hasError('min')">Must be ≥ 0.</ng-container>
+          </mat-error>
         </mat-form-field>
       </div>
     </div>
+
+    <!-- CCCD -->
     <div class="dialog-element">
-      <span class="dialog-element-label">Contract Holder CCCD</span>
-      <div class= "dialog-element-container">
+      <span class="dialog-element-label">Tenant CCCD</span>
+      <div class="dialog-element-container">
         <mat-form-field appearance="outline">
           <mat-label>CCCD</mat-label>
-            <input matInput type="number" [(ngModel)]="formData.total" placeholder="0522...">
-          <mat-icon matSuffix>info</mat-icon>
+          <input matInput type="text" [formControl]="cccdCtrl" placeholder="0522..." (blur)="cccdCtrl.markAsTouched()">
+          <mat-icon matSuffix>badge</mat-icon>
+          <mat-error *ngIf="cccdCtrl.touched && cccdCtrl.invalid">
+            <ng-container *ngIf="cccdCtrl.hasError('required')">CCCD is required.</ng-container>
+            <ng-container *ngIf="cccdCtrl.hasError('pattern')">Invalid CCCD format.</ng-container>
+          </mat-error>
         </mat-form-field>
       </div>
     </div>
