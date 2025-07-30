@@ -25,5 +25,48 @@ namespace BACKEND.Controllers
 
             return Ok(buildings);
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBuilding(int id, UpdateBuildingDTO updateDTO)
+        {
+            var building = await _context.Building.FindAsync(id);
+
+            if (building == null)
+            {
+                return NotFound();
+            }
+
+            _mapper.Map(updateDTO, building);
+
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // DELETE: api/Building/{id}
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBuilding(int id)
+        {
+            var building = await _context.Building
+                .Include(b => b.Rooms)
+                .FirstOrDefaultAsync(b => b.BuildingID == id);
+
+            if (building == null)
+            {
+                return NotFound();
+            }
+
+            if (building.Rooms.Any())
+            {
+                return BadRequest("Cannot delete building with existing rooms.");
+            }
+
+            _context.Building.Remove(building);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+
     }
 }
