@@ -10,13 +10,18 @@ import { Paymentrequest } from './pages/paymentrequest/paymentrequest';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { AssetManagement } from './pages/assetmanagement/assetmanagement';
 import { Service } from './pages/service/service';
-import { Register } from './pages/register/register';
 import { AuthGuard } from './auth/auth.guard';
+import { AccountTypeSelection } from './auth/register/account-selection/account-type-selection';
+import { TenantRegister } from './auth/register/tenant-register/tenant-register';
+import { OwnerRegister } from './auth/register/owner-register/owner-register';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: Login},
-  { path: 'register', component: Register},
+  { path: 'register', component: AccountTypeSelection},
+  { path: 'register/tenant', component: TenantRegister},
+  { path: 'register/owner', component: OwnerRegister},
+  // { path: 'register/owner'},
   {
     path: '',
     component: Layout,

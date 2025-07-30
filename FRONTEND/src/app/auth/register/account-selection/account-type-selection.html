@@ -1,0 +1,48 @@
+<div class="account-type-wrapper">
+  <div class="background-overlay"></div>
+  <div class="account-type-container">
+    <div class="selection-card">
+      <div class="logo-section">
+        <img src="/assets/images/logo.svg" alt="MotelMate Logo" class="logo" />
+      </div>
+      <h2 class="title">Account Type</h2>
+      <p class="subtitle">
+        Choose the account type that suits your needs.<br>
+        Each has a different set of tools and features.
+      </p>
+
+      <div class="account-options">
+        <mat-radio-group [(ngModel)]="selectedAccountType" class="radio-group">
+          <div class="option-card" [class.selected]="selectedAccountType === 'tenant'">
+            <mat-radio-button value="tenant" class="radio-button">
+              <div class="option-content">
+                <mat-icon class="option-icon">person</mat-icon>
+                <div class="option-text">
+                  <h3>Tenant</h3>
+                  <p>Pay rent online</p>
+                </div>
+              </div>
+            </mat-radio-button>
+          </div>
+
+          <div class="option-card" [class.selected]="selectedAccountType === 'landlord'">
+            <mat-radio-button value="landlord" class="radio-button">
+              <div class="option-content">
+                <mat-icon class="option-icon">home</mat-icon>
+                <div class="option-text">
+                  <h3>Landlord</h3>
+                  <p>Accept rent online & manage motel</p>
+                </div>
+              </div>
+            </mat-radio-button>
+          </div>
+        </mat-radio-group>
+      </div>
+
+      <button mat-raised-button color="primary" class="next-button" [disabled]="!selectedAccountType"
+        (click)="onNext()">
+        Next
+      </button>
+    </div>
+  </div>
+</div>
