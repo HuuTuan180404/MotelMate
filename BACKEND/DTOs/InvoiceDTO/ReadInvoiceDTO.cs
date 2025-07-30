@@ -25,6 +25,7 @@ namespace BACKEND.DTOs.InvoiceDTO
         public decimal Total { get; set; }
         public decimal TotalInitialAmount { get; set; } // Cột đã lưu sẵn trong DB
         public string Status { get; set; } = string.Empty;
+        public decimal RoomPrice { get; set; }
 
         public List<ExtraCostDTO> ExtraCosts { get; set; } = new();
         public List<ServiceDetailDTO> Services { get; set; } = new();

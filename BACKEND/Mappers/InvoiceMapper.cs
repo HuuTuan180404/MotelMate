@@ -17,7 +17,7 @@ namespace BACKEND.Mappers
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()));
 
             CreateMap<Invoice, ReadInvoiceDetailDTO>()
-                .ForMember(dest => dest.InvoiceID, opt => opt.MapFrom(src => src.InvoiceID)) 
+                .ForMember(dest => dest.InvoiceID, opt => opt.MapFrom(src => src.InvoiceID))
                 .ForMember(dest => dest.Building, opt => opt.MapFrom(src => src.Contract.Room.Building.Name))
                 .ForMember(dest => dest.Room, opt => opt.MapFrom(src => src.Contract.Room.RoomNumber))
                 .ForMember(dest => dest.Month, opt => opt.MapFrom(src => src.PeriodStart.ToString("yyyy-MM")))
@@ -28,6 +28,7 @@ namespace BACKEND.Mappers
                 .ForMember(dest => dest.Total, opt => opt.MapFrom(src => src.TotalAmount))
                 .ForMember(dest => dest.TotalInitialAmount, opt => opt.MapFrom(src => src.TotalInitialAmount))
                 .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status.ToString()))
+                .ForMember(dest => dest.RoomPrice, opt => opt.MapFrom(src => src.Contract.Price))
                 .ForMember(dest => dest.ExtraCosts, opt => opt.MapFrom(src => src.ExtraCosts))
                 .ForMember(dest => dest.Services, opt => opt.MapFrom(src => src.InvoiceDetail));
 

@@ -83,7 +83,11 @@
             <ng-template #readonlyCostAmount>{{ cost.amount | number }}</ng-template>
           </td>
         </tr>
-
+         <tr>
+          <td>Room Price</td>
+          <td colspan="2"></td>
+          <td colspan="2">{{ data.roomPrice | number }}</td>
+        </tr>
         <tr class="total-row">
           <td colspan="3"><strong>Total</strong></td>
           <td>{{ data.totalInitialAmount | number }}</td>
