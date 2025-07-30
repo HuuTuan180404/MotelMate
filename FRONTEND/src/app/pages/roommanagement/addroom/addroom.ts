@@ -38,6 +38,7 @@ export interface Building {
     CommonModule,
     MatFormFieldModule,
     MatIconModule,
+    MatButtonModule,
     MatDialogModule,
     ReactiveFormsModule,
     MatOptionModule,

@@ -4,16 +4,15 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { TenantModel } from '../models/Tenant.model';
 import { jwtDecode } from 'jwt-decode';
+import { AssetModel } from '../models/Asset.model';
 @Injectable({
   providedIn: 'root',
 })
 export class AssetService {
-  private apiTenant = `${environment.apiURL.getAsset}/asset`;
+  private api = `${environment.apiUrl}/api`;
   constructor(private http: HttpClient) {}
 
-  getAllAssets(): Observable<TenantModel[]> {
-    // var accessToken = sessionStorage.getItem('accessToken');
-    
-    return this.http.get<TenantModel[]>(`${this.apiTenant}`);
+  getAllAssets(): Observable<AssetModel[]> {
+    return this.http.get<AssetModel[]>(`${this.api}/assets`);
   }
 }

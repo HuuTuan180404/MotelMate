@@ -11,5 +11,5 @@ export interface Asset {
   assetID: number;
   assetName: string;
   assetType: string;
-  condition: 'new' | 'good' | 'fair' | 'poor';
+  // condition: 'new' | 'good' | 'fair' | 'poor';
 }
