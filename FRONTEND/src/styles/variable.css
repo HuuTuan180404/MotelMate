@@ -1,4 +1,6 @@
 :root {
+  --mat-snack-bar-container-color: #da3131;
+  --mat-snack-bar-button-color: #fff;
   --mat-button-filled-container-color: #45a9ea;
   /* button colors */
   --primary-color: #45a9ea;

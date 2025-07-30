@@ -172,7 +172,6 @@ export class AddContractDialogComponent {
           {
             duration: 4000,
             panelClass: ['snackbar-error'],
-            horizontalPosition: 'end',
             verticalPosition: 'top',
           }
         );
