@@ -5,9 +5,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
   flex-direction: column;
-  padding: 2rem 0;
 }
 
 .background-overlay {
@@ -18,25 +16,23 @@
   width: 100%;
   background: url("/assets/images/bg.jpg") center / cover no-repeat;
   opacity: 0.4;
-  z-index: 0;
+  z-index: 0; 
 }
 
 .register-form {
   background-color: white;
   padding: 2rem 3rem;
   width: 100%;
-  max-width: 480px;
+  max-width: 800px; /* Increased from 480px */
   border-radius: 16px;
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
   text-align: center;
   z-index: 1;
   box-sizing: border-box;
-  margin: 1rem;
 }
 
 .register-form .logo {
-  width: 80px;
-  margin-bottom: 1rem;
+  width: 120px;
 }
 
 .form-title {
@@ -68,6 +64,18 @@
 
 .register-form ::ng-deep .mat-mdc-form-field-outline {
   border-radius: 8px;
+}
+
+/* 2-Column Form Layout */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
 }
 
 /* Button Styling */
@@ -132,13 +140,21 @@
 }
 
 /* Responsive Design */
-@media (max-width: 480px) {
-  .register-form {
-    padding: 1.5rem 2rem;
-    margin: 1rem;
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
-  .btn {
-    font-size: 14px;
+  .register-form {
+    max-width: 480px;
+    padding: 1.5rem 2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .register-form {
+    padding: 1.5rem 1.5rem;
+    margin: 0.5rem;
   }
 }
