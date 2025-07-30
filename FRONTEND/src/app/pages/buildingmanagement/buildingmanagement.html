@@ -14,37 +14,30 @@
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
-    <button mat-flat-button class="btn-add" (click)="openAddForm()" matTooltip="Add Building">
-      <mat-icon>add</mat-icon> Add
-  </button>
 
     </div>
-  </div>
-
-  <!-- List of buildings -->
-  <div class="buildings">
-    <app-building *ngFor="let building of filteredbuilding" [building]="building"></app-building>
-  </div>
 </div>
-
-<!-- Popup Add Building -->
-<div class="popup-overlay" *ngIf="isAddFormVisible" (click)="cancelAdd()" >
-  <div class="popup-form" (click)="$event.stopPropagation()">
-    <h3>Add New Building</h3>
-
-    <label class="form-label">
-      Name of Building
-      <input type="text" [(ngModel)]="newBuilding.building" placeholder="Enter Building Name"/>
-    </label>
-
-    <label class="form-label">
-      Address
-      <textarea [(ngModel)]="newBuilding.address" placeholder="Enter Full Address"></textarea>
-    </label>
-
-    <div class="button-group">
-      <button class="btn-cancel" (click)="cancelAdd()">Cancel</button>
-      <button class="btn-submit" (click)="addBuilding()">+ Add</button>
+<div class="building-grid">
+  <div class="building-card" *ngFor="let b of filteredbuilding">
+    <div class="building-card-header" [style.backgroundImage]="'url(/assets/images/default-building.jpg)'"></div>
+    <div class="building-card-body">
+      <div class="building-name">{{ b.name }}</div>
+      <div class="building-address">{{ b.address }}</div>
+      <div class="stats-row">
+        <div><strong>Total Rooms:</strong> {{ b.totalRooms }}</div>
+        <div><strong>Available:</strong> {{ b.availableRooms }}</div>
+      </div>
+      <div class="stats-row">
+        <div><strong>Occupied:</strong> {{ b.occupiedRooms }}</div>
+        <div><strong>Maintenance:</strong> {{ b.maintenanceRooms }}</div>
+      </div>
+      <div class="stats-row">
+        <div><strong>Tenants:</strong> {{ b.totalTenants }}</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button mat-icon-button color="primary"><mat-icon>edit</mat-icon></button>
+      <button mat-icon-button color="warn"><mat-icon>delete</mat-icon></button>
     </div>
   </div>
 </div>

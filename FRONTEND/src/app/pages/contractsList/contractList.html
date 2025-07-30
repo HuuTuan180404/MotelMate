@@ -1,4 +1,4 @@
-<!-- Header with Title and Search -->
+<!-- Header -->
 <div class="header-container">
   <h1 class="page-title">CONTRACTS</h1>
   <div class="search-container">
@@ -7,12 +7,7 @@
     </button>
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Search</mat-label>
-      <input
-        matInput
-        placeholder="Search..."
-        [(ngModel)]="searchTerm"
-        (input)="applyFilters()"
-      />
+      <input matInput placeholder="Search..." [(ngModel)]="searchTerm" (input)="applyFilters()" />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
     <button mat-flat-button class="create-btn" (click)="openAddContractDialog()" matTooltip="Add Contract">
@@ -21,102 +16,103 @@
     </button>
   </div>
 </div>
-<!-- Table Container -->
-<div class="table-container">
-  <!-- Filters Row -->
-  <div class="filters-row">
-    <div class="filters-container">
-      <mat-form-field appearance="outline" class="filter-field">
-        <mat-select
-          [(ngModel)]="filters.building"
-          (selectionChange)="applyFilters()"
-          placeholder="Building"
-        >
-          <mat-option value="">Building</mat-option>
-          <mat-option *ngFor="let b of buildings" [value]="b"
-            >{{ b }}</mat-option
-          >
-        </mat-select>
-        <mat-icon matSuffix>apartment</mat-icon>
-      </mat-form-field>
 
-      <mat-form-field appearance="outline" class="filter-field">
-        <mat-select
-          [(ngModel)]="filters.status"
-          (selectionChange)="applyFilters()"
-          placeholder="Status"
-        >
-          <mat-option value="">Status</mat-option>
-          <mat-option *ngFor="let s of statuses" [value]="s"
-            >{{ s }}</mat-option
-          >
-        </mat-select>
-        <mat-icon matSuffix>info</mat-icon>
-      </mat-form-field>
+<!-- Filters Row -->
+<div class="filters-row">
+  <div class="filters-container">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-select [(ngModel)]="filters.building" (selectionChange)="applyFilters()" placeholder="Building">
+        <mat-option value="">All Buildings</mat-option>
+        <mat-option *ngFor="let b of buildings" [value]="b">{{ b }}</mat-option>
+      </mat-select>
+      <mat-icon matSuffix>apartment</mat-icon>
+    </mat-form-field>
 
-      <mat-form-field appearance="outline" class="filter-field">
-        <mat-label>Enter a date range</mat-label>
-        <mat-date-range-input [rangePicker]="picker">
-          <input matStartDate placeholder="Start date" [(ngModel)]="filters.startDate" (dateChange)="applyFilters()">
-          <input matEndDate placeholder="End date" [(ngModel)]="filters.endDate" (dateChange)="applyFilters()">
-        </mat-date-range-input>
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-date-range-picker #picker></mat-date-range-picker>
-      </mat-form-field>
-    </div>
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-select [(ngModel)]="filters.status" (selectionChange)="applyFilters()" placeholder="Status">
+        <mat-option value="">All Statuses</mat-option>
+        <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+      </mat-select>
+      <mat-icon matSuffix>info</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Date Range</mat-label>
+      <mat-date-range-input [rangePicker]="picker">
+        <input matStartDate placeholder="Start date" [(ngModel)]="filters.startDate" (dateChange)="applyFilters()" />
+        <input matEndDate placeholder="End date" [(ngModel)]="filters.endDate" (dateChange)="applyFilters()" />
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
   </div>
+</div>
 
-  <table mat-table [dataSource]="dataSource"  matSort class="contracts-table" >
+<!-- Table -->
+<div class="table-container">
+  <table mat-table [dataSource]="dataSource" matSort class="contracts-table">
+
+    <!-- Contract Code -->
+    <ng-container matColumnDef="contractcode">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Contract Code</th>
+      <td mat-cell *matCellDef="let inv">{{ inv.contractcode || 'N/A' }}</td>
+    </ng-container>
+
+    <!-- Contract Holder -->
     <ng-container matColumnDef="contractholder">
-      <th mat-header-cell *matHeaderCellDef>Contract Holder</th>
-      <td mat-cell *matCellDef="let inv">{{inv.building}}</td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Contract Holder</th>
+      <td mat-cell *matCellDef="let inv">
+        {{ inv.contractholder?.trim() ? inv.contractholder : 'N/A' }}
+      </td>
     </ng-container>
 
+    <!-- Building -->
     <ng-container matColumnDef="building">
-      <th mat-header-cell *matHeaderCellDef>Building</th>
-      <td mat-cell *matCellDef="let inv">{{inv.building}}</td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Building</th>
+      <td mat-cell *matCellDef="let inv">{{ inv.building }}</td>
     </ng-container>
 
+    <!-- Room -->
     <ng-container matColumnDef="room">
-      <th mat-header-cell *matHeaderCellDef>Room</th>
-      <td mat-cell *matCellDef="let inv">{{inv.room}}</td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Room</th>
+      <td mat-cell *matCellDef="let inv">{{ inv.room || inv.roomNumber || 'N/A' }}</td>
     </ng-container>
 
+    <!-- Start Date -->
     <ng-container matColumnDef="start">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Start Day</th>
-      <td mat-cell *matCellDef="let inv">{{inv.start| date:'dd/MM/yyyy'}}</td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Start Date</th>
+      <td mat-cell *matCellDef="let inv">{{ inv.start }}</td>
     </ng-container>
 
+    <!-- End Date -->
     <ng-container matColumnDef="end">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>End Date</th>
-      <td mat-cell *matCellDef="let inv">{{inv.end | date:'dd/MM/yyyy'}}</td>
+      <td mat-cell *matCellDef="let inv">{{ inv.end }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="deposit">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Deposit</th>
-      <td mat-cell *matCellDef="let inv">{{inv.deposit | number}}</td>
-    </ng-container>
-
-    <ng-container matColumnDef="total">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Total (VND)</th>
-      <td mat-cell *matCellDef="let inv">{{inv.total | number}}</td>
-    </ng-container>
-
+    <!-- Status -->
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef>Status</th>
       <td mat-cell *matCellDef="let inv">
-        <span [ngClass]="'status ' + inv.status.toLowerCase()"
-          >{{ inv.status }}
+        <span [ngClass]="'status ' + (inv.status?.toLowerCase() || 'unknown')">
+          {{ inv.status || 'N/A' }}
         </span>
       </td>
     </ng-container>
-      <tr mat-header-row *matHeaderRowDef="displayedColumns" class ="sticky-header"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" [attr.colspan]="displayedColumns.length">
-          No records found
-        </td>
-      </tr>
+
+    <!-- Table Rows -->
+    <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky-header"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr class="mat-row" *matNoDataRow>
+      <td class="mat-cell" [attr.colspan]="displayedColumns.length">No records found</td>
+    </tr>
   </table>
-  <mat-paginator [pageSizeOptions]="[5, 10, 15, 20]" showFirstLastButtons [length]="dataSource.data.length"></mat-paginator>
+
+  <!-- Paginator -->
+  <mat-paginator
+    [pageSizeOptions]="[5, 10, 20]"
+    [pageSize]="5"
+    showFirstLastButtons
+    [length]="dataSource.filteredData.length">
+  </mat-paginator>
 </div>

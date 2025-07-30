@@ -4,6 +4,7 @@ namespace BACKEND.Enums
     {
         Active,
         Expired,
-        Terminated
+        Terminated,
+        Unsigned
     }
 }

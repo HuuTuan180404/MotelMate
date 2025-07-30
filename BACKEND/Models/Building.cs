@@ -15,8 +15,6 @@ namespace BACKEND.Models
         [Key]
         public int BuildingID { get; set; }
 
-        public required string BuildingCode { get; set; }
-
         [Required]
         [StringLength(255)]
         public required string Name { get; set; }
@@ -24,6 +22,8 @@ namespace BACKEND.Models
         [Required]
         [StringLength(255)]
         public required string Address { get; set; }
+
+        public required string ImageURL { get; set; }
 
         [ForeignKey(nameof(Owner))]
         public int OwnerID { get; set; }

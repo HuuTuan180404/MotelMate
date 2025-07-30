@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { on } from 'events';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -10,7 +12,11 @@ import { RouterModule } from '@angular/router';
 })
 export class Sidebar {
   isRequestMenuOpen = false;
+  constructor(private authService: AuthService) {}
 
+  logout() {
+    this.authService.logout();
+  }
   mainMenu = [
     { icon: 'dashboard', label: 'Dashboard', route: 'dashboard' },
     { icon: 'apartment', label: 'Building', route: 'buildings' },
@@ -47,7 +53,7 @@ export class Sidebar {
 
   accountMenu = [
     { icon: 'settings', label: 'Setting', route: '#' },
-    { icon: 'exit_to_app', label: 'Logout', route: '#' },
+    { icon: 'exit_to_app', label: 'Logout', route: '#', action: () => this.logout() },
   ];
   toggleRequestMenu() {
     this.isRequestMenuOpen = !this.isRequestMenuOpen;

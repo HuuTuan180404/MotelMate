@@ -12,17 +12,8 @@ export class AssetService {
   constructor(private http: HttpClient) {}
 
   getAllAssets(): Observable<TenantModel[]> {
-    var accessToken = sessionStorage.getItem('accessToken');
-    // const {
-    //   ['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier']:
-    //     userId,
-    //   ['http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name']: username,
-    //   ['http://schemas.microsoft.com/ws/2008/06/identity/claims/role']: role,
-    // } = jwtDecode<any>(accessToken || '');
-    // console.log(userId, username, role);
-
-    console.log(accessToken);
-
+    // var accessToken = sessionStorage.getItem('accessToken');
+    
     return this.http.get<TenantModel[]>(`${this.apiTenant}`);
   }
 }

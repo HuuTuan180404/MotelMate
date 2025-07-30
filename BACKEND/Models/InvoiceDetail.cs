@@ -20,7 +20,11 @@ namespace BACKEND.Models
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
 
-        public virtual Invoice ?Invoice { get; set; }
+        [Required]
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal InitialPrice { get; set; }
+        
+        public virtual Invoice? Invoice { get; set; }
         public virtual Service ?Service { get; set; }
     }
 }

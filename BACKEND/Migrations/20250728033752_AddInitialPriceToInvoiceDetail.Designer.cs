@@ -4,6 +4,7 @@ using BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BACKEND.Migrations
 {
     [DbContext(typeof(MotelMateDbContext))]
-    partial class MotelMateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250728033752_AddInitialPriceToInvoiceDetail")]
+    partial class AddInitialPriceToInvoiceDetail
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -198,6 +201,10 @@ namespace BACKEND.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("BuildingCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageURL")
                         .IsRequired()
@@ -884,7 +891,7 @@ namespace BACKEND.Migrations
             modelBuilder.Entity("BACKEND.Models.Room", b =>
                 {
                     b.HasOne("BACKEND.Models.Building", "Building")
-                        .WithMany("Rooms")
+                        .WithMany("Room")
                         .HasForeignKey("BuildingID");
 
                     b.Navigation("Building");
@@ -992,7 +999,7 @@ namespace BACKEND.Migrations
 
             modelBuilder.Entity("BACKEND.Models.Building", b =>
                 {
-                    b.Navigation("Rooms");
+                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("BACKEND.Models.Contract", b =>
