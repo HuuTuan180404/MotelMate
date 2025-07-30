@@ -10,7 +10,6 @@ namespace BACKEND.Models
         public Building()
         {
             this.Rooms = new HashSet<Room>();
-            this.Assets = new HashSet<Asset>();
         }
 
         [Key]
@@ -30,6 +29,5 @@ namespace BACKEND.Models
         public int OwnerID { get; set; }
         public required virtual Owner Owner { get; set; }
         public virtual ICollection<Room> Rooms { get; set; }
-        public virtual ICollection<Asset> Assets { get; set; }
     }
 }

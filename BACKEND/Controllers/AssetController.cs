@@ -35,9 +35,7 @@ namespace BACKEND.Controllers
                 return Unauthorized("User ID not found or invalid");
             }
             var assets = await _context.Asset
-                    .Include(b => b.Building)
                     .Include(a => a.RoomAsset)
-                    .Where(o => o.Building.Owner.Id == ownerId)
                     .OrderByDescending(a => a.RoomAsset.Count())
                     .ToListAsync();
             return Ok(_mapper.Map<List<ReadAssetDTO>>(assets));

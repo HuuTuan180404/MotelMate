@@ -28,11 +28,6 @@ namespace BACKEND.Models
         [Required]
         public EAssetType Type { get; set; }
 
-        // thêm cột của building id
-        [ForeignKey(nameof(Building))]
-        public Nullable<int> BuildingID { get; set; }
-
-        public virtual Building? Building { get; set; }
         public virtual ICollection<RoomAsset> RoomAsset { get; set; }
     }
 }
