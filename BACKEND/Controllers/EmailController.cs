@@ -18,10 +18,10 @@ namespace BACKEND.Controllers
             _emailService = emailService;
         }
 
-        [HttpPost("send")]
-        public async Task<IActionResult> SendEmail([FromBody] string request)
+        [HttpPost("send/{toEmail}")]
+        public async Task<IActionResult> SendEmail(string toEmail)
         {
-            await _emailService.SendEmailAsync(request);
+            await _emailService.SendEmailAsync(toEmail);
             return Ok("Email sent successfully");
         }
     }

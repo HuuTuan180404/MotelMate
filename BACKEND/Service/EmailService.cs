@@ -10,14 +10,22 @@ namespace BACKEND.Service
 {
     public class EmailService : IEmailService
     {
+        private readonly IOtpService _otpService;
+
+        public EmailService(IOtpService otpService)
+        {
+            _otpService = otpService;
+        }
+
         public async Task SendEmailAsync(string toEmail)
         {
             var fromEmail = Environment.GetEnvironmentVariable("EMAIL_FROM");
             var fromPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
-            string subject = "Forgot Password";
-            string otp = GenerateOtp();
-            string body = $"<p>Your OTP is: <strong>{otp}</strong></p><p>This OTP is valid for 5 minutes.</p>";
 
+            string otp = _otpService.GenerateAndSaveOtp(toEmail); 
+
+            string subject = "Forgot Password";
+            string body = $"<p>Your OTP is: <strong>{otp}</strong></p><p>This OTP is valid for 5 minutes.</p>";
 
             var message = new MailMessage
             {
@@ -36,13 +44,6 @@ namespace BACKEND.Service
             };
 
             await smtp.SendMailAsync(message);
-        }
-        private string GenerateOtp(int length = 6)
-        {
-            var random = new Random();
-            return new string(Enumerable.Range(0, length)
-                .Select(_ => (char)('0' + random.Next(0, 10)))
-                .ToArray());
         }
     }
 }
