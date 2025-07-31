@@ -9,6 +9,7 @@ export interface Building {
   maintenanceRooms: number;
   totalTenants: number;
 }
+
 export interface BuildingWithRoomsModel {
   buildingID: number;
   buildingName: string;

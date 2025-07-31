@@ -4,39 +4,24 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { RoomModel } from '../models/Room.model';
 import { RoomDetail } from '../pages/roomdetail/roomdetail';
-// import { RoomStatus } from '../pages/roommanagement/roommanagement';
-export interface PaginatedResponse<T> {
-  data: T[];
-  totalCount: number;
-  pageIndex: number;
-  pageSize: number;
-  totalPages: number;
-}
-
-export interface RoomFilters {
-  page: number;
-  size: number;
-  searchText?: string;
-  minPrice?: number;
-  maxPrice?: number;
-  buildingCode?: number;
-}
 
 @Injectable({
   providedIn: 'root',
 })
 export class RoomService {
-  private apiUrl = 'your-api-url';
+  private apiUrl = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) {}
 
   getAllRooms(): Observable<RoomModel[]> {
-    return this.http.get<RoomModel[]>(`${environment.apiURL.getTenant}/room`);
+    return this.http.get<RoomModel[]>(`${this.apiUrl}/room`);
   }
 
   getRoomById(id: number): Observable<RoomDetail> {
-    return this.http.get<RoomDetail>(
-      `${environment.apiURL.getTenant}/room/${id}`
-    );
+    return this.http.get<RoomDetail>(`${this.apiUrl}/room/${id}`);
+  }
+
+  postNewRoom(formData: FormData): Observable<any> {
+    return this.http.post(`${this.apiUrl}/room/add-room`, formData);
   }
 }

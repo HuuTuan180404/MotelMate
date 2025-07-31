@@ -264,23 +264,10 @@ export class RoomManagement implements OnInit, AfterViewInit {
       height: 'auto',
       maxHeight: '90vh',
       minWidth: '60vw',
-      data: {
-        formData: {
-          buildingID: 1,
-          roomNumber: 1,
-          maxGuests: 2,
-          area: 2.4,
-          price: 1300000,
-          images: [],
-          description: '',
-          assets: [],
-        },
-      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        // Reload tất cả dữ liệu
         this.loadAllRooms();
       }
     });

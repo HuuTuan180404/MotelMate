@@ -10,13 +10,13 @@ export interface RoomModel {
 }
 
 export interface CreateRoomModel {
-  buildingID: number; // Changed to array for multiple selection
+  buildingID: number;
   roomNumber: string;
   area: number;
   price: number;
   description: string;
   images: RoomImageModel[];
-  selectedAssets: number[];
+  selectedAssetIDs: number[];
 }
 
 export interface RoomImageModel {

@@ -22,6 +22,6 @@ export class BuildingService {
 
   // lấy tòa nhà và phòng của tòa nhà - Tu
   getBuildingWithRooms(): Observable<object[]> {
-    return this.http.get<object[]>(`${environment.apiUrl}/api/noti/with-rooms`);
+    return this.http.get<object[]>(`${this.apiUrl}/with-rooms`);
   }
 }

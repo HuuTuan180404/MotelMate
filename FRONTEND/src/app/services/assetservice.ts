@@ -13,6 +13,6 @@ export class AssetService {
   constructor(private http: HttpClient) {}
 
   getAllAssets(): Observable<AssetModel[]> {
-    return this.http.get<AssetModel[]>(`${this.api}/assets`);
+    return this.http.get<AssetModel[]>(`${this.api}/asset`);
   }
 }
