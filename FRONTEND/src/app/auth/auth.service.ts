@@ -34,16 +34,40 @@ export class AuthService {
     this.isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
     this.isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
   }
+
   register(registerData: RegisterDto): Observable<any> {
     const headers = { 'Skip-Auth-Interceptor': 'true' };
     return this.http.post(
       `${environment.apiUrl}/api/Account/register`,
       registerData,
       {
-        withCredentials: true, headers
+        withCredentials: true,
+        headers,
       }
     );
   }
+  sendOtpEmail(toEmail: string): Observable<any> {
+    const headers = { 'Skip-Auth-Interceptor': 'true' };
+    return this.http.post(`${environment.apiUrl}/api/Email/send/${toEmail}`, {
+      headers,
+    });
+  }
+  resetPassword(resetDto: {
+    email: string;
+    otp: string;
+    newPassword: string;
+  }): Observable<any> {
+    const headers = { 'Skip-Auth-Interceptor': 'true' };
+    return this.http.post(
+      `${environment.apiUrl}/api/Account/reset-password`,
+      resetDto,
+      {
+        headers,
+        withCredentials: true,
+      }
+    );
+  }
+
   login(credentials: { username: string; password: string }): Observable<any> {
     return this.http
       .post<{ accessToken: string }>(
