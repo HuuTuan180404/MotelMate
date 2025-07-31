@@ -31,7 +31,10 @@ namespace BACKEND.DTOs.AuthDTO
 
         [Required]
         public DateOnly Bdate { get; set; }
-
+        
+        [Required]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be 10 digits.")]
+        public string PhoneNumber { get; set; } = null!;
         public string? URLAvatar { get; set; }
 
         // Thông tin ngân hàng

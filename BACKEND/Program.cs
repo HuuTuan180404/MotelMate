@@ -48,6 +48,7 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+builder.Services.AddMemoryCache();
 
 builder.Services.AddDbContext<MotelMateDbContext>
     (option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -110,7 +111,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
-
+builder.Services.AddScoped<IOtpService, OtpService>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

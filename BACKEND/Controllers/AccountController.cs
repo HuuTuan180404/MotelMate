@@ -10,10 +10,12 @@ namespace BACKEND.Controllers
     public class AccountController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly IOtpService _otpService;
 
-        public AccountController(IAuthService authService)
+        public AccountController(IAuthService authService, IOtpService otpService)
         {
             _authService = authService;
+            _otpService = otpService;
         }
 
         [HttpPost("register")]
@@ -78,6 +80,19 @@ namespace BACKEND.Controllers
             }
 
             return Unauthorized();
+        }
+        
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPassDTO dto)
+        {
+            if (!_otpService.VerifyOtp(dto.Email, dto.Otp))
+                return BadRequest("Invalid or expired OTP.");
+
+            bool result = await _authService.ResetPasswordAsync(dto.Email, dto.NewPassword);
+            if (!result)
+                return NotFound("User not found.");
+
+            return Ok("Password reset successfully.");
         }
     }
 }

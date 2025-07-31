@@ -26,13 +26,35 @@ namespace BACKEND.Service
             _tokenService = tokenService;
             _context = context;
         }
+        public async Task<bool> ResetPasswordAsync(string email, string newPassword)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+            if (user == null) return false;
 
+            user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, newPassword);
+
+            var result = await _userManager.UpdateAsync(user);
+
+            return result.Succeeded;
+        }
         public async Task<(bool Success, object Result)> Register(RegisterDTO model)
         {
             try
             {
+                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser != null)
+                    return (false, "Email already exists");
+                existingUser = await _context.Users.FirstOrDefaultAsync(u => u.CCCD == model.CCCD);
+                if (existingUser != null)
+                    return (false, "CCCD already exists");
+                existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName);
+                if (existingUser != null)
+                    return (false, "Username already exists");
+                existingUser = await _context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
+                if (existingUser != null)
+                    return (false, "Phone number already exists");
                 Account user = CreateUserFromModel(model);
-
+                
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (!result.Succeeded)
                     return (false, result.Errors);
