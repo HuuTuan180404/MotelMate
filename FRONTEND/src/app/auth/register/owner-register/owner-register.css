@@ -16,7 +16,7 @@
   width: 100%;
   background: url("/assets/images/bg.jpg") center / cover no-repeat;
   opacity: 0.4;
-  z-index: 0; 
+  z-index: 0;
 }
 
 .register-form {
@@ -29,6 +29,8 @@
   text-align: center;
   z-index: 1;
   box-sizing: border-box;
+  max-height: 100vh;
+  overflow: auto;
 }
 
 .register-form .logo {
@@ -45,7 +47,6 @@
 .form-subtitle {
   color: #666;
   font-size: 0.9rem;
-  margin: 0 0 1.5rem 0;
 }
 
 /* Angular Material Form Field Styling */
@@ -65,9 +66,16 @@
 .register-form ::ng-deep .mat-mdc-form-field-outline {
   border-radius: 8px;
 }
-
+.form-container{
+  max-height: 20rem;
+  overflow-y: auto;
+}
+.form-container::-webkit-scrollbar {
+  display: none;
+}
 /* 2-Column Form Layout */
 .form-grid {
+  margin-top: 1rem;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;

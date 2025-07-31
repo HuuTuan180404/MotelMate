@@ -14,6 +14,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-owner-register',
@@ -27,22 +29,31 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   templateUrl: './owner-register.html',
   styleUrls: ['./owner-register.css'],
 })
 export class OwnerRegister {
   form!: FormGroup;
-
+  hidePassword = true;
+  hideConfirmPassword = true;
+  
   constructor(private fb: FormBuilder, private router: Router) {
     this.form = this.fb.group(
       {
-        fullName: ['', [Validators.required]],
-        cccd: ['', [Validators.required]],
-        phoneNumber: ['', [Validators.required]],
+        fullName: ['', Validators.required],
+        username: ['', Validators.required],
+        cccd: ['', Validators.required],
+        phoneNumber: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
+        birthday: ['', Validators.required], // Date input
         password: ['', [Validators.required, Validators.minLength(6)]],
-        confirmPassword: ['', [Validators.required]],
+        confirmPassword: ['', Validators.required],
+        bankCode: ['', Validators.required],
+        accountNum: ['', Validators.required],
+        accountName: ['', Validators.required],
       },
       { validators: this.passwordMatchValidator }
     );
@@ -77,7 +88,32 @@ export class OwnerRegister {
   onSubmit() {
     if (this.form.invalid) return;
 
-    const formData = this.form.value;
+    const {
+      fullName,
+      username,
+      cccd,
+      phoneNumber,
+      email,
+      birthday,
+      password,
+      bankCode,
+      accountNum,
+      accountName,
+    } = this.form.value;
+
+    const formData = {
+      fullName,
+      username,
+      cccd,
+      phoneNumber,
+      email,
+      birthday, // kiểu Date, có thể format nếu cần
+      password,
+      bankCode,
+      accountNum,
+      accountName,
+    };
+
     console.log('Owner registration data:', formData);
     this.router.navigate(['/login']);
   }

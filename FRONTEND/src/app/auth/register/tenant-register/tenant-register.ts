@@ -14,6 +14,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-tenant-register',
@@ -27,22 +29,27 @@ import { MatIconModule } from '@angular/material/icon';
     MatInputModule,
     MatButtonModule,
     MatIconModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   templateUrl: './tenant-register.html',
   styleUrls: ['./tenant-register.css'],
 })
 export class TenantRegister {
   form!: FormGroup;
-
+  hidePassword = true;
+  hideConfirmPassword = true;
   constructor(private fb: FormBuilder, private router: Router) {
     this.form = this.fb.group(
       {
-        fullName: ['', [Validators.required]],
-        cccd: ['', [Validators.required]],
-        phoneNumber: ['', [Validators.required]],
+        fullName: ['', Validators.required],
+        username: ['', Validators.required],
+        cccd: ['', Validators.required],
+        phoneNumber: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
+        birthday: ['', Validators.required], // Date input
         password: ['', [Validators.required, Validators.minLength(6)]],
-        confirmPassword: ['', [Validators.required]],
+        confirmPassword: ['', Validators.required],
       },
       { validators: this.passwordMatchValidator }
     );
@@ -77,8 +84,27 @@ export class TenantRegister {
   onSubmit() {
     if (this.form.invalid) return;
 
-    const formData = this.form.value;
-    console.log('Owner registration data:', formData);
+    const {
+      fullName,
+      username,
+      cccd,
+      phoneNumber,
+      email,
+      birthday,
+      password,
+    } = this.form.value;
+
+    const formData = {
+      fullName,
+      username,
+      cccd,
+      phoneNumber,
+      email,
+      birthday, // kiểu Date, có thể format nếu cần
+      password,
+    };
+
+    console.log('tenant registration data:', formData);
     this.router.navigate(['/login']);
   }
 }
