@@ -40,6 +40,10 @@
             <mat-error *ngIf="form.controls['cccd'].errors?.['required']">
               CCCD is required
             </mat-error>
+            <!-- Lỗi pattern -->
+            <mat-error *ngIf="form.controls['cccd'].hasError('pattern') && !form.controls['cccd'].hasError('required')">
+              CCCD must be exactly 12 digits
+            </mat-error>
           </mat-form-field>
 
           <!-- Phone Number -->
@@ -53,7 +57,6 @@
         </div>
 
         <div class="form-column">
-
           <!-- Full Name -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Full Name</mat-label>
@@ -62,6 +65,7 @@
               Full name is required
             </mat-error>
           </mat-form-field>
+
           <!-- Confirm Password -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Confirm Password</mat-label>
@@ -79,6 +83,7 @@
               Passwords do not match
             </mat-error>
           </mat-form-field>
+
           <!-- Birthday -->
           <mat-form-field appearance="outline" class="full-width">
             <mat-label>Birthday</mat-label>

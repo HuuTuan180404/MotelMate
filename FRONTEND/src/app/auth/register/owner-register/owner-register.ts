@@ -117,7 +117,7 @@ export class OwnerRegister {
       fullName,
       userName: username,
       cccd,
-      phoneNumber,
+      phoneNumber: phoneNumber.toString(),
       email,
       bdate: this.formatDate(birthday),
       password,

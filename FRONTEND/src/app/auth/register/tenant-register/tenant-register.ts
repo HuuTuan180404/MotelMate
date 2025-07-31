@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -16,6 +16,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { AuthService } from '../../auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-tenant-register',
@@ -39,12 +41,18 @@ export class TenantRegister {
   form!: FormGroup;
   hidePassword = true;
   hideConfirmPassword = true;
-  constructor(private fb: FormBuilder, private router: Router) {
+  private _snackBar = inject(MatSnackBar);
+
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private authService: AuthService
+  ) {
     this.form = this.fb.group(
       {
         fullName: ['', Validators.required],
         username: ['', Validators.required],
-        cccd: ['', Validators.required],
+        cccd: ['', [Validators.required, Validators.pattern(/^\d{12}$/)]],
         phoneNumber: ['', Validators.required],
         email: ['', [Validators.required, Validators.email]],
         birthday: ['', Validators.required], // Date input
@@ -54,7 +62,12 @@ export class TenantRegister {
       { validators: this.passwordMatchValidator }
     );
   }
-
+  formatDate(date: Date): string {
+    const year = date.getFullYear();
+    const month = ('0' + (date.getMonth() + 1)).slice(-2);
+    const day = ('0' + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+  }
   passwordMatchValidator(control: AbstractControl) {
     const password = control.get('password');
     const confirmPassword = control.get('confirmPassword');
@@ -94,17 +107,41 @@ export class TenantRegister {
       password,
     } = this.form.value;
 
-    const formData = {
+    const registerDto = {
       fullName,
-      username,
+      userName: username,
       cccd,
-      phoneNumber,
+      phoneNumber: phoneNumber.toString(),
       email,
-      birthday, // kiểu Date, có thể format nếu cần
+      bdate: this.formatDate(birthday),
       password,
+      bankCode: 0,
+      accountNo: 0,
+      accountName: '',
+      urlAvatar: '',
     };
 
-    console.log('tenant registration data:', formData);
-    this.router.navigate(['/login']);
+    this.authService.register(registerDto).subscribe({
+      next: () => {
+        this._snackBar.open('Register successful!', 'Close', {
+          duration: 4000,
+          panelClass: ['snackbar-success'],
+          verticalPosition: 'top',
+        });
+        this.router.navigate(['/login']);
+      },
+      error: (err) => {
+        console.error('Register failed', err);
+        this._snackBar.open(
+          'Failed to register: ' + (err.error.message || 'Unknown error'),
+          'Close',
+          {
+            duration: 4000,
+            panelClass: ['snackbar-error'],
+            verticalPosition: 'top',
+          }
+        );
+      },
+    });
   }
 }
