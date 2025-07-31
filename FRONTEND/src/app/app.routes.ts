@@ -14,6 +14,7 @@ import { AuthGuard } from './auth/auth.guard';
 import { AccountTypeSelection } from './auth/register/account-selection/account-type-selection';
 import { TenantRegister } from './auth/register/tenant-register/tenant-register';
 import { OwnerRegister } from './auth/register/owner-register/owner-register';
+import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'register', component: AccountTypeSelection},
   { path: 'register/tenant', component: TenantRegister},
   { path: 'register/owner', component: OwnerRegister},
+  { path: 'forgot-password', component: ForgotPasswordComponent },
   // { path: 'register/owner'},
   {
     path: '',

@@ -9,5 +9,6 @@ namespace BACKEND.Interfaces
         Task<(bool Success, object Result)> Register(RegisterDTO model);
         Task<(bool Success, object Result)> Login(LoginDTO model);
         Task<(bool Success, object Result)> RefreshToken(string refreshToken);
+        Task<bool> ResetPasswordAsync(string email, string newPassword);
     }
 }

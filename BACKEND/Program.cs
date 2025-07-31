@@ -13,7 +13,9 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.Extensions.Options;
+using DotNetEnv;
 
+DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
@@ -46,6 +48,7 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+builder.Services.AddMemoryCache();
 
 builder.Services.AddDbContext<MotelMateDbContext>
     (option => option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -108,6 +111,8 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IOtpService, OtpService>();
 
 
 

@@ -16,7 +16,7 @@
     </mat-form-field>
 
     <!-- Password -->
-    <mat-form-field appearance="outline" class="full-width">
+    <mat-form-field appearance="outline">
       <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Password" />
       <button mat-icon-button matSuffix tabindex="-1" type="button" (click)="hidePassword = !hidePassword">
         <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
@@ -29,6 +29,9 @@
       </mat-error>
     </mat-form-field>
 
+    <div class="register" style="margin: 0 0 1rem; text-align: right;">
+      <a routerLink="/forgot-password" class="register-link">Forgot Password?</a>
+    </div>
     <!-- Login button -->
     <button mat-raised-button color="primary" class="btn btn-primary" type="submit" [disabled]="form.invalid">
       Log In
