@@ -5,6 +5,18 @@ import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
 
+export interface RegisterDto {
+  userName: string;
+  email: string;
+  password: string;
+  cccd: string;
+  fullName: string;
+  bdate: string;
+  urlAvatar: string;
+  accountNo: number;
+  accountName: string;
+  bankCode: number;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -22,7 +34,16 @@ export class AuthService {
     this.isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
     this.isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
   }
-
+  register(registerData: RegisterDto): Observable<any> {
+    const headers = { 'Skip-Auth-Interceptor': 'true' };
+    return this.http.post(
+      `${environment.apiUrl}/api/Account/register`,
+      registerData,
+      {
+        withCredentials: true, headers
+      }
+    );
+  }
   login(credentials: { username: string; password: string }): Observable<any> {
     return this.http
       .post<{ accessToken: string }>(
@@ -43,7 +64,13 @@ export class AuthService {
   logout(): void {
     const headers = { 'Skip-Auth-Interceptor': 'true' };
     if (!this.isBrowser) return;
-    this.http.post(`${environment.apiUrl}/api/Account/logout`, {}, { withCredentials: true, headers }).subscribe();
+    this.http
+      .post(
+        `${environment.apiUrl}/api/Account/logout`,
+        {},
+        { withCredentials: true, headers }
+      )
+      .subscribe();
     sessionStorage.removeItem('accessToken');
     this.isAuthenticatedSubject.next(false);
     this.router.navigate(['/login']);

@@ -40,6 +40,10 @@
             <mat-error *ngIf="form.controls['cccd'].errors?.['required']">
               CCCD is required
             </mat-error>
+            <!-- Lỗi pattern -->
+            <mat-error *ngIf="form.controls['cccd'].hasError('pattern') && !form.controls['cccd'].hasError('required')">
+              CCCD must be exactly 12 digits
+            </mat-error>
           </mat-form-field>
 
           <!-- Phone Number -->

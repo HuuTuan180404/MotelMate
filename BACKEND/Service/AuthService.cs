@@ -41,18 +41,18 @@ namespace BACKEND.Service
         {
             try
             {
-                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName);
                 if (existingUser != null)
-                    return (false, "Email already exists");
+                    return (false, new { message = "Username already exists" });
                 existingUser = await _context.Users.FirstOrDefaultAsync(u => u.CCCD == model.CCCD);
                 if (existingUser != null)
-                    return (false, "CCCD already exists");
-                existingUser = await _context.Users.FirstOrDefaultAsync(u => u.UserName == model.UserName);
-                if (existingUser != null)
-                    return (false, "Username already exists");
+                    return (false, new { message = "CCCD already exists" });
                 existingUser = await _context.Users.FirstOrDefaultAsync(u => u.PhoneNumber == model.PhoneNumber);
                 if (existingUser != null)
-                    return (false, "Phone number already exists");
+                    return (false, new { message = "Phone number already exists" });
+                existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser != null)
+                    return (false, new { message = "Email already exists" });
                 Account user = CreateUserFromModel(model);
                 
                 var result = await _userManager.CreateAsync(user, model.Password);
