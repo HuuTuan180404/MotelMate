@@ -2,6 +2,7 @@ using AutoMapper;
 using BACKEND.Models;
 using BACKEND.Enums;
 using BACKEND.RoomDTO.DTOs;
+using BACKEND.DTOs.RoomDTO;
 namespace BACKEND.Mappers
 {
     public class RoomMapper : Profile
@@ -27,7 +28,6 @@ namespace BACKEND.Mappers
                                                                     .Select(img => img.ImageURL)
                                                                     .Distinct()
                                                                     .ToList()))
-
                 .ForMember(r => r.Members, opt => opt.MapFrom(src => src.Contracts
                                                                             .Where(c => c.Status == EContractStatus.Active) // chỉ hợp đồng Active
                                                                             .SelectMany(c => c.ContractDetail)
@@ -44,6 +44,9 @@ namespace BACKEND.Mappers
                     AssetName = ra.Asset.Name,
                     Quantity = ra.Quantity
                 })));
+
+            CreateMap<CreateRoomDTO, Room>()
+                .ForMember(t => t.Status, opt => opt.MapFrom(src => ERoomStatus.Available));
         }
     }
 }
