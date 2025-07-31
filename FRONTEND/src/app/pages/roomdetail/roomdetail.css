@@ -29,7 +29,7 @@
   color: white;
   padding: 8px 16px;
   border: none;
-  border-radius: 6px;
+  border-radius: 9999px;
   cursor: pointer;
   font-weight: 500;
   transition: background-color 0.2s ease;
@@ -89,7 +89,6 @@
   width: 100px;
   height: 70px;
   object-fit: cover;
-  border-radius: 8px;
   cursor: pointer;
   border: 2px solid transparent;
   transition: 0.3s;
@@ -188,7 +187,7 @@
   padding: 14px 16px;
   font-size: 16px;
   border: 2px solid #ccc;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   outline: none;
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
@@ -207,7 +206,7 @@
 .room-info-description > textarea {
   width: 100%;
   border: 2px solid #ccc;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   padding: 0 16px;
   font-size: 16px;
 }
@@ -346,7 +345,7 @@
   justify-content: space-between;
   padding: 12px;
   border: 1px solid #e0e0e0;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   transition: background-color 0.2s ease;
 
   &:hover {
@@ -373,21 +372,12 @@
 
 /* button add */
 .btn-add {
-  display: flex;
-  border-radius: var(--border-radius);
-  background-color: var(--create-btn);
-  border: none;
-  color: white;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.25s ease;
-  box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+  background-color: var(--create-btn) !important;
+  color: white !important;
 }
 
 .btn-add:hover {
-  transform: translateY(-2px);
+  /* transform: translateY(-2px);
   box-shadow: 0 6px 14px rgba(99, 102, 241, 0.5);
-  background: linear-gradient(135deg, #4338ca, #4f46e5);
+  background: linear-gradient(135deg, #4338ca, #4f46e5); */
 }

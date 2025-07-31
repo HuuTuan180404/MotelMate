@@ -38,6 +38,7 @@ export interface Building {
     CommonModule,
     MatFormFieldModule,
     MatIconModule,
+    MatButtonModule,
     MatDialogModule,
     ReactiveFormsModule,
     MatOptionModule,
@@ -90,43 +91,36 @@ export class AddRoom {
       assetID: 1,
       assetName: 'Giường đơn',
       assetType: 'Nội thất',
-      condition: 'good',
     },
     {
       assetID: 2,
       assetName: 'Tủ quần áo',
       assetType: 'Nội thất',
-      condition: 'new',
     },
     {
       assetID: 3,
       assetName: 'Bàn học',
       assetType: 'Nội thất',
-      condition: 'good',
     },
     {
       assetID: 4,
       assetName: 'Ghế xoay',
       assetType: 'Nội thất',
-      condition: 'fair',
     },
     {
       assetID: 5,
       assetName: 'Điều hòa',
       assetType: 'Điện tử',
-      condition: 'new',
     },
     {
       assetID: 6,
       assetName: 'Tủ lạnh mini',
       assetType: 'Điện tử',
-      condition: 'good',
     },
     {
       assetID: 7,
       assetName: 'Máy nước nóng',
       assetType: 'Điện tử',
-      condition: 'good',
     },
   ];
 

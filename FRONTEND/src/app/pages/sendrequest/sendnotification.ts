@@ -20,8 +20,8 @@ import { MatCardModule } from '@angular/material/card';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
-import { RoomService } from '../../services/roomservice';
 import { BuildingWithRoomsModel } from '../../models/Building.model';
+import { BuildingService } from '../../services/building-service';
 
 @Component({
   selector: 'app-sentrequest',
@@ -62,7 +62,7 @@ export class SendNotification {
   }[] = [];
 
   constructor(
-    private roomService: RoomService,
+    private buildingService: BuildingService,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<SendNotification>,
     @Inject(MAT_DIALOG_DATA) public data: any
@@ -79,7 +79,7 @@ export class SendNotification {
     });
 
     // Load data từ service
-    this.roomService.getBuildingWithRooms().subscribe({
+    this.buildingService.getBuildingWithRooms().subscribe({
       next: (data: any) => {
         this._buildingWithRooms = data;
       },

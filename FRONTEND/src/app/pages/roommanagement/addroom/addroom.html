@@ -2,7 +2,7 @@
   <div class="dialog-header">
     <h2 mat-dialog-title>
       <mat-icon>add_home</mat-icon>
-      Tạo phòng mới
+      Create New Room
     </h2>
     <button mat-icon-button mat-dialog-close>
       <mat-icon>close</mat-icon>
@@ -11,11 +11,10 @@
 
   <mat-dialog-content class="dialog-content">
     <form [formGroup]="roomForm" class="room-form">
-      <!-- Thông tin cơ bản -->
       <div class="form-section">
         <h3 class="section-title">
           <mat-icon>info</mat-icon>
-          Thông tin cơ bản
+          Basic Information
         </h3>
 
         <div class="form-row">
@@ -24,7 +23,7 @@
             appearance="outline"
             class="form-field selectBuilding"
           >
-            <mat-label>Tòa nhà</mat-label>
+            <mat-label>Building</mat-label>
             <mat-select formControlName="buildingID">
               <mat-select-trigger>
                 {{ selectedBuildingName }}
@@ -44,7 +43,7 @@
                 </div>
               </mat-option>
             </mat-select>
-            <mat-hint>Có thể chọn nhiều tòa nhà</mat-hint>
+            <mat-hint>You can select multiple buildings</mat-hint>
             <mat-error *ngIf="roomForm.get('buildingID')?.hasError('required')">
               Vui lòng chọn ít nhất một tòa nhà
             </mat-error>
@@ -59,10 +58,10 @@
               placeholder="VD: P101, A201"
             />
             <mat-error *ngIf="roomForm.get('roomNumber')?.hasError('required')">
-              Số phòng là bắt buộc
+              Room number is required
             </mat-error>
             <mat-error *ngIf="roomForm.get('roomNumber')?.hasError('pattern')">
-              Số phòng chỉ được chứa chữ và số
+              Room number can only contain letters and numbers
             </mat-error>
           </mat-form-field>
         </div>

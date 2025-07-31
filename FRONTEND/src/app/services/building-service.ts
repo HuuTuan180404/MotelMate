@@ -5,7 +5,7 @@ import { environment } from '../../environments/environment';
 import { Building } from '../models/Building.model';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class BuildingService {
   private apiUrl = `${environment.apiUrl}/api/building`;
@@ -16,4 +16,12 @@ export class BuildingService {
     return this.http.get<Building[]>(this.apiUrl);
   }
 
+  deleteBuilding(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
+  }
+
+  // lấy tòa nhà và phòng của tòa nhà - Tu
+  getBuildingWithRooms(): Observable<object[]> {
+    return this.http.get<object[]>(`${environment.apiUrl}/api/noti/with-rooms`);
+  }
 }

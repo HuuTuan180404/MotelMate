@@ -4,6 +4,7 @@ using BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BACKEND.Migrations
 {
     [DbContext(typeof(MotelMateDbContext))]
-    partial class MotelMateDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250730101126_RemoveBuildingInAssetEntity")]
+    partial class RemoveBuildingInAssetEntity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -199,7 +202,7 @@ namespace BACKEND.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("ImageURL")
+                    b.Property<string>("BuildingCode")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -282,31 +285,6 @@ namespace BACKEND.Migrations
                     b.ToTable("ContractDetail");
                 });
 
-            modelBuilder.Entity("BACKEND.Models.ExtraCost", b =>
-                {
-                    b.Property<int>("ExtraCostID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExtraCostID"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("InvoiceID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ExtraCostID");
-
-                    b.HasIndex("InvoiceID");
-
-                    b.ToTable("ExtraCosts");
-                });
-
             modelBuilder.Entity("BACKEND.Models.Invoice", b =>
                 {
                     b.Property<int>("InvoiceID")
@@ -324,8 +302,8 @@ namespace BACKEND.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateOnly>("DueDate")
-                        .HasColumnType("date");
+                    b.Property<decimal>("ExtraCosts")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("InvoiceCode")
                         .IsRequired()
@@ -344,9 +322,6 @@ namespace BACKEND.Migrations
                     b.Property<decimal>("TotalAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<decimal>("TotalInitialAmount")
-                        .HasColumnType("decimal(18,2)");
-
                     b.HasKey("InvoiceID");
 
                     b.HasIndex("ContractID");
@@ -361,9 +336,6 @@ namespace BACKEND.Migrations
 
                     b.Property<int>("ServiceID")
                         .HasColumnType("int");
-
-                    b.Property<decimal>("InitialPrice")
-                        .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
@@ -799,17 +771,6 @@ namespace BACKEND.Migrations
                     b.Navigation("Tenant");
                 });
 
-            modelBuilder.Entity("BACKEND.Models.ExtraCost", b =>
-                {
-                    b.HasOne("BACKEND.Models.Invoice", "Invoice")
-                        .WithMany("ExtraCosts")
-                        .HasForeignKey("InvoiceID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Invoice");
-                });
-
             modelBuilder.Entity("BACKEND.Models.Invoice", b =>
                 {
                     b.HasOne("BACKEND.Models.Contract", "Contract")
@@ -1004,8 +965,6 @@ namespace BACKEND.Migrations
 
             modelBuilder.Entity("BACKEND.Models.Invoice", b =>
                 {
-                    b.Navigation("ExtraCosts");
-
                     b.Navigation("InvoiceDetail");
                 });
 

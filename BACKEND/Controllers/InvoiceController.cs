@@ -18,23 +18,20 @@ namespace BACKEND.Controllers
         private readonly MotelMateDbContext _context = context;
         private readonly IMapper _mapper = mapper;
 
+        // GET: api/Invoice
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadInvoiceDTO>>> GetInvoices()
         {
-            int currentAccountId = GetCurrentAccountId();
-            Console.WriteLine($"[DEBUG] Current Account ID: {currentAccountId}");
             var invoices = await _context.Invoice
                 .Include(i => i.Contract)
                     .ThenInclude(c => c.Room)
                         .ThenInclude(r => r.Building)
-                            .ThenInclude(b => b.Owner)
-                .Where(i => i.Contract.Room.Building.OwnerID == currentAccountId)
                 .ProjectTo<ReadInvoiceDTO>(_mapper.ConfigurationProvider)
                 .ToListAsync();
 
             return Ok(invoices);
         }
-
+        
         // GET: api/Invoice/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<ReadInvoiceDetailDTO>> GetInvoiceDetail(int id)
@@ -166,15 +163,6 @@ namespace BACKEND.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
-        }
-        private int GetCurrentAccountId()
-        {
-            var accountIdClaim = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            if (accountIdClaim != null && int.TryParse(accountIdClaim.Value, out int accountId))
-            {
-                return accountId;
-            }
-            return 0;
         }
 
     }
