@@ -1,4 +1,3 @@
-using Backend.Data;
 using BACKEND.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -13,6 +12,7 @@ using BACKEND.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +54,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
 });
+
 builder.Services.AddIdentity<Account, IdentityRole<int>>()
     .AddEntityFrameworkStores<MotelMateDbContext>()
     .AddDefaultTokenProviders();
@@ -107,6 +108,27 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+
+
+// Cloudinary
+builder.Services.Configure<CloudinarySettingsAccount>(
+    builder.Configuration.GetSection("CloudinarySettingsAccount"));
+
+builder.Services.AddSingleton<CloudinaryDotNet.Cloudinary>(provider =>
+{
+    var config = provider.GetRequiredService<IOptions<CloudinarySettingsAccount>>().Value;
+    var account = new CloudinaryDotNet.Account(config.CloudName, config.ApiKey, config.ApiSecret);
+    return new CloudinaryDotNet.Cloudinary(account);
+});
+
+// builder.Services.AddSingleton<Cloudinary>(provider =>
+// {
+//     var config = provider.GetRequiredService<IOptions<CloudinarySettingsAccount>>().Value;
+//     var account = new CloudinarySettingsAccount(config.CloudName, config.ApiKey, config.ApiSecret);
+//     return new Cloudinary(account);
+// });
+
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())
