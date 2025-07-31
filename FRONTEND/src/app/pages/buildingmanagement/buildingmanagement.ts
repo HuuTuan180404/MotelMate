@@ -19,6 +19,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog'; 
 import { MatDialogModule } from '@angular/material/dialog';
+import { AddBuilding } from './add-building/add-building';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-buildingmanagement',
@@ -44,6 +46,9 @@ export class Buildingmanagement implements OnInit {
   searchTerm: string = '';
   buildings: Building[] = [];
   filteredbuilding: Building[] = [];
+  editingBuildingID: number | null = null;
+  originalBuilding: Building | null = null;
+
 
   constructor(private buildingService: BuildingService,
     private dialog: MatDialog,
@@ -105,4 +110,134 @@ export class Buildingmanagement implements OnInit {
       }
     });
   }
+  startEdit(building: Building) {
+    this.editingBuildingID = building.buildingID;
+    this.originalBuilding = JSON.parse(JSON.stringify(building));
+  }
+
+  cancelEdit() {
+    if (this.originalBuilding) {
+      const index = this.buildings.findIndex(b => b.buildingID === this.originalBuilding!.buildingID);
+      if (index !== -1) {
+        this.buildings[index] = { ...this.originalBuilding! };  // Khôi phục lại dữ liệu cũ
+        this.applyFilters();
+      }
+    }
+    this.editingBuildingID = null;
+    this.originalBuilding = null;
+    this.buildings.forEach(b => b.previewImage = null);
+  }
+
+  async onImageSelected(event: Event, building: Building) {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files.length > 0) {
+      const file = fileInput.files[0];
+      
+      // Preview image
+      const reader = new FileReader();
+      reader.onload = () => {
+        building.previewImage = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+
+      // Upload to Cloudinary
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', environment.cloudinary.uploadPreset);
+
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${environment.cloudinary.cloudName}/upload`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        building.imageURL = data.secure_url;
+      } else {
+        console.error('Image upload failed');
+      }
+    }
+  }
+
+
+  saveEdit(building: Building) {
+    const hasChanges = JSON.stringify(this.originalBuilding) !== JSON.stringify(building);
+
+    if (!hasChanges) {
+      this.snackBar.open('No changes detected.', 'Close', {
+        duration: 2000,
+        verticalPosition: 'top',
+        panelClass: 'custom-snackbar-success'
+      });
+      this.editingBuildingID = null;
+      this.originalBuilding = null;
+      return;
+    }
+
+    if (!building.name.trim()) {
+      this.snackBar.open('Name must not be empty.', 'Close', { duration: 3000, verticalPosition: 'top', panelClass: 'custom-snackbar' });
+      return;
+    }
+
+    if (!building.address.trim()) {
+      this.snackBar.open('Address must not be empty.', 'Close', { duration: 3000, verticalPosition: 'top', panelClass: 'custom-snackbar' });
+      return;
+    }
+
+    this.buildingService.updateBuilding(building.buildingID, {
+      name: building.name,
+      address: building.address,
+      imageURL: building.imageURL
+    }).subscribe({
+      next: () => {
+        this.snackBar.open('Building updated successfully.', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          panelClass: 'custom-snackbar-success'
+        });
+        building.previewImage = null;
+        this.editingBuildingID = null;
+        this.originalBuilding = null;
+      },
+      error: (err) => {
+        console.error('Failed to update building', err);
+        this.snackBar.open('Failed to update building.', 'Close', {
+          duration: 3000,
+          verticalPosition: 'top',
+          panelClass: 'custom-snackbar'
+        });
+      }
+    });
+  }
+
+  openAddBuildingDialog() {
+    const dialogRef = this.dialog.open(AddBuilding, {
+      panelClass: 'custom-dialog-panel',
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.buildingService.addBuilding(result).subscribe({
+          next: (newBuilding) => {
+            this.buildings.push(newBuilding);
+            this.searchTerm = '';
+            this.applyFilters();
+            this.snackBar.open('Building added successfully.', 'Close', {
+              duration: 2000,
+              verticalPosition: 'top',
+              panelClass: 'custom-snackbar-success'
+            });
+          },
+          error: (err) => {
+            console.error('Failed to add building', err);
+            this.snackBar.open('Failed to add building.', 'Close', {
+              duration: 3000,
+              verticalPosition: 'top',
+              panelClass: 'custom-snackbar'
+            });
+          }
+        });
+      }
+  });
+}
 }
