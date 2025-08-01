@@ -37,10 +37,6 @@ namespace BACKEND.RoomDTO.DTOs
         public List<string>? UrlRoomImages { get; set; }
         public List<ReadTenantDTO>? Members { get; set; }
 
-        // public int AssetId { get; set; }
-        // public string? AssetName { get; set; }
-        // public int AssetQuantity { get; set; }
-
         public List<object> AssetData { get; set; }
     }
 }
