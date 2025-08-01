@@ -1,0 +1,103 @@
+<!-- Dialog Header -->
+<div class="dialog-header">
+  <h2>Profile</h2>
+</div>
+
+<!-- Dialog Body -->
+<div class="dialog-container" [formGroup]="form">
+  <!-- Left Section -->
+  <div class="left-section">
+    <img [src]="profileImage" class="profile-img" alt="Profile photo" />
+    <button mat-stroked-button class="upload-btn">
+      Upload Photo
+      <input type="file" (change)="onFileSelected($event)" hidden />
+    </button>
+
+    <div class="password-section">
+      <mat-form-field appearance="outline">
+        <mat-label>Old Password</mat-label>
+        <input matInput type="password" formControlName="oldPassword" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>New Password</mat-label>
+        <input matInput type="password" formControlName="newPassword" />
+      </mat-form-field>
+
+      <button mat-flat-button color="primary" (click)="changePassword()">Change Password</button>
+    </div>
+  </div>
+
+  <!-- Right Section -->
+  <div class="right-section">
+    <h3>Profile Information</h3>
+    <div class="grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Username</mat-label>
+        <input matInput formControlName="username" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="firstName" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Nickname</mat-label>
+        <input matInput formControlName="nickname" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastName" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role">
+          <mat-option value="Subscriber">Subscriber</mat-option>
+          <mat-option value="Admin">Admin</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Display Name</mat-label>
+        <input matInput formControlName="displayName" />
+      </mat-form-field>
+    </div>
+
+    <h3>Contact Info</h3>
+    <div class="grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>WhatsApp</mat-label>
+        <input matInput formControlName="whatsapp" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Website</mat-label>
+        <input matInput formControlName="website" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Telegram</mat-label>
+        <input matInput formControlName="telegram" />
+      </mat-form-field>
+    </div>
+
+    <h3>About the User</h3>
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Biographical Info</mat-label>
+      <textarea matInput rows="4" formControlName="bio"></textarea>
+    </mat-form-field>
+  </div>
+</div>
+
+<!-- Dialog Footer -->
+<div class="dialog-footer">
+  <button mat-button (click)="onClose()">Close</button>
+</div>

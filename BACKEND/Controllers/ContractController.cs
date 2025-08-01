@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace MyApp.Namespace
+namespace BACKEND.Namespace
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -89,7 +89,6 @@ namespace MyApp.Namespace
                 ContractID = contract.ContractID,
                 TenantID = tenant.Id,
                 StartDate = request.StartDate,
-                EndDate = request.EndDate,
                 IsRoomRepresentative = true
             };
 

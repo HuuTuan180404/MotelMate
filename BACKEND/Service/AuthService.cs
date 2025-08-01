@@ -31,7 +31,7 @@ namespace BACKEND.Service
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null) return false;
             user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, newPassword);
-
+            
             var result = await _userManager.UpdateAsync(user);
 
             return result.Succeeded;
