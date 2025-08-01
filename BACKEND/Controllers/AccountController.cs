@@ -86,13 +86,13 @@ namespace BACKEND.Controllers
         public async Task<IActionResult> ResetPassword([FromBody] ResetPassDTO dto)
         {
             if (!_otpService.VerifyOtp(dto.Email, dto.Otp))
-                return BadRequest("Invalid or expired OTP.");
+                return BadRequest(new { message = "Invalid or expired OTP." });
 
             bool result = await _authService.ResetPasswordAsync(dto.Email, dto.NewPassword);
             if (!result)
-                return NotFound("User not found.");
+                return NotFound(new { message = "User not found." });
 
-            return Ok("Password reset successfully.");
+            return Ok(new { message = "Password reset successfully." });
         }
     }
 }

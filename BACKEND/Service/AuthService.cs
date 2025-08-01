@@ -30,7 +30,6 @@ namespace BACKEND.Service
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null) return false;
-
             user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, newPassword);
 
             var result = await _userManager.UpdateAsync(user);
@@ -134,6 +133,7 @@ namespace BACKEND.Service
                     Email = model.Email,
                     CCCD = model.CCCD,
                     FullName = model.FullName,
+                    PhoneNumber = model.PhoneNumber,
                     Bdate = model.Bdate,
                     URLAvatar = model.URLAvatar,
                     Status = EAccountStatus.Active,
@@ -150,6 +150,7 @@ namespace BACKEND.Service
                 Email = model.Email,
                 CCCD = model.CCCD,
                 FullName = model.FullName,
+                PhoneNumber = model.PhoneNumber,
                 Bdate = model.Bdate,
                 URLAvatar = model.URLAvatar,
                 Status = EAccountStatus.Active,

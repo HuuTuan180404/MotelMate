@@ -21,8 +21,16 @@ namespace BACKEND.Controllers
         [HttpPost("send/{toEmail}")]
         public async Task<IActionResult> SendEmail(string toEmail)
         {
-            await _emailService.SendEmailAsync(toEmail);
-            return Ok("Email sent successfully");
+            try
+            {
+                await _emailService.SendEmailAsync(toEmail);
+                return Ok(new { message = "Email sent successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
+
     }
 }

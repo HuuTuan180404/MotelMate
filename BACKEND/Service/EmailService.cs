@@ -4,21 +4,27 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Threading.Tasks;
+using BACKEND.Data;
 using BACKEND.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace BACKEND.Service
 {
     public class EmailService : IEmailService
     {
         private readonly IOtpService _otpService;
+        private readonly MotelMateDbContext _context;
 
-        public EmailService(IOtpService otpService)
+        public EmailService(IOtpService otpService, MotelMateDbContext context)
         {
             _otpService = otpService;
+            _context = context;
         }
 
         public async Task SendEmailAsync(string toEmail)
         {
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == toEmail);
+            if (user == null) throw new Exception("User not found");
             var fromEmail = Environment.GetEnvironmentVariable("EMAIL_FROM");
             var fromPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
 
