@@ -25,7 +25,7 @@ import {
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 export interface ContractFormData {
-  building: string;
+  buildingID: number;
   room: string;
   start: Date;
   end: Date;
@@ -35,7 +35,7 @@ export interface ContractFormData {
   status?: 'Active' | 'Expire' | 'Terminate' | 'Unsigned';
 }
 export interface CreateContractDTO {
-  buildingName: string;
+  buildingID: number;
   roomNumber: string;
   startDate: string;
   endDate: string;
@@ -43,7 +43,10 @@ export interface CreateContractDTO {
   price: number;
   cccd: string;
 }
-
+export interface Building {
+  buildingID: number;
+  name: string;
+}
 @Component({
   selector: 'contract-dialog',
   templateUrl: './contractDialog.html',
@@ -66,7 +69,7 @@ export interface CreateContractDTO {
 export class AddContractDialogComponent {
   private _snackBar = inject(MatSnackBar);
   formData: ContractFormData = {
-    building: '',
+    buildingID: 0,
     room: '',
     start: new Date(),
     end: new Date(),
@@ -75,8 +78,9 @@ export class AddContractDialogComponent {
     cccd: '',
     status: 'Unsigned',
   };
-  buildings: string[] = [];
+  buildings: Building[] = [];
   statuses: string[] = [];
+
   readonly errorMessage = signal('');
   private contractService = inject(ContractService);
   private apiUrl = `${environment.apiUrl}`;
@@ -101,12 +105,19 @@ export class AddContractDialogComponent {
     public dialogRef: MatDialogRef<AddContractDialogComponent>,
     private http: HttpClient
   ) {
-    this.http.get<{ name: string }[]>(`${this.apiUrl}/api/Building`).subscribe((response) => {
-      this.buildings = response.map((b) => b.name);
-    });
-    this.http.get<any[]>(`${this.apiUrl}/api/Enum/contract-statuses`).subscribe((response) => {
-      this.statuses = response.map((item) => item.name);
-    });
+    this.http
+      .get<{ name: string, buildingID: number }[]>(`${this.apiUrl}/api/Building`)
+      .subscribe((response) => {
+        this.buildings = response.map((b) => ({
+          buildingID: b.buildingID,
+          name: b.name,
+        }));
+      });
+    this.http
+      .get<any[]>(`${this.apiUrl}/api/Enum/contract-statuses`)
+      .subscribe((response) => {
+        this.statuses = response.map((item) => item.name);
+      });
   }
 
   onCancel(): void {
@@ -131,7 +142,7 @@ export class AddContractDialogComponent {
     )
       return;
     const createDTO: CreateContractDTO = {
-      buildingName: this.formData.building,
+      buildingID: this.formData.buildingID,
       roomNumber: this.formData.room,
       startDate: this.formData.start.toISOString().split('T')[0],
       endDate: this.formData.end.toISOString().split('T')[0],

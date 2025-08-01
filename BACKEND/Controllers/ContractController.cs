@@ -44,7 +44,7 @@ namespace BACKEND.Namespace
             // find room
             var room = await _context.Room
                 .Include(r => r.Building)
-                .FirstOrDefaultAsync(r => r.RoomNumber == request.RoomNumber && r.Building.Name == request.BuildingName);
+                .FirstOrDefaultAsync(r => r.RoomNumber == request.RoomNumber && r.Building.BuildingID == request.BuildingID);
 
             if (room == null)
                 return NotFound(new { message = "room not found" });

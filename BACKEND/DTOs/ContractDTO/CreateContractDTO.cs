@@ -7,7 +7,7 @@ namespace BACKEND.DTOs.ContractDTO
 {
     public class CreateContractDTO
     {
-        public string BuildingName { get; set; }
+        public int BuildingID { get; set; }
         public string RoomNumber { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
