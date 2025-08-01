@@ -39,10 +39,13 @@
   position: relative;
   display: inline-block;
   margin-top: 8px;
+  margin-bottom: 1rem;
   width: 100%;
 }
-
-.upload-btn input[type="file"] {
+.change-password-btn{
+  width: 100%;
+}
+.upload-btn input[type='file'] {
   position: absolute;
   top: 0;
   left: 0;
@@ -53,12 +56,16 @@
 }
 
 .password-section {
-  margin-top: 24px;
+  overflow: hidden;
 }
-
+.hihi{
+  margin-top: 1rem;
+}
+.change-password-element{
+  margin-bottom: 1rem;
+}
 .password-section mat-form-field {
   width: 100%;
-  margin-bottom: 12px;
 }
 
 .right-section {
@@ -66,13 +73,13 @@
 }
 
 .right-section h3 {
-  margin: 16px 0 8px;
+  margin: 0 0 8px;
   font-weight: 600;
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  display: flex;
+  flex-direction: column;
   gap: 16px;
 }
 
