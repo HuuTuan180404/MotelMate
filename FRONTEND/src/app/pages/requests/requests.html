@@ -1,0 +1,58 @@
+<div class="main">
+  <!-- Header -->
+  <div class="header-container">
+    <h2 class="page-title">{{ formatTitle(requestType) }}</h2>
+     <div class="tabs">
+    <mat-button-toggle-group [(ngModel)]="selectedStatus" (change)="changeTab()">
+      <mat-button-toggle value="Pending">Pending</mat-button-toggle>
+      <mat-button-toggle value="Approved">Approved</mat-button-toggle>
+      <mat-button-toggle value="Rejected">Rejected</mat-button-toggle>
+    </mat-button-toggle-group>
+  </div>
+    <div class="search-container">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-label>Search</mat-label>
+        <input matInput placeholder="Search..." [(ngModel)]="searchTerm" (input)="applyFilters()" />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </div>
+  </div>
+  <!-- Request List -->
+  <div class="request-list">
+    <mat-card *ngFor="let request of filteredRequests" class="request-card">
+      <div class="request-info">
+        <div class="request-header">
+          <mat-card-title>{{ request.title }}</mat-card-title>
+          <span class="request-date">{{ request.createAt | date:'short' }}</span>
+        </div>
+        <mat-card-subtitle>{{ request.roomName }} - {{ request.buildingName }}</mat-card-subtitle>
+        <div class="meta-info">
+          <span>Sender: {{ request.tenantName }}</span>
+        </div>
+        <mat-card-content>
+          {{ request.content }}
+        </mat-card-content>
+
+        <button mat-stroked-button color="primary" *ngIf="request.image" (click)="viewImage(request.image)">View Attachment</button>
+      </div>
+
+      <div class="request-actions" *ngIf="request.status === 'Pending'; else statusChip">
+        <button mat-raised-button color="primary" (click)="approveRequest(request)">Approve</button>
+        <button mat-raised-button color="warn" (click)="rejectRequest(request)">Reject</button>
+      </div>
+
+      <ng-template #statusChip>
+        <mat-chip [color]="request.status === 'Approved' ? 'primary' : 'warn'" selected>
+          {{ request.status }}
+        </mat-chip>
+      </ng-template>
+    </mat-card>
+  </div>
+
+  <!-- Image Dialog -->
+  <ng-template #imageDialog let-data>
+    <div class="image-popup">
+      <img [src]="data" alt="Attachment" />
+    </div>
+  </ng-template>
+</div>

@@ -1,4 +1,4 @@
-namespace BACKEND.DTOs.RequestDTO
+namespace BACKEND.DTOs.RequestDTO 
 {
     public class ReadRequestDTO
     {
@@ -10,6 +10,13 @@ namespace BACKEND.DTOs.RequestDTO
         public DateTime CreateAt { get; set; }
         public required string Status { get; set; }  // TRẢ STRING
         public int? TenantID { get; set; }
+
+        public string? TenantName { get; set; }
+
         public int? OwnerID { get; set; }
+
+        // Add thêm Room & Building Info
+        public string? RoomName { get; set; }
+        public string? BuildingName { get; set; }
     }
 }

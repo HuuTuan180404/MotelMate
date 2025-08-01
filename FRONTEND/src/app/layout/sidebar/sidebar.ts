@@ -45,7 +45,7 @@ export class Sidebar {
         {
           icon: 'feedback',
           label: 'Feedback/Issue',
-          route: 'requests/feedback',
+          route: 'requests/feedbackorissue',
         },
       ],
     },
