@@ -115,8 +115,11 @@ namespace BACKEND.Controllers
             _context.Building.Add(building);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetBuildingSummary), new { id = building.BuildingID }, null);
+            var readDTO = _mapper.Map<ReadBuildingDTO>(building);
+
+            return CreatedAtAction(nameof(GetBuildingSummary), new { id = building.BuildingID }, readDTO);
         }
+
 
 
     }

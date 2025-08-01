@@ -5,44 +5,96 @@
 
     <div class="search-container">
       <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Search</mat-label>
-      <input
-        matInput
-        placeholder="Search..."
-        [(ngModel)]="searchTerm"
-        (input)="applyFilters()"
-      />
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
-
-    </div>
-</div>
-<div class="building-list-container">
-<div class="building-grid">
-  <div class="building-card" *ngFor="let b of filteredbuilding">
-    <div class="building-card-header" [style.backgroundImage]="'url(' + (b.imageURL || '/assets/images/default-building.jpg') + ')'"></div>
-    <div class="building-card-body">
-      <div class="building-name">{{ b.name }}</div>
-      <div class="building-address">{{ b.address }}</div>
-      <div class="stats-row">
-        <div><strong>Total Rooms:</strong> {{ b.totalRooms }}</div>
-        <div><strong>Available:</strong> {{ b.availableRooms }}</div>
-      </div>
-      <div class="stats-row">
-        <div><strong>Occupied:</strong> {{ b.occupiedRooms }}</div>
-        <div><strong>Maintenance:</strong> {{ b.maintenanceRooms }}</div>
-      </div>
-      <div class="stats-row">
-        <div><strong>Total Tenants:</strong> {{ b.totalTenants }}</div>
-      </div>
-    </div>
-    <div class="actions">
-      <button mat-icon-button color="primary"><mat-icon style="color: #45a9ea;">edit</mat-icon></button>
-      <button mat-icon-button color="warn" (click)="deleteBuilding(b.buildingID)">
-        <mat-icon style="color: #f44336;">delete</mat-icon>
+        <mat-label>Search</mat-label>
+        <input
+          matInput
+          placeholder="Search..."
+          [(ngModel)]="searchTerm"
+          (input)="applyFilters()"
+        />
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+      <button mat-flat-button class="create-btn" (click)="openAddBuildingDialog()" matTooltip="Add Building">
+        <span>Add</span>
+        <mat-icon>add</mat-icon>
       </button>
-
     </div>
   </div>
-</div>
+
+  <div class="building-list-container">
+    <div class="building-grid">
+      <div class="building-card" *ngFor="let b of filteredbuilding">
+        <!-- Image Header -->
+        <div class="building-card-header" [style.backgroundImage]="'url(' + (b.imageURL || '/assets/images/default-building.jpg') + ')'">
+          <!-- Preview Image Overlay (When editing and new image selected) -->
+          <div *ngIf="b.previewImage" class="preview-overlay" [style.backgroundImage]="'url(' + b.previewImage + ')'"></div>
+        </div>
+
+
+        <div class="building-card-body">
+          <!-- Editable Name -->
+          <div class="building-name">
+            <ng-container *ngIf="editingBuildingID === b.buildingID; else viewName">
+              <input [(ngModel)]="b.name" class="editable-input" />
+            </ng-container>
+            <ng-template #viewName>{{ b.name }}</ng-template>
+          </div>
+
+          <!-- Editable Address -->
+          <div class="building-address">
+            <ng-container *ngIf="editingBuildingID === b.buildingID; else viewAddress">
+              <input [(ngModel)]="b.address" class="editable-input" />
+            </ng-container>
+            <ng-template #viewAddress>{{ b.address }}</ng-template>
+          </div>
+
+          <!-- Stats Rows -->
+          <div class="stats-row">
+            <div><strong>Total Rooms:</strong> {{ b.totalRooms }}</div>
+            <div><strong>Available:</strong> {{ b.availableRooms }}</div>
+          </div>
+          <div class="stats-row">
+            <div><strong>Occupied:</strong> {{ b.occupiedRooms }}</div>
+            <div><strong>Maintenance:</strong> {{ b.maintenanceRooms }}</div>
+          </div>
+          <div class="stats-row">
+            <div><strong>Total Tenants:</strong> {{ b.totalTenants }}</div>
+          </div>
+
+          <!-- Change Image Button (Only Edit Mode) -->
+          <div *ngIf="editingBuildingID === b.buildingID" class="change-image-section">
+            <input type="file" #fileInput (change)="onImageSelected($event, b)" hidden />
+            <button mat-stroked-button color="primary" (click)="fileInput.click()">
+              <mat-icon>cloud_upload</mat-icon> Change Image
+            </button>
+          </div>
+        </div>
+        <div class="spacer"></div>
+
+        <!-- Action Buttons -->
+        <div class="actions">
+          <!-- If NOT in edit mode -->
+          <ng-container *ngIf="editingBuildingID !== b.buildingID">
+            <button mat-icon-button color="primary" [disabled]="editingBuildingID !== null" (click)="startEdit(b)">
+              <mat-icon style="color: #45a9ea;">edit</mat-icon>
+            </button>
+            <button mat-icon-button color="warn" (click)="deleteBuilding(b.buildingID)">
+              <mat-icon style="color: #f44336;">delete</mat-icon>
+            </button>
+          </ng-container>
+
+          <!-- If in edit mode -->
+          <ng-container *ngIf="editingBuildingID === b.buildingID">
+            <button mat-icon-button color="primary" (click)="saveEdit(b)">
+              <mat-icon style="color: #4CAF50;">check</mat-icon>
+            </button>
+            <button mat-icon-button (click)="cancelEdit()">
+              <mat-icon style="color: #a0aec0;">close</mat-icon>
+            </button>
+          </ng-container>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </div>

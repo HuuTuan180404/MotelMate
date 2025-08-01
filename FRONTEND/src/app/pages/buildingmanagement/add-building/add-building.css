@@ -15,6 +15,11 @@
     padding: 2rem 2.5rem 1rem 2.5rem;
     border-bottom: 1px solid #eee;
   }
+  /* .dialog-header {
+    padding: 16px 0;
+    border-bottom: 1px solid #eee;
+    background: #f7f7f7;
+  } */
 
   .dialog-header h2 {
     color: var(--primary-color);
@@ -32,6 +37,9 @@
     flex-direction: column;
     gap: 16px;
   }
+  .dialog-body::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari, Opera */
+    }
 
   ::ng-deep .mat-mdc-form-field {
     width: 100%;
@@ -128,4 +136,17 @@
     min-height: 20px; /* hoặc 16px tùy chỉnh */
     display: block;
   }
+  .image-preview {
+    margin-top: 15px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    text-align: center;
+    }
+  .file-name {
+    margin-top: 10px;
+    font-style: italic;
+    color: #555;
+    }
 }

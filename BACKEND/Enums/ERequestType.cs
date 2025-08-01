@@ -2,8 +2,8 @@ namespace BACKEND.Enums
 {
     public enum ERequestType
     {
-        ExtendContract,
         Payment,
+        ExtendContract,
         RoomRegistration,
         FeedBackOrIssue
     }
