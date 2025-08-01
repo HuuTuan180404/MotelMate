@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -17,6 +17,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatError, MatSuffix } from '@angular/material/form-field';
 import { MatIcon } from '@angular/material/icon';
 import { firstValueFrom } from 'rxjs';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-login',
@@ -41,6 +42,7 @@ import { firstValueFrom } from 'rxjs';
 export class Login {
   form!: FormGroup;
   hidePassword = true;
+  private _snackBar = inject(MatSnackBar);
 
   constructor(
     private router: Router,
@@ -70,6 +72,15 @@ export class Login {
       },
       error: (err) => {
         console.error('Login failed', err);
+        this._snackBar.open(
+          'Failed to login: Invalid username or password',
+          'Close',
+          {
+            duration: 4000,
+            panelClass: ['snackbar-error'],
+            verticalPosition: 'top',
+          }
+        );
       },
     });
   }
