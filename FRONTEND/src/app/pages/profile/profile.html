@@ -1,11 +1,13 @@
-<!-- Dialog Header -->
+<!-- Header -->
 <div class="dialog-header">
   <h2>Profile</h2>
+  <button mat-stroked-button color="primary" (click)="enableEdit()" *ngIf="!editMode()">Edit</button>
+  
 </div>
 
-<!-- Dialog Body -->
+<!-- Body -->
 <div class="dialog-container" [formGroup]="form">
-  <!-- Left Section -->
+  <!-- Left -->
   <div class="left-section">
     <img [src]="profileImage" class="profile-img" alt="Profile photo" />
     <button mat-stroked-button class="upload-btn">
@@ -28,7 +30,7 @@
     </div>
   </div>
 
-  <!-- Right Section -->
+  <!-- Right -->
   <div class="right-section">
     <h3>Profile Information</h3>
     <div class="grid">
@@ -97,7 +99,15 @@
   </div>
 </div>
 
-<!-- Dialog Footer -->
+<!-- Footer -->
 <div class="dialog-footer">
-  <button mat-button (click)="onClose()">Close</button>
+  <button mat-stroked-button (click)="cancel()">Close</button>
+  <button
+    mat-flat-button
+    color="primary"
+    (click)="accept()"
+    [disabled]="!editMode() || !hasChanges()"
+  >
+    Accept
+  </button>
 </div>

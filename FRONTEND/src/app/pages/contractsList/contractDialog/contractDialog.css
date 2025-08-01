@@ -68,7 +68,9 @@ mat-error {
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
   animation: slideInRight 0.4s ease-in-out;
 }
-
+::ng-deep .snackbar-error .mat-mdc-snackbar-surface {
+  background-color:#da3131  !important;
+}
 /* Slide từ phải vào */
 @keyframes slideInRight {
   0% {

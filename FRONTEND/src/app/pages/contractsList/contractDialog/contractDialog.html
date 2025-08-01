@@ -17,9 +17,9 @@
 
         <mat-form-field appearance="outline">
           <mat-label>Room</mat-label>
-          <input matInput [formControl]="roomCtrl" placeholder="101" (blur)="updateErrorMessage()">
+          <input matInput [formControl]="roomCtrl" placeholder="101">
           <mat-icon matSuffix>meeting_room</mat-icon>
-          <mat-error *ngIf="roomCtrl.errors">{{ errorMessage() }}</mat-error>
+          <mat-error *ngIf="roomCtrl.touched && roomCtrl.hasError('required')">Room is required.</mat-error>
         </mat-form-field>
       </div>
     </div>

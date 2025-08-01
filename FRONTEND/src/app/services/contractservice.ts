@@ -14,7 +14,7 @@ export interface ContractDTO {
 }
 export interface CreateContractDTO {
   buildingName: string;
-  roomNumber: number;
+  roomNumber: string;
   startDate: string;
   endDate: string;
   deposit: number;

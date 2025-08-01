@@ -199,20 +199,6 @@ export class ContractComponent implements OnInit, AfterViewInit {
       height: 'auto',
       maxHeight: '90vh',
       minWidth: '50vw',
-      data: {
-        formData: {
-          contractcode: '',
-          contractholder: '',
-          building: '',
-          room: null,
-          start: '',
-          end: '',
-          status: 'Unsigned',
-        },
-        buildings: this.buildings,
-        contracts: this.contracts,
-        statuses: this.statuses,
-      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {

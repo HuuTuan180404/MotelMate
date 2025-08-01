@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,12 +25,15 @@ import { CommonModule } from '@angular/common';
   ]
 })
 export class Profile {
-  form: FormGroup;
   profileImage = 'https://i.imgur.com/8Km9tLL.png';
+
+  editMode = signal(false);
+  form: FormGroup;
+  originalValue: any;
 
   constructor(
     private fb: FormBuilder,
-    private dialogRef: MatDialogRef<Profile>
+    public dialogRef: MatDialogRef<Profile>
   ) {
     this.form = this.fb.group({
       username: ['gene.rodrig'],
@@ -47,6 +50,9 @@ export class Profile {
       oldPassword: [''],
       newPassword: ['']
     });
+
+    this.originalValue = this.form.getRawValue(); // lưu giá trị gốc
+    this.form.disable(); // mặc định disable
   }
 
   onFileSelected(event: any) {
@@ -58,11 +64,33 @@ export class Profile {
     }
   }
 
+  enableEdit() {
+    this.editMode.set(true);
+    this.form.enable();
+    this.form.get('oldPassword')?.disable(); // vẫn khóa đổi mật khẩu
+    this.form.get('newPassword')?.disable();
+  }
+
   changePassword() {
     const { oldPassword, newPassword } = this.form.value;
     console.log('Changing password:', oldPassword, newPassword);
   }
-  onClose() {
+
+  hasChanges(): boolean {
+    return JSON.stringify(this.form.getRawValue()) !== JSON.stringify(this.originalValue);
+  }
+
+  accept() {
+    if (this.hasChanges()) {
+      console.log('Accepted form value:', this.form.getRawValue());
+      this.originalValue = this.form.getRawValue(); // cập nhật lại gốc
+      this.form.markAsPristine();
+      this.editMode.set(false);
+      this.form.disable();
+    }
+  }
+
+  cancel() {
     this.dialogRef.close();
   }
 }

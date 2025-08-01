@@ -22,9 +22,11 @@ import {
   MatSnackBarLabel,
   MatSnackBarRef,
 } from '@angular/material/snack-bar';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../environments/environment';
 export interface ContractFormData {
   building: string;
-  room: number;
+  room: string;
   start: Date;
   end: Date;
   deposit: number;
@@ -34,7 +36,7 @@ export interface ContractFormData {
 }
 export interface CreateContractDTO {
   buildingName: string;
-  roomNumber: number;
+  roomNumber: string;
   startDate: string;
   endDate: string;
   deposit: number;
@@ -63,17 +65,23 @@ export interface CreateContractDTO {
 })
 export class AddContractDialogComponent {
   private _snackBar = inject(MatSnackBar);
-  formData: ContractFormData;
+  formData: ContractFormData = {
+    building: '',
+    room: '',
+    start: new Date(),
+    end: new Date(),
+    deposit: 0,
+    total: 0,
+    cccd: '',
+    status: 'Unsigned',
+  };
   buildings: string[] = [];
-  contracts: any[] = [];
   statuses: string[] = [];
   readonly errorMessage = signal('');
   private contractService = inject(ContractService);
+  private apiUrl = `${environment.apiUrl}`;
 
-  roomCtrl = new FormControl<number | null>(null, [
-    Validators.required,
-    Validators.min(1),
-  ]);
+  roomCtrl = new FormControl<string | null>(null, [Validators.required]);
   startCtrl = new FormControl<Date | null>(null, Validators.required);
   endCtrl = new FormControl<Date | null>(null, Validators.required);
   depositCtrl = new FormControl<number | null>(null, [
@@ -91,56 +99,27 @@ export class AddContractDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<AddContractDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
+    private http: HttpClient
   ) {
-    this.formData = { ...data.formData };
-    this.buildings = data.buildings || [];
-    this.contracts = data.contracts || [];
-    this.statuses = data.statuses || [];
-
-    this.roomCtrl.setValue(this.formData.room ?? null);
-    this.startCtrl.setValue(new Date(this.formData.start));
-    this.endCtrl.setValue(new Date(this.formData.end));
-    this.depositCtrl.setValue(this.formData.deposit);
-    this.totalCtrl.setValue(this.formData.total);
-    this.cccdCtrl.setValue(this.formData.cccd);
+    this.http.get<{ name: string }[]>(`${this.apiUrl}/api/Building`).subscribe((response) => {
+      this.buildings = response.map((b) => b.name);
+    });
+    this.http.get<any[]>(`${this.apiUrl}/api/Enum/contract-statuses`).subscribe((response) => {
+      this.statuses = response.map((item) => item.name);
+    });
   }
 
   onCancel(): void {
     this.dialogRef.close();
   }
 
-  updateErrorMessage(): void {
-    const room = this.roomCtrl.value;
-    if (!room || room < 1) {
-      this.errorMessage.set('Please enter a valid room number!');
-      this.roomCtrl.setErrors({ invalid: true });
-      return;
-    }
-
-    const exists = this.contracts.some(
-      (c) => c.building === this.formData.building && c.room === room
-    );
-
-    if (exists) {
-      this.errorMessage.set('This room already has a contract!');
-      // this.roomCtrl.setErrors({ conflict: true });
-      return;
-    } else {
-      this.errorMessage.set('');
-      this.roomCtrl.setErrors(null);
-    }
-  }
-
   onConfirm(): void {
-    this.formData.room = this.roomCtrl.value ?? 0;
+    this.formData.room = this.roomCtrl.value!;
     this.formData.start = this.startCtrl.value!;
     this.formData.end = this.endCtrl.value!;
     this.formData.deposit = this.depositCtrl.value!;
     this.formData.total = this.totalCtrl.value!;
     this.formData.cccd = this.cccdCtrl.value!;
-
-    this.updateErrorMessage();
 
     if (
       this.roomCtrl.invalid ||
@@ -167,7 +146,8 @@ export class AddContractDialogComponent {
       (error) => {
         console.error(error);
         this._snackBar.open(
-          'Failed to create contract: ' + (error.error.message || 'Unknown error'),
+          'Failed to create contract: ' +
+            (error.error.message || 'Unknown error'),
           'Close',
           {
             duration: 4000,
