@@ -44,7 +44,7 @@ namespace BACKEND.Controllers
                                     .Include(r => r.Building)
                                     .Include(r => r.RoomImages)
                                     .Include(r => r.Contracts.Where(c => c.Status == EContractStatus.Active)) // hợp đồng active
-                                        .ThenInclude(c => c.ContractDetail)
+                                        .ThenInclude(c => c.ContractDetail.Where(cd => cd.EndDate == null))
                                             .ThenInclude(cd => cd.Tenant)
                                     .Where(b => b.Building.Owner.Id == userId)
                                     .ToListAsync();
@@ -62,7 +62,7 @@ namespace BACKEND.Controllers
                                         .ThenInclude(b => b.Owner)
                                     .Include(r => r.RoomImages)
                                     .Include(r => r.Contracts.Where(c => c.Status == EContractStatus.Active)) // hợp đồng active
-                                        .ThenInclude(c => c.ContractDetail)
+                                        .ThenInclude(c => c.ContractDetail.Where(cd => cd.EndDate == null))
                                             .ThenInclude(cd => cd.Tenant)
                                     .Include(ra => ra.RoomAssets)
                                         .ThenInclude(a => a.Asset)

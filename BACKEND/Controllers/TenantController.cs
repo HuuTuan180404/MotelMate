@@ -48,13 +48,24 @@ namespace BACKEND.Controllers
 
         // GET: api/tenant/1
         [HttpGet("{id}")]
-        public async Task<ActionResult<ReadTenantDetailDTO>> GetTenantDetail(int id)
+        public async Task<ActionResult<ReadTenantDTO>> GetTenantDetail(int id)
         {
-            var tenant = await _context.Tenant.Include(t => t.ContractDetails).FirstOrDefaultAsync(t => t.Id == id);
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!long.TryParse(userIdStr, out var ownerId))
+            {
+                return Unauthorized("User ID not found or invalid");
+            }
 
-            if (tenant == null)
-                return NotFound();
-            return Ok(_mapper.Map<ReadTenantDTO>(tenant));
+            var tenants = await _context.Tenant
+                        .Include(t => t.ContractDetails)
+                            .ThenInclude(cd => cd.Contract)
+                                .ThenInclude(c => c.Room)
+                                    .ThenInclude(r => r.Building)
+                        .Where(t => t.Id == id)
+                        .Where(t => t.ContractDetails.Any(cd => cd.Contract.Room.Building.OwnerID == ownerId))
+                        .FirstOrDefaultAsync();
+
+            return Ok(_mapper.Map<ReadTenantDTO>(tenants));
         }
     }
 }

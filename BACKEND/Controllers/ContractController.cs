@@ -38,6 +38,8 @@ namespace MyApp.Namespace
             var result = _mapper.Map<List<ContractDTOs>>(contracts);
             return Ok(result);
         }
+
+
         [HttpPost("create")]
         public async Task<IActionResult> CreateContract([FromBody] CreateContractDTO request)
         {
@@ -81,7 +83,7 @@ namespace MyApp.Namespace
             };
 
             _context.Contract.Add(contract);
-            await _context.SaveChangesAsync(); 
+            await _context.SaveChangesAsync();
 
             // create contract detail
             var contractDetail = new ContractDetail
