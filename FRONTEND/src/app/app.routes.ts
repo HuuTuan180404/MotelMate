@@ -6,7 +6,7 @@ import { Login } from './auth/login/login';
 import { Buildingmanagement } from './pages/buildingmanagement/buildingmanagement';
 import { ContractComponent } from './pages/contractsList/contractList';
 import { TenantManagement } from './pages/tenantmanagement/tenantmanagement';
-import { Paymentrequest } from './pages/paymentrequest/paymentrequest';
+import { Requests } from './pages/requests/requests';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { AssetManagement } from './pages/assetmanagement/assetmanagement';
 import { Service } from './pages/service/service';
@@ -34,7 +34,10 @@ export const routes: Routes = [
       { path: 'buildings', component: Buildingmanagement },
       { path: 'contracts', component: ContractComponent },
       { path: 'tenants', component: TenantManagement },
-      { path: 'requests/payment', component: Paymentrequest },
+      { path: 'requests/payment', component: Requests },
+      { path: 'requests/room-registration', component: Requests },
+      { path: 'requests/feedbackorissue', component: Requests },
+      { path: 'requests/extend-contract', component: Requests },
       { path: 'dashboard', component: Dashboard },
       { path: 'assets', component: AssetManagement },
       { path: 'services', component: Service },

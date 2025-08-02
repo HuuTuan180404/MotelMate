@@ -8,6 +8,8 @@ export interface Building {
   occupiedRooms: number;
   maintenanceRooms: number;
   totalTenants: number;
+
+  previewImage?: string | null;
 }
 
 export interface BuildingWithRoomsModel {
