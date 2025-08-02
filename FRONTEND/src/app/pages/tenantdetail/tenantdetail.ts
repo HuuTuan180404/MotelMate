@@ -1,4 +1,4 @@
-import { Component, Inject, Input } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Input } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
@@ -10,6 +10,7 @@ import {
 } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { TenantModel } from '../../models/Tenant.model';
+import { TenantService } from '../../services/tenantservice';
 
 @Component({
   selector: 'app-tenantdetail',
@@ -28,17 +29,22 @@ export class TenantDetail {
 
   constructor(
     private dialogRef: MatDialogRef<TenantDetail>,
-    @Inject(MAT_DIALOG_DATA) private tenantDetail: TenantModel
+    private tenantService: TenantService,
+    private cdr: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA) private tenantID: number // @Inject(MAT_DIALOG_DATA) private tenantDetail: TenantModel
   ) {
-    this._tenantDetail = { ...tenantDetail };
+    this.getTenantInfomation(this.tenantID);
   }
 
-  ngOnInit(): void {
-    // Sắp xếp lịch sử theo thời gian mới nhất
-    this._tenantDetail?.contractDetails.sort(
-      (a: any, b: any) =>
-        new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
-    );
+  getTenantInfomation(id: number) {
+    this.tenantService.getTenantDetail(this.tenantID).subscribe((data) => {
+      this._tenantDetail = data;
+      this._tenantDetail?.contractDetails.sort(
+        (a: any, b: any) =>
+          new Date(b.startDate).getTime() - new Date(a.startDate).getTime()
+      );
+      this.cdr.detectChanges();
+    });
   }
 
   calculateDuration(
