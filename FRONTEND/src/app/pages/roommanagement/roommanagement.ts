@@ -245,18 +245,18 @@ export class RoomManagement implements OnInit, AfterViewInit {
   }
 
   viewRoomDetail(id: number): void {
-    this.roomService.getRoomById(id).subscribe({
-      next: (data) => {
-        this.dialog.open(RoomDetail, {
-          maxWidth: '90vw',
-          maxHeight: '90vh',
-          data: data,
-        });
-      },
-      error: (error) => {
-        console.error('Error loading room detail:', error);
-      },
+    this.dialog.open(RoomDetail, {
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      data: id,
     });
+
+    // this.roomService.getRoomById(id).subscribe({
+    //   next: (data) => {},
+    //   error: (error) => {
+    //     console.error('Error loading room detail:', error);
+    //   },
+    // });
   }
 
   onClick_btnCreate(): void {

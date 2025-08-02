@@ -1,12 +1,9 @@
 <div class="room-detail">
-  <button mat-icon-button aria-label="Close" title="Back" mat-dialog-close>
-    <mat-icon>keyboard_arrow_left</mat-icon>
-  </button>
   <div mat-mat-dialog-title class="dialog-title">
+    <button mat-icon-button aria-label="Close" title="Back" mat-dialog-close>
+      <mat-icon>keyboard_arrow_left</mat-icon>
+    </button>
     <h2>Room detail</h2>
-    <div class="btn-container">
-      <button id="btnApply">Apply</button>
-    </div>
   </div>
 
   <div class="content">
@@ -25,6 +22,12 @@
         </div>
         <div class="main-image">
           <img [src]="_currentImage" alt="Ảnh chính" class="main-photo" />
+          <mat-icon
+            *ngIf="_roomDetail.urlRoomImages.length > 0"
+            (click)="onDeleteImage()"
+          >
+            delete
+          </mat-icon>
         </div>
       </div>
 
@@ -127,10 +130,35 @@
                 <mat-icon>group</mat-icon>
                 Members
               </mat-card-title>
-              <button matButton class="btn-add" (click)="onAddMember()">
-                <mat-icon>add</mat-icon>
-                Add
-              </button>
+              <div class="add-container">
+                <ng-container
+                  *ngIf="_roomDetail?.members?.length !== 0; else addContract"
+                >
+                  <mat-form-field appearance="outline" class="search-field">
+                    <mat-label>Search to add</mat-label>
+                    <input
+                      matInput
+                      placeholder="Member ID..."
+                      #inputAddMemberID
+                    />
+                    <button
+                      mat-icon-button
+                      matSuffix
+                      matTooltip="Add member"
+                      (click)="onAddMember(inputAddMemberID.value)"
+                    >
+                      <mat-icon>add</mat-icon>
+                    </button>
+                  </mat-form-field>
+                </ng-container>
+
+                <ng-template #addContract>
+                  <button mat-button class="btn-add" (click)="onAddContract()">
+                    <mat-icon>add</mat-icon>
+                    Create contract
+                  </button>
+                </ng-template>
+              </div>
             </mat-card-header>
 
             <mat-card-content class="card-content members-content">
@@ -138,25 +166,35 @@
                 *ngIf="_roomDetail.members.length > 0; else noMembers"
               >
                 <div
-                  (keydown)="handleKeyboardEvent($event)"
                   class="member"
                   *ngFor="let member of _roomDetail.members"
                   [class.memberIsSelected]="member.id === _selectedMember"
                   (click)="defSelectedMember(member.id)"
                 >
                   <img [src]="member.urlAvatar" alt="" />
-                  <div>
-                    <div class="row-info">
+                  <div class="row-info-container">
+                    <div class="row-info fullName">
                       <span class="material-symbols-outlined"> person </span>
                       <span>{{ member.fullName }}</span>
                     </div>
-                    <div class="row-info">
-                      <span class="material-symbols-outlined"> call</span>
-                      <span> {{ member.phoneNumber }}</span>
-                    </div>
-                    <div class="row-info">
-                      <span class="material-symbols-outlined"> cake </span>
-                      <span>{{ member.bdate | date: 'dd/MM/yyyy' }}</span>
+                    <div>
+                      <div class="row-info phoneNumber">
+                        <span class="material-symbols-outlined"> call</span>
+                        <span> {{ member.phoneNumber }}</span>
+                      </div>
+                      <div class="row-info bdate">
+                        <span class="material-symbols-outlined"> cake </span>
+                        <span>{{ member.bdate | date: 'dd/MM/yyyy' }}</span>
+                      </div>
+
+                      <div class="row-info icon-actions">
+                        <mat-icon (click)="onRemoveMember(member.id)">
+                          delete
+                        </mat-icon>
+                        <mat-icon (click)="onViewMember(member.id)">
+                          remove_red_eye
+                        </mat-icon>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -176,10 +214,25 @@
                 <mat-icon>inventory_2</mat-icon>
                 Assets
               </mat-card-title>
-              <button matButton class="btn-add" (click)="onAddAsset()">
-                <mat-icon>add</mat-icon>
-                Add
-              </button>
+              <div class="add-container">
+                <mat-form-field>
+                  <mat-label>Toppings</mat-label>
+                  <mat-select [formControl]="selectedAssetsID" multiple>
+                    <mat-option
+                      *ngFor="let asset of _assetsData;trackBy: trackByAssetID"
+                      [value]="asset.assetID"
+                      (onSelectionChange)="onOptionChange($event, asset.assetID)"
+                    >
+                      {{asset.name}}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <button matButton class="btn-add" (click)="onAddAsset()">
+                  <mat-icon>add</mat-icon>
+                  Add
+                </button>
+              </div>
             </mat-card-header>
 
             <mat-card-content class="assets-content">
@@ -201,9 +254,13 @@
                 <div class="assets-grid">
                   <div *ngFor="let asset of getAssetData" class="asset-item">
                     <span class="asset-name">{{ asset.assetName }}</span>
-                    <mat-chip class="quantity-chip"
-                      >x{{ asset.quantity }}</mat-chip
-                    >
+                    <div>
+                      <mat-icon>remove</mat-icon>
+                      <mat-chip class="quantity-chip">
+                        <label>x{{ asset.quantity }}</label>
+                      </mat-chip>
+                      <mat-icon>add</mat-icon>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -211,6 +268,12 @@
           </mat-card>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div mat-mat-dialog-actions class="dialog-actions">
+    <div class="btn-container">
+      <button id="btnApply" (click)="onUpdateRoom()">Apply</button>
     </div>
   </div>
 </div>

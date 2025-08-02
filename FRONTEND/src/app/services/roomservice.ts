@@ -4,6 +4,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { RoomModel } from '../models/Room.model';
 import { RoomDetail } from '../pages/roomdetail/roomdetail';
+import { RoomDetailModel } from '../models/RoomDetail.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,8 +18,8 @@ export class RoomService {
     return this.http.get<RoomModel[]>(`${this.apiUrl}/room`);
   }
 
-  getRoomById(id: number): Observable<RoomDetail> {
-    return this.http.get<RoomDetail>(`${this.apiUrl}/room/${id}`);
+  getRoomById(id: number): Observable<RoomDetailModel> {
+    return this.http.get<RoomDetailModel>(`${this.apiUrl}/room/${id}`);
   }
 
   postNewRoom(formData: FormData): Observable<any> {
