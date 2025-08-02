@@ -8,18 +8,18 @@
       <div class="dialog-element-container">
         <mat-form-field appearance="outline">
           <mat-label>Building</mat-label>
-          <mat-select [(ngModel)]="formData.building">
+          <mat-select [(ngModel)]="formData.buildingID" >
             <mat-option [value]="null">-- None --</mat-option>
-            <mat-option *ngFor="let b of buildings" [value]="b">{{ b }}</mat-option>
+            <mat-option *ngFor="let b of buildings" [value]="b.buildingID">{{ b.name }}</mat-option>
           </mat-select>
           <mat-icon matSuffix>apartment</mat-icon>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Room</mat-label>
-          <input matInput [formControl]="roomCtrl" placeholder="101" (blur)="updateErrorMessage()">
+          <input matInput [formControl]="roomCtrl" placeholder="101">
           <mat-icon matSuffix>meeting_room</mat-icon>
-          <mat-error *ngIf="roomCtrl.errors">{{ errorMessage() }}</mat-error>
+          <mat-error *ngIf="roomCtrl.touched && roomCtrl.hasError('required')">Room is required.</mat-error>
         </mat-form-field>
       </div>
     </div>

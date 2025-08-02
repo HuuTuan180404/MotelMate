@@ -117,7 +117,5 @@ namespace BACKEND.Controllers
 
             return CreatedAtAction(nameof(GetBuildingSummary), new { id = building.BuildingID }, null);
         }
-
-
     }
 }

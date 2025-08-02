@@ -67,7 +67,6 @@ namespace BACKEND.Controllers
                                     .Include(ra => ra.RoomAssets)
                                         .ThenInclude(a => a.Asset)
                                     .FirstOrDefaultAsync(r => r.RoomID == id);
-
             return Ok(_mapper.Map<ReadRoomDetailDTO>(room));
         }
 

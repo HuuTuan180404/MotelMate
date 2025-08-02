@@ -130,17 +130,13 @@ export class ContractComponent implements OnInit, AfterViewInit {
     this.filteredcontracts = this.contracts.filter((con) => {
       const searchMatch =
         !this.searchTerm ||
-        con.contractcode
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase()) ||
-        con.contractholder
-          .toLowerCase()
-          .includes(this.searchTerm.toLowerCase()) ||
-        con.building.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        con.room.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        con.status.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        con.start.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        con.end.toLowerCase().includes(this.searchTerm.toLowerCase());
+        this.safeIncludes(con.contractcode, this.searchTerm) ||
+        this.safeIncludes(con.contractholder, this.searchTerm) ||
+        this.safeIncludes(con.building, this.searchTerm) ||
+        this.safeIncludes(con.room, this.searchTerm) ||
+        this.safeIncludes(con.status, this.searchTerm) ||
+        this.safeIncludes(con.start, this.searchTerm) ||
+        this.safeIncludes(con.end, this.searchTerm);
 
       const filterMatch =
         (!this.filters.building || con.building === this.filters.building) &&
@@ -180,7 +176,12 @@ export class ContractComponent implements OnInit, AfterViewInit {
     this.dataSource.data = this.filteredcontracts;
     if (this.paginator) this.paginator.firstPage();
   }
-
+  private safeIncludes(
+    value: string | null | undefined,
+    search: string
+  ): boolean {
+    return (value || '').toLowerCase().includes(search.toLowerCase());
+  }
   clearFilters(): void {
     this.searchTerm = '';
     this.filters = {
@@ -198,35 +199,21 @@ export class ContractComponent implements OnInit, AfterViewInit {
       height: 'auto',
       maxHeight: '90vh',
       minWidth: '50vw',
-      data: {
-        formData: {
-          contractcode: '',
-          contractholder: '',
-          building: '',
-          room: null,
-          start: '',
-          end: '',
-          status: 'Unsigned',
-        },
-        buildings: this.buildings,
-        contracts: this.contracts,
-        statuses: this.statuses,
-      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-            this.contracts.push({
-              contractcode: '',
-              contractholder: result.cccd,
-              building: result.building,
-              room: result.room.toString(),
-              start: result.start.startDate,
-              end: result.endDate,
-              status: 'Unsigned',
-            });
-            this.applyFilters();
-        }
+        this.contracts.push({
+          contractcode: '',
+          contractholder: result.cccd,
+          building: result.building,
+          room: result.room.toString(),
+          start: result.start.startDate,
+          end: result.endDate,
+          status: 'Unsigned',
+        });
+        this.applyFilters();
+      }
     });
   }
 

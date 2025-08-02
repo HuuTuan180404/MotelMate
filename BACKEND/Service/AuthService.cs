@@ -30,9 +30,8 @@ namespace BACKEND.Service
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null) return false;
-
             user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, newPassword);
-
+            
             var result = await _userManager.UpdateAsync(user);
 
             return result.Succeeded;
@@ -80,7 +79,7 @@ namespace BACKEND.Service
             {
                 var user = await _userManager.FindByNameAsync(model.Username);
                 if (user == null || !await _userManager.CheckPasswordAsync(user, model.Password))
-                    return (false, "Invalid username or password");
+                    return (false, new { message = "Invalid username or password" });
 
                 var accessToken = await _tokenService.GenerateAccessTokenAsync(user);
                 var refreshToken = _tokenService.GenerateRefreshToken();
@@ -105,7 +104,7 @@ namespace BACKEND.Service
             {
                 var user = await GetUserFromRefreshToken(refreshToken);
                 if (user == null)
-                    return (false, "Invalid refresh token");
+                    return (false, new { message = "Invalid refresh token" });
 
                 var newAccessToken = await _tokenService.GenerateAccessTokenAsync(user);
                 var newRefreshToken = _tokenService.GenerateRefreshToken();
@@ -134,6 +133,7 @@ namespace BACKEND.Service
                     Email = model.Email,
                     CCCD = model.CCCD,
                     FullName = model.FullName,
+                    PhoneNumber = model.PhoneNumber,
                     Bdate = model.Bdate,
                     URLAvatar = model.URLAvatar,
                     Status = EAccountStatus.Active,
@@ -150,6 +150,7 @@ namespace BACKEND.Service
                 Email = model.Email,
                 CCCD = model.CCCD,
                 FullName = model.FullName,
+                PhoneNumber = model.PhoneNumber,
                 Bdate = model.Bdate,
                 URLAvatar = model.URLAvatar,
                 Status = EAccountStatus.Active,

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace MyApp.Namespace
+namespace BACKEND.Namespace
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -46,7 +46,7 @@ namespace MyApp.Namespace
             // find room
             var room = await _context.Room
                 .Include(r => r.Building)
-                .FirstOrDefaultAsync(r => r.RoomNumber == request.RoomNumber && r.Building.Name == request.BuildingName);
+                .FirstOrDefaultAsync(r => r.RoomNumber == request.RoomNumber && r.Building.BuildingID == request.BuildingID);
 
             if (room == null)
                 return NotFound(new { message = "room not found" });
@@ -91,7 +91,6 @@ namespace MyApp.Namespace
                 ContractID = contract.ContractID,
                 TenantID = tenant.Id,
                 StartDate = request.StartDate,
-                EndDate = request.EndDate,
                 IsRoomRepresentative = true
             };
 

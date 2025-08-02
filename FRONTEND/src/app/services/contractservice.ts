@@ -13,8 +13,8 @@ export interface ContractDTO {
   status: string;
 }
 export interface CreateContractDTO {
-  buildingName: string;
-  roomNumber: number;
+  buildingID: number;
+  roomNumber: string;
   startDate: string;
   endDate: string;
   deposit: number;

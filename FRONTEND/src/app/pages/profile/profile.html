@@ -1,0 +1,146 @@
+<div class="dialog-header">
+  <h2>Profile</h2>
+  <div>
+    <button mat-stroked-button color="warn" *ngIf="editMode()" (click)="cancelEdit()">Cancel</button>
+    <button mat-stroked-button color="primary" *ngIf="!editMode()" (click)="enableEdit()">Edit</button>
+  </div>
+</div>
+
+<!-- Body -->
+<div class="dialog-container" [formGroup]="form">
+  <!-- Left -->
+  <div class="left-section">
+    <img [src]="profileImage" class="profile-img" alt="Profile photo" />
+    <button mat-stroked-button class="upload-btn">
+      Upload Photo
+      <input type="file" (change)="onFileSelected($event)" hidden />
+    </button>
+
+    <button class="change-password-btn" mat-flat-button color="primary" (click)="togglePasswordSection()">
+      {{ showPasswordSection() ? 'Cancel Password Change' : 'Change Password' }}
+    </button>
+
+    <div class="password-section" [@slideToggle]="showPasswordSection() ? 'open' : 'closed'"
+      *ngIf="showPasswordSection()">
+      <form [formGroup]="changePasswordForm">
+        <mat-form-field class="hihi change-password-element" appearance="outline">
+          <mat-label>Old Password</mat-label>
+          <input matInput type="password" formControlName="oldPassword" />
+          <mat-error *ngIf="changePasswordForm.controls['oldPassword'].hasError('required')">
+            Old password is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="change-password-element" appearance="outline">
+          <mat-label>New Password</mat-label>
+          <input matInput type="password" formControlName="newPassword" />
+          <mat-error *ngIf="changePasswordForm.controls['newPassword'].hasError('required')">
+            New password is required
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Confirm New Password</mat-label>
+          <input matInput type="password" formControlName="confirmPassword" />
+          <mat-error *ngIf="changePasswordForm.controls['confirmPassword'].hasError('required')">
+            Please confirm your password
+          </mat-error>
+          <mat-error
+            *ngIf="changePasswordForm.controls['confirmPassword'].errors?.['passwordMismatch'] && !changePasswordForm.controls['confirmPassword'].errors?.['required']">
+            Passwords do not match
+          </mat-error>
+        </mat-form-field>
+      </form>
+
+      <button class="change-password-btn" mat-flat-button color="accent" (click)="changePassword()" [disabled]="changePasswordForm.invalid">Submit</button>
+    </div>
+  </div>
+
+  <!-- Right -->
+  <div class="right-section">
+    <h3>User Info</h3>
+    <div class="grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Full Name</mat-label>
+        <input matInput formControlName="fullname" [readonly]="!editMode()" />
+        <mat-error *ngIf="form.get('fullname')?.hasError('required')">
+          Full name is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Role</mat-label>
+        <input matInput [value]="form.get('role')?.value" readonly />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Birthday</mat-label>
+        <input matInput formControlName="bday" [readonly]="!editMode()" />
+        <mat-error *ngIf="form.get('bday')?.hasError('required')">
+          Birthday is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <h3>Contact Info</h3>
+    <div class="grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" [readonly]="!editMode()" />
+        <mat-error *ngIf="form.get('email')?.hasError('required')">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="form.get('email')?.hasError('email')">
+          Invalid email format
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Phone Number</mat-label>
+        <input matInput formControlName="phoneNumber" [readonly]="!editMode()" />
+        <mat-error *ngIf="form.get('phoneNumber')?.hasError('required')">
+          Phone number is required
+        </mat-error>
+        <mat-error *ngIf="form.get('phoneNumber')?.hasError('pattern')">
+          Phone number must be 10 digits
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <h3>Bank Info</h3>
+    <div class="grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Bank Code</mat-label>
+        <input matInput formControlName="bankcode" [readonly]="!editMode()" />
+        <mat-error *ngIf="form.get('bankcode')?.hasError('required')">
+          Bank code is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Account Number</mat-label>
+        <input matInput formControlName="accountno" [readonly]="!editMode()" />
+        <mat-error *ngIf="form.get('accountno')?.hasError('required')">
+          Account number is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Account Name</mat-label>
+        <input matInput formControlName="accountname" [readonly]="!editMode()" />
+        <mat-error *ngIf="form.get('accountname')?.hasError('required')">
+          Account name is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<div class="dialog-footer">
+  <button mat-stroked-button (click)="dialogRef.close()">Close</button>
+  <button mat-flat-button color="primary" (click)="accept()" [disabled]="form.invalid || !editMode() || !hasChanges()">
+    Accept
+  </button>
+</div>
