@@ -1,6 +1,8 @@
 using BACKEND.DTOs.AuthDTO;
 using BACKEND.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace BACKEND.Controllers
@@ -81,7 +83,7 @@ namespace BACKEND.Controllers
 
             return Unauthorized();
         }
-        
+
         [HttpPost("reset-password")]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPassDTO dto)
         {
@@ -93,6 +95,21 @@ namespace BACKEND.Controllers
                 return NotFound(new { message = "User not found." });
 
             return Ok(new { message = "Password reset successfully." });
+        }
+        [HttpPatch("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePassDTO dto)
+        {
+            int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+            var result = await _authService.ChangePasswordAsync(userId, dto);
+
+            if (!result)
+            {
+                return BadRequest(new { message = "Invalid old password." });
+            }
+
+            return Ok(new { message = "Password changed successfully." });
         }
     }
 }
