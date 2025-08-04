@@ -17,6 +17,11 @@ export interface RegisterDto {
   accountName: string;
   bankCode: number;
 }
+
+export interface ChangePassDTO {
+  oldPassword: string;
+  newPassword: string;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -134,7 +139,9 @@ export class AuthService {
         })
       );
   }
-
+  changePassword(dto: ChangePassDTO): Observable<void> {
+    return this.http.patch<void>(`${environment.apiUrl}/api/Account/change-password`, dto);
+  }
   storeToken(accessToken: string): void {
     if (this.isBrowser) {
       sessionStorage.setItem('accessToken', accessToken);
@@ -152,4 +159,5 @@ export class AuthService {
   setAuthenticationState(isAuthenticated: boolean): void {
     this.isAuthenticatedSubject.next(isAuthenticated);
   }
+
 }
