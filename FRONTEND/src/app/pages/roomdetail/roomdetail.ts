@@ -36,7 +36,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { RoomService } from '../../services/roomservice';
 import { AddContractDialogComponent } from '../contractsList/contractDialog/contractDialog';
 import { AssetModel } from '../../models/Asset.model';
-import { AssetService } from '../../services/assetservice';
+import { AssetService } from '../../services/asset-service';
 import { MatOptionSelectionChange } from '@angular/material/core';
 import { RoomImageModel } from '../../models/Room.model';
 @Component({
