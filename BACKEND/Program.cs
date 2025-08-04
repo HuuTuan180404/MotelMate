@@ -64,6 +64,7 @@ builder.Services.AddIdentity<Account, IdentityRole<int>>()
 builder.Services.AddAutoMapper(typeof(ContractMapper));
 builder.Services.AddAutoMapper(typeof(TenantMapper));
 builder.Services.AddAutoMapper(typeof(RoomMapper));
+builder.Services.AddAutoMapper(typeof(ProfileMapper));
 
 builder.Services.AddAuthentication(options =>
 {
@@ -112,6 +113,7 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

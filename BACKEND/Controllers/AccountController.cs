@@ -1,4 +1,5 @@
 using BACKEND.DTOs.AuthDTO;
+using BACKEND.DTOs.ProfileDTO;
 using BACKEND.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,9 +14,11 @@ namespace BACKEND.Controllers
     {
         private readonly IAuthService _authService;
         private readonly IOtpService _otpService;
+        private readonly IProfileService _profileService;
 
-        public AccountController(IAuthService authService, IOtpService otpService)
+        public AccountController(IAuthService authService, IOtpService otpService, IProfileService profileService)
         {
+            _profileService = profileService;
             _authService = authService;
             _otpService = otpService;
         }
@@ -110,6 +113,27 @@ namespace BACKEND.Controllers
             }
 
             return Ok(new { message = "Password changed successfully." });
+        }
+        [HttpGet("get-profile")]
+        [Authorize]
+        public async Task<IActionResult> GetProfile()
+        {
+            var result = await _profileService.GetProfileAsync(User);
+            if (result == null)
+                return NotFound(new { message = "User not found." });
+
+            return Ok(result);
+        }
+
+        [HttpPut("update-profile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDTO dto)
+        {
+            var success = await _profileService.UpdateProfileAsync(User, dto);
+            if (!success)
+                return BadRequest(new { message = "Update failed." });
+
+            return Ok(new { message = "Update successfully." });
         }
     }
 }
