@@ -1,9 +1,17 @@
-import { Component, signal, computed, effect, inject } from '@angular/core';
+import {
+  Component,
+  signal,
+  computed,
+  effect,
+  inject,
+  OnInit,
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
@@ -21,7 +29,27 @@ import {
   transition,
   animate,
 } from '@angular/animations';
+import { AuthService, ChangePassDTO } from '../../auth/auth.service';
+import { ProfileDTO, ProfileService } from '../../services/profileservice';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
+export function strongPasswordValidator(
+  control: AbstractControl
+): ValidationErrors | null {
+  const value = control.value;
 
+  if (!value) return null;
+
+  const hasUpperCase = /[A-Z]/.test(value);
+  const hasLowerCase = /[a-z]/.test(value);
+  const hasNumber = /[0-9]/.test(value);
+  const hasSpecialChar = /[\W_]/.test(value); // _ và các ký tự đặc biệt
+
+  const passwordValid =
+    hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+
+  return passwordValid ? null : { weakPassword: true };
+}
 @Component({
   selector: 'app-profile-dialog',
   standalone: true,
@@ -36,6 +64,7 @@ import {
     MatSelectModule,
     MatButtonModule,
     MatOptionModule,
+    MatIconModule,
   ],
   animations: [
     trigger('slideToggle', [
@@ -45,7 +74,11 @@ import {
     ]),
   ],
 })
-export class Profile {
+export class Profile implements OnInit {
+  private profileService = inject(ProfileService);
+  private authservice = inject(AuthService);
+  private _snackBar = inject(MatSnackBar);
+
   profileImage = 'https://i.imgur.com/8Km9tLL.png';
   editMode = signal(false);
   showPasswordSection = signal(false);
@@ -54,35 +87,36 @@ export class Profile {
   form: FormGroup;
   originalValue: any;
   changePasswordForm: FormGroup;
-
-  oldPassword = this.fb.control('', Validators.required);
-  newPassword = this.fb.control('', Validators.required);
-  confirmPassword = this.fb.control('', Validators.required);
+  hidePassword = true;
+  hideNewPassword = true;
+  hideConfirmPassword = true;
 
   constructor(public dialogRef: MatDialogRef<Profile>) {
     this.form = this.fb.group({
-      fullname: ['Tôn Viết Tri', Validators.required],
-      role: ['Owner'],
-      email: [
-        'tonviettri2004@gmail.com',
-        [Validators.required, Validators.email],
-      ],
-      phoneNumber: [
-        '0969696969',
-        [Validators.required, Validators.pattern(/^\d{10}$/)],
-      ],
-      bday: ['13/06/2004', Validators.required],
-      bankcode: ['123', Validators.required],
-      accountno: ['123456789', Validators.required],
-      accountname: ['ACCOUNT BANK NAME', Validators.required],
+      fullname: ['', Validators.required],
+      role: [''],
+      email: ['', [Validators.required, Validators.email]],
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      bday: ['', [Validators.required,Validators.pattern(/^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/)]],
+      bankcode: ['', Validators.required],
+      accountno: ['', Validators.required],
+      accountname: ['', Validators.required],
     });
-    this.changePasswordForm = this.fb.group({
-      oldPassword: this.oldPassword,
-      newPassword: this.newPassword,
-      confirmPassword: this.confirmPassword,
-    },
-    { validators: this.passwordMatchValidator });
-    this.originalValue = this.form.getRawValue();
+    this.changePasswordForm = this.fb.group(
+      {
+        oldPassword: ['', Validators.required],
+        newPassword: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(6),
+            strongPasswordValidator,
+          ],
+        ],
+        confirmPassword: ['', Validators.required],
+      },
+      { validators: this.passwordMatchValidator }
+    );
   }
 
   onFileSelected(event: any) {
@@ -135,32 +169,107 @@ export class Profile {
     }
     return null;
   }
+  ngOnInit(): void {
+    this.loadProfile();
+  }
+  loadProfile() {
+    this.profileService.getProfile().subscribe((data) => {
+      this.form.patchValue({
+        fullname: data.fullName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        bday: this.formatISOToDDMMYYYY(data.bdate),
+        role: data.role,
+        accountname: data.accountName,
+        accountno: data.accountNo,
+        bankcode: data.bankCode,
+      });
+      this.originalValue = this.form.getRawValue();
+    });
+  }
   accept() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
     if (this.hasChanges()) {
-      console.log('Accepted form value:', this.form.getRawValue());
-      this.originalValue = this.form.getRawValue();
-      this.editMode.set(false);
+      var dto: ProfileDTO = {
+        ...this.form.getRawValue(),
+      };
+      dto.bdate = this.parseDDMMYYYYToISO(this.form.value.bday);
+      this.profileService.updateProfile(dto).subscribe({
+        next: () => {
+          this.originalValue = this.form.getRawValue();
+          this.editMode.set(false);
+          this._snackBar.open('Profile updated successfully!', 'Close', {
+            duration: 4000,
+            panelClass: ['snackbar-success'],
+            verticalPosition: 'top',
+          });
+        },
+        error: (err) => {
+          this._snackBar.open(
+            'Cannot update profile: ' + (err.error.message || 'Unknown error'),
+            'Close',
+            {
+              duration: 4000,
+              panelClass: ['snackbar-error'],
+              verticalPosition: 'top',
+            }
+          );
+        },
+      });
     }
   }
 
   changePassword() {
-    if (this.newPassword.value !== this.confirmPassword.value) {
-      alert('New password and confirm password do not match.');
+    if (this.changePasswordForm.invalid) {
+      this.changePasswordForm.markAllAsTouched();
       return;
     }
-    console.log(
-      'Changing password:',
-      this.oldPassword.value,
-      this.newPassword.value
-    );
-    this.oldPassword.reset();
-    this.newPassword.reset();
-    this.confirmPassword.reset();
-    this.showPasswordSection.set(false);
+    const dto: ChangePassDTO = {
+      oldPassword: this.changePasswordForm.get('oldPassword')!.value || '',
+      newPassword: this.changePasswordForm.get('newPassword')!.value || '',
+    };
+
+    this.authservice.changePassword(dto).subscribe({
+      next: () => {
+        this.changePasswordForm.reset();
+        this.showPasswordSection.set(false);
+        this._snackBar.open(
+          'Change password successful please login again!',
+          'Close',
+          {
+            duration: 4000,
+            panelClass: ['snackbar-success'],
+            verticalPosition: 'top',
+          }
+        );
+        this.authservice.logout();
+      },
+      error: (err) =>
+        this._snackBar.open(
+          'Cannot change password: ' + (err.error.message || 'Unknown error'),
+          'Close',
+          {
+            duration: 4000,
+            panelClass: ['snackbar-error'],
+            verticalPosition: 'top',
+          }
+        ),
+    });
+  }
+  private parseDDMMYYYYToISO(dateStr: string): string {
+    var [day, month, year] = dateStr.split('/');
+    while(year.length < 4) year = '0' + year;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  private formatISOToDDMMYYYY(isoDate: string): string {
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // JS months are 0-based
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   }
   togglePasswordSection() {
     this.showPasswordSection.update((v) => !v);

@@ -98,3 +98,6 @@
   justify-content: flex-end;
   gap: 12px;
 }
+::ng-deep .snackbar-error .mat-mdc-snackbar-surface {
+  background-color:#da3131  !important;
+}

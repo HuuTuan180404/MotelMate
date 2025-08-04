@@ -60,6 +60,16 @@ export class Login {
     if (isAuth) {
       this.router.navigate(['/dashboard']);
     }
+    else{
+      this.authService.refreshToken().subscribe({
+        next: () => {
+          this.router.navigate(['/dashboard']);
+        },
+        error: () => {
+          this.authService.setAuthenticationState(false);
+        },
+      });
+    }
   }
 
   onSubmit() {
@@ -71,7 +81,6 @@ export class Login {
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        console.error('Login failed', err);
         this._snackBar.open(
           'Failed to login: Invalid username or password',
           'Close',
