@@ -56,20 +56,7 @@ export class Login {
   }
 
   async ngOnInit() {
-    const isAuth = await firstValueFrom(this.authService.isAuthenticated());
-    if (isAuth) {
-      this.router.navigate(['/dashboard']);
-    }
-    else{
-      this.authService.refreshToken().subscribe({
-        next: () => {
-          this.router.navigate(['/dashboard']);
-        },
-        error: () => {
-          this.authService.setAuthenticationState(false);
-        },
-      });
-    }
+    this.router.navigate(['/dashboard']);
   }
 
   onSubmit() {
