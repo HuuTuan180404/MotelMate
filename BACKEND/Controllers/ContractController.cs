@@ -64,7 +64,7 @@ namespace BACKEND.Namespace
 
             // check if tenant is in another room
             var isInAnotherRoom = tenant.ContractDetails.Any(cd =>
-                cd.EndDate >= DateOnly.FromDateTime(DateTime.Today));
+                cd.EndDate == null);
 
             if (isInAnotherRoom)
                 return BadRequest(new { message = "tenant is in another room" });
