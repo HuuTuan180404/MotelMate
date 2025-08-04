@@ -180,22 +180,6 @@ namespace BACKEND.Controllers
                 // Lỗi không xác định
                 return StatusCode(500, new { Message = "Internal server error", Details = ex.Message });
             }
-
-
-
-            // foreach (var file in images)
-            // {
-            //     if (file.Length > 0)
-            //     {
-            //         var filePath = Path.Combine("Uploads", file.FileName);
-            //         using (var stream = new FileStream(filePath, FileMode.Create))
-            //         {
-            //             await file.CopyToAsync(stream);
-            //         }
-            //     }
-            // }
-
-
         }
 
         private int GetRoomIDByRoomNumber(int buildingID, string roomNumber)
