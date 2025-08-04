@@ -11,6 +11,6 @@ namespace BACKEND.Interfaces
     public interface IProfileService
     {
         Task<GetProfileDTO?> GetProfileAsync(ClaimsPrincipal user);
-        Task<bool> UpdateProfileAsync(ClaimsPrincipal user, UpdateProfileDTO dto);
+        Task<bool> UpdateProfileAsync(ClaimsPrincipal user, UpdateProfileDTO dto, List<IFormFile> addedImages);
     }
 }

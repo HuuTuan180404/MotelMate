@@ -7,10 +7,8 @@
   <!-- Left -->
   <div class="left-section">
     <img [src]="profileImage" class="profile-img" alt="Profile photo" />
-    <button mat-stroked-button class="upload-btn">
-      Upload Photo
-      <input type="file" (change)="onFileSelected($event)" hidden />
-    </button>
+    <input type="file" accept="image/*" #fileInput hidden (change)="onFileSelected($event)" />
+    <button mat-stroked-button class="upload-btn" (click)="fileInput.click()" [disabled]="!editMode()">Upload Photo</button>
 
     <button class="change-password-btn" mat-flat-button color="primary" (click)="togglePasswordSection()">
       {{ showPasswordSection() ? 'Cancel Password Change' : 'Change Password' }}
@@ -23,7 +21,7 @@
           <mat-label>Old Password</mat-label>
           <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="oldPassword" />
           <button mat-icon-button matSuffix tabindex="-1" type="button" (click)="hidePassword = !hidePassword">
-              <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           <mat-error *ngIf="changePasswordForm.controls['oldPassword'].hasError('required')">
             Old password is required
@@ -34,12 +32,13 @@
           <mat-label>New Password</mat-label>
           <input matInput [type]="hideNewPassword ? 'password' : 'text'" formControlName="newPassword" />
           <button mat-icon-button matSuffix tabindex="-1" type="button" (click)="hideNewPassword = !hideNewPassword">
-              <mat-icon>{{ hideNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+            <mat-icon>{{ hideNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           <mat-error *ngIf="changePasswordForm.controls['newPassword'].hasError('required')">
             New password is required
           </mat-error>
-          <mat-error *ngIf="changePasswordForm.controls['newPassword'].hasError('minlength') && !changePasswordForm.controls['newPassword'].errors?.['weakPassword']">
+          <mat-error
+            *ngIf="changePasswordForm.controls['newPassword'].hasError('minlength') && !changePasswordForm.controls['newPassword'].errors?.['weakPassword']">
             Min 6 characters
           </mat-error>
           <mat-error *ngIf="changePasswordForm.controls['newPassword'].hasError('weakPassword')">
@@ -50,8 +49,9 @@
         <mat-form-field appearance="outline">
           <mat-label>Confirm New Password</mat-label>
           <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" />
-          <button mat-icon-button matSuffix tabindex="-1" type="button" (click)="hideConfirmPassword = !hideConfirmPassword">
-              <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          <button mat-icon-button matSuffix tabindex="-1" type="button"
+            (click)="hideConfirmPassword = !hideConfirmPassword">
+            <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
           <mat-error *ngIf="changePasswordForm.controls['confirmPassword'].hasError('required')">
             Please confirm your password
