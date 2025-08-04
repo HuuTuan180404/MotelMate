@@ -39,6 +39,8 @@ import { AssetModel } from '../../models/Asset.model';
 import { AssetService } from '../../services/asset-service';
 import { MatOptionSelectionChange } from '@angular/material/core';
 import { RoomImageModel } from '../../models/Room.model';
+import { TenantService } from '../../services/tenantservice';
+import { DialogAction, ReusableDialog } from '../dialog/dialog';
 @Component({
   selector: 'app-roomdetail',
   imports: [
@@ -77,7 +79,7 @@ export class RoomDetail {
   _addedImages: RoomImageModel[] = [];
 
   _deleteMembers: number[] = [];
-  _addedMembers: string[] = [];
+  _addedMembers: number[] = [];
 
   // asset in DB
   _selectedAssets: {
@@ -99,6 +101,7 @@ export class RoomDetail {
     @Inject(MAT_DIALOG_DATA) private roomID: number,
     private dialog: MatDialog,
     private roomService: RoomService,
+    private tenantService: TenantService,
     private assetService: AssetService,
     public dialogRef: MatDialogRef<RoomDetail>,
     private cdr: ChangeDetectorRef
@@ -190,12 +193,44 @@ export class RoomDetail {
     return this._checkedAssets.filter((x) => x.quantity > 0);
   }
 
-  changeImage(image: string) {
-    this._currentImage = image;
+  changeImage(image: any) {
+    this._currentImage = image as string;
   }
 
   onAddMember(cccd: string) {
     console.log('Add member CCCD:', cccd);
+    this.tenantService.getTenantDetailByCCCD(cccd).subscribe({
+      next: (data) => {
+        if (data) {
+          console.log(data);
+          this._addedMembers.push(data.id);
+          this._roomDetail.members.push(data);
+          this.cdr.detectChanges();
+        } else {
+          const actions: DialogAction[] = [
+            {
+              label: 'Ok',
+              bgColor: 'primary',
+              callback: () => {
+                return true;
+              },
+            },
+          ];
+
+          const dialogResult = this.dialog.open(ReusableDialog, {
+            data: {
+              icon: 'error',
+              title: 'Error',
+              message: 'User does not exist.',
+              actions: actions,
+            },
+          });
+        }
+      },
+      error: (error) => {
+        console.log('Error loading tenant detail:', error);
+      },
+    });
   }
 
   onAddContract() {
@@ -227,8 +262,17 @@ export class RoomDetail {
     );
 
     if (index > -1) {
-      this._deleteMembers.push(memberID);
       this._roomDetail.members.splice(index, 1);
+    }
+
+    const indexIn_addedMembers = this._addedMembers.findIndex(
+      (item) => item === memberID
+    );
+
+    if (indexIn_addedMembers > -1) {
+      this._addedMembers.splice(indexIn_addedMembers, 1);
+    } else {
+      this._deleteMembers.push(memberID);
     }
   }
 
@@ -246,23 +290,41 @@ export class RoomDetail {
 
   onSelectedAssetChangeQuantity(assetID: number, quan: number) {
     const val = this._checkedAssets.find((x) => x.assetID === assetID);
-    if (val && val.quantity > 0) {
+
+    if (val) {
       val.quantity += quan;
+
+      if (val.quantity <= 0) {
+        val.quantity = 0;
+
+        const ids = this.selectedAssetsID.value || [];
+        const updatedIDs = ids.filter((id) => id !== assetID);
+        this.selectedAssetsID.setValue(updatedIDs);
+      }
+
+      this.cdr.detectChanges();
     }
   }
 
   onDeleteImage() {
-    const index = this._roomDetail.urlRoomImages.indexOf(this._currentImage);
-    if (index > -1) {
+    var index = this._roomDetail.urlRoomImages.indexOf(this._currentImage);
+
+    // không tìm imgaes trong DB
+    if (index <= -1) {
+      index = this._addedImages.findIndex(
+        (img) => img.url === this._currentImage
+      );
+      this._addedImages.splice(index, 1);
+    } else {
       this._roomDetail.urlRoomImages.splice(index, 1);
       this._deletedImages.push(this._currentImage);
+    }
 
+    if (this._addedImages.length > 0) {
+      this._currentImage = this._addedImages[0].url as string;
+    } else {
       if (this._roomDetail.urlRoomImages.length > 0) {
-        const nextIndex = Math.min(
-          index,
-          this._roomDetail.urlRoomImages.length - 1
-        );
-        this._currentImage = this._roomDetail.urlRoomImages[nextIndex];
+        this._currentImage = this._roomDetail.urlRoomImages[0];
       } else {
         this._currentImage = '../../assets/images/avatar_error.png';
       }
@@ -332,29 +394,45 @@ export class RoomDetail {
       }
     }
 
-    //images
-    console.log(this._deletedImages);
+    const formDataToSend = new FormData();
 
-    //members
+    // Thông tin cơ bản
+    formDataToSend.append('roomID', this._roomDetail.roomID.toString());
+    formDataToSend.append('roomNumber', this._roomDetail.roomNumber);
+    formDataToSend.append('area', this._roomDetail.area.toString());
+    formDataToSend.append('price', this._roomDetail.price.toString());
+    formDataToSend.append('description', this._roomDetail.description);
 
-    // const formDataToSend = new FormData();
+    // Thành viên: thêm
+    this._addedMembers.forEach((id) => {
+      formDataToSend.append('addedMembers', id.toString());
+    });
 
-    // formDataToSend.append('roomID', this._roomDetail.roomID.toString());
-    // formDataToSend.append('roomCode', this._roomDetail.roomNumber);
-    // formDataToSend.append('area', this._roomDetail.area.toString());
-    // formDataToSend.append('price', this._roomDetail.price.toString());
-    // formDataToSend.append('description', this._roomDetail.description);
+    // Thành viên: xoá
+    this._deleteMembers.forEach((id) => {
+      formDataToSend.append('deletedMembers', id.toString());
+    });
 
-    // this._deleteMembers.forEach((id) =>
-    //   formDataToSend.append('deleteMembers', id.toString())
-    // );
-    // this._deletedImages.forEach((img) =>
-    //   formDataToSend.append('deletedImages', img)
-    // );
+    // Ảnh: đã xoá
+    this._deletedImages.forEach((imgUrl) => {
+      formDataToSend.append('deletedImages', imgUrl);
+    });
 
-    // for (const pair of formDataToSend.entries()) {
-    //   console.log(`${pair[0]}:`, pair[1]);
-    // }
+    // Ảnh: thêm mới
+    this._addedImages.forEach((image) => {
+      formDataToSend.append('addedImages', image.file, image.name);
+    });
+
+    // Tài sản: cập nhật số lượng
+    writeAsset.forEach((asset) => {
+      formDataToSend.append(
+        'assets',
+        JSON.stringify({
+          assetID: asset.assetID,
+          quantity: asset.quantity,
+        })
+      );
+    });
   }
 
   trackByAssetID(index: number, asset: AssetModel): number {

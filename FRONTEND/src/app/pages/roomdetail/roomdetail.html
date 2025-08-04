@@ -19,6 +19,14 @@
             (click)="changeImage(img)"
             class="thumb"
           />
+
+          <img
+            *ngFor="let img of _addedImages"
+            [src]="img.url"
+            alt="thumbnail"
+            (click)="changeImage(img.url)"
+            class="thumb"
+          />
         </div>
         <div class="main-image">
           <img [src]="_currentImage" alt="Ảnh chính" class="main-photo" />

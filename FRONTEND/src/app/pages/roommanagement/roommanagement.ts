@@ -23,6 +23,8 @@ import { RoomModel } from '../../models/Room.model';
 import { AddRoom } from './addroom/addroom';
 import { RoomService } from '../../services/roomservice';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-roommanagement',
@@ -39,9 +41,12 @@ import { MatButtonModule } from '@angular/material/button';
     MatSliderModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   templateUrl: './roommanagement.html',
   styleUrl: './roommanagement.css',
+  // standalone: true,
 })
 export class RoomManagement implements OnInit, AfterViewInit {
   isFilterPanelOpen = false;
