@@ -1,3 +1,4 @@
+// bắt trường hợp khi người xóa người cuối dùng ra danh sách = kết thúc hợp đồng, set lại trạng thía phòng
 import {
   ChangeDetectorRef,
   Component,
@@ -37,6 +38,7 @@ import { AddContractDialogComponent } from '../contractsList/contractDialog/cont
 import { AssetModel } from '../../models/Asset.model';
 import { AssetService } from '../../services/assetservice';
 import { MatOptionSelectionChange } from '@angular/material/core';
+import { RoomImageModel } from '../../models/Room.model';
 @Component({
   selector: 'app-roomdetail',
   imports: [
@@ -72,9 +74,20 @@ export class RoomDetail {
   _currentImage = '../../assets/images/avatar_error.png';
 
   _deletedImages: string[] = [];
+  _addedImages: RoomImageModel[] = [];
+
   _deleteMembers: number[] = [];
   _addedMembers: string[] = [];
+
+  // asset in DB
   _selectedAssets: {
+    assetID: number;
+    assetName: string;
+    quantity: number;
+  }[] = [];
+
+  // asset is selected
+  _checkedAssets: {
     assetID: number;
     assetName: string;
     quantity: number;
@@ -93,7 +106,6 @@ export class RoomDetail {
 
   ngOnInit() {
     this.loadRoomData();
-    this.loadAssets();
   }
 
   ngAfterViewInit() {
@@ -124,12 +136,12 @@ export class RoomDetail {
         }
 
         const assetIDs = this._roomDetail.assetData.map((a: any) => a.assetID);
-
         setTimeout(() => {
           this.selectedAssetsID.setValue(assetIDs);
         }, 300);
 
-        console.log(this._selectedAssets);
+        // Gọi loadAssets và truyền danh sách đã chọn vào
+        this.loadAssets(this._selectedAssets);
 
         this.cdr.detectChanges();
       },
@@ -139,7 +151,7 @@ export class RoomDetail {
     });
   }
 
-  loadAssets() {
+  loadAssets(selectedAssets?: { assetID: number; quantity: number }[]) {
     this.assetService.getAllAssets().subscribe((data) => {
       this._assetsData = data.map(
         (x: any): AssetModel => ({
@@ -151,6 +163,18 @@ export class RoomDetail {
           quantity: x.quantity,
         })
       );
+
+      // Khởi tạo _checkedAssets sau khi có _assetsData
+      this._checkedAssets = this._assetsData.map((x) => {
+        const selected = selectedAssets?.find((s) => s.assetID === x.assetID);
+        return {
+          assetID: x.assetID,
+          assetName: x.name,
+          quantity: selected ? selected.quantity : 0,
+        };
+      });
+
+      this.cdr.detectChanges();
     });
   }
 
@@ -158,8 +182,12 @@ export class RoomDetail {
     this._selectedMember = id;
   }
 
-  get getAssetData(): any[] {
-    return this._roomDetail?.assetData || [];
+  get getAssetData(): {
+    assetID: number;
+    assetName: string;
+    quantity: number;
+  }[] {
+    return this._checkedAssets.filter((x) => x.quantity > 0);
   }
 
   changeImage(image: string) {
@@ -171,7 +199,15 @@ export class RoomDetail {
   }
 
   onAddContract() {
-    console.log('Create contract');
+    const dialogRef = this.dialog.open(AddContractDialogComponent, {
+      height: 'auto',
+      maxHeight: '90vh',
+      minWidth: '50vw',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log(`Dialog result: ${result}`);
+    });
   }
 
   onViewMember(memberID: number) {
@@ -196,13 +232,23 @@ export class RoomDetail {
     }
   }
 
-  onAddAsset() {
-    console.log('Assets Selected:', this.selectedAssetsID.value);
+  onOptionChange(event: MatOptionSelectionChange, assetID: number) {
+    const state = event.source.selected;
+
+    const val = this._checkedAssets.find((x) => x.assetID === assetID);
+
+    if (val) {
+      val.quantity = state ? 1 : 0;
+    }
+
+    this.cdr.detectChanges();
   }
 
-  onOptionChange(event: MatOptionSelectionChange, assetID: number) {
-    const state = event.source.selected ? '✅ CHECK' : '❌ UNCHECK';
-    console.log(`${state}:`, assetID);
+  onSelectedAssetChangeQuantity(assetID: number, quan: number) {
+    const val = this._checkedAssets.find((x) => x.assetID === assetID);
+    if (val && val.quantity > 0) {
+      val.quantity += quan;
+    }
   }
 
   onDeleteImage() {
@@ -223,25 +269,92 @@ export class RoomDetail {
     }
   }
 
-  onUpdateRoom() {
-    const formDataToSend = new FormData();
+  async onFileSelected(event: any): Promise<void> {
+    const files: FileList = event.target.files;
 
-    formDataToSend.append('roomID', this._roomDetail.roomID.toString());
-    formDataToSend.append('roomCode', this._roomDetail.roomNumber);
-    formDataToSend.append('area', this._roomDetail.area.toString());
-    formDataToSend.append('price', this._roomDetail.price.toString());
-    formDataToSend.append('description', this._roomDetail.description);
+    if (!files || files.length === 0) return;
 
-    this._deleteMembers.forEach((id) =>
-      formDataToSend.append('deleteMembers', id.toString())
-    );
-    this._deletedImages.forEach((img) =>
-      formDataToSend.append('deletedImages', img)
-    );
+    const filePromises: Promise<void>[] = [];
 
-    for (const pair of formDataToSend.entries()) {
-      console.log(`${pair[0]}:`, pair[1]);
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+
+      // if (!this.validateFile(file)) continue;
+      if (this._addedImages.length >= 5) {
+        console.warn(`Chỉ được tải tối đa 5 ảnh`);
+        break;
+      }
+
+      const imageId = Math.random().toString(36).substr(2, 9);
+
+      const filePromise = new Promise<void>((resolve) => {
+        const reader = new FileReader();
+
+        reader.onload = (e: any) => {
+          const roomImage: RoomImageModel = {
+            id: imageId,
+            file: file,
+            url: e.target.result,
+            isThumb: false,
+            name: file.name,
+            size: file.size,
+          };
+
+          this._addedImages.push(roomImage);
+          resolve();
+        };
+
+        reader.readAsDataURL(file);
+      });
+
+      filePromises.push(filePromise);
     }
+
+    // Wait for all files to be processed
+    await Promise.all(filePromises);
+
+    // Force UI update
+    this.cdr.detectChanges();
+
+    // Reset input
+    event.target.value = '';
+  }
+
+  onUploadImage(event: Event) {}
+
+  onUpdateRoom() {
+    // assets
+    const writeAsset = this._checkedAssets.filter((x) => x.quantity > 0);
+    for (let asset of this._roomDetail.assetData) {
+      const val = writeAsset.find((x) => x.assetID === asset.assetID);
+      if (!val) {
+        writeAsset.push({ ...asset, quantity: 0 });
+      }
+    }
+
+    //images
+    console.log(this._deletedImages);
+
+    //members
+
+    // const formDataToSend = new FormData();
+
+    // formDataToSend.append('roomID', this._roomDetail.roomID.toString());
+    // formDataToSend.append('roomCode', this._roomDetail.roomNumber);
+    // formDataToSend.append('area', this._roomDetail.area.toString());
+    // formDataToSend.append('price', this._roomDetail.price.toString());
+    // formDataToSend.append('description', this._roomDetail.description);
+
+    // this._deleteMembers.forEach((id) =>
+    //   formDataToSend.append('deleteMembers', id.toString())
+    // );
+    // this._deletedImages.forEach((img) =>
+    //   formDataToSend.append('deletedImages', img)
+    // );
+
+    // for (const pair of formDataToSend.entries()) {
+    //   console.log(`${pair[0]}:`, pair[1]);
+    // }
   }
 
   trackByAssetID(index: number, asset: AssetModel): number {
