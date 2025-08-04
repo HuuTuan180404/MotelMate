@@ -67,5 +67,27 @@ namespace BACKEND.Controllers
 
             return Ok(_mapper.Map<ReadTenantDTO>(tenants));
         }
+
+
+        [HttpGet("by-cccd/{cccd}")]
+        public async Task<ActionResult<ReadTenantDTO>> GetTenantDetailByCCCD(string cccd)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!long.TryParse(userIdStr, out var ownerId))
+            {
+                return Unauthorized("User ID not found or invalid");
+            }
+
+            var tenants = await _context.Tenant
+                        .Include(t => t.ContractDetails)
+                            .ThenInclude(cd => cd.Contract)
+                                .ThenInclude(c => c.Room)
+                                    .ThenInclude(r => r.Building)
+                        .Where(t => t.CCCD == cccd)
+                        .Where(t => t.ContractDetails.Any(cd => cd.Contract.Room.Building.OwnerID == ownerId))
+                        .FirstOrDefaultAsync();
+
+            return Ok(_mapper.Map<ReadTenantDTO>(tenants));
+        }
     }
 }

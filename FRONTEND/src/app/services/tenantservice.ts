@@ -18,4 +18,8 @@ export class TenantService {
   getTenantDetail(id: number): Observable<TenantModel> {
     return this.http.get<TenantModel>(`${this.apiTenant}/${id}`);
   }
+
+  getTenantDetailByCCCD(cccd: string): Observable<TenantModel> {
+    return this.http.get<TenantModel>(`${this.apiTenant}/by-cccd/${cccd}`);
+  }
 }

@@ -22,7 +22,7 @@ export interface CreateRoomModel {
 export interface RoomImageModel {
   id: string;
   file: File;
-  url: string;
+  url: string | ArrayBuffer | null;
   isThumb: boolean;
   name: string;
   size: number;
