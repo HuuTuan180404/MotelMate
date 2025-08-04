@@ -1,9 +1,5 @@
 <div class="dialog-header">
   <h2>Profile</h2>
-  <div>
-    <button mat-stroked-button color="warn" *ngIf="editMode()" (click)="cancelEdit()">Cancel</button>
-    <button mat-stroked-button color="primary" *ngIf="!editMode()" (click)="enableEdit()">Edit</button>
-  </div>
 </div>
 
 <!-- Body -->
@@ -52,7 +48,8 @@
         </mat-form-field>
       </form>
 
-      <button class="change-password-btn" mat-flat-button color="accent" (click)="changePassword()" [disabled]="changePasswordForm.invalid">Submit</button>
+      <button class="change-password-btn" mat-flat-button color="accent" (click)="changePassword()"
+        [disabled]="changePasswordForm.invalid">Submit</button>
     </div>
   </div>
 
@@ -140,7 +137,10 @@
 <!-- Footer -->
 <div class="dialog-footer">
   <button mat-stroked-button (click)="dialogRef.close()">Close</button>
-  <button mat-flat-button color="primary" (click)="accept()" [disabled]="form.invalid || !editMode() || !hasChanges()">
+  <button mat-stroked-button color="warn" *ngIf="editMode()" (click)="cancelEdit()">Cancel</button>
+  <button mat-stroked-button color="primary" *ngIf="!editMode()" (click)="enableEdit()">Edit</button>
+  <button mat-flat-button color="primary" *ngIf="editMode()" (click)="accept()"
+    [disabled]="form.invalid || !editMode() || !hasChanges()">
     Accept
   </button>
 </div>
