@@ -27,6 +27,36 @@ namespace BACKEND.Controllers
             return Ok(buildings);
         }
 
+
+        // tu
+        [HttpGet("with-rooms")]
+        public async Task<ActionResult<IEnumerable<object>>> GetBuildingsWithRooms()
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!long.TryParse(userIdStr, out var ownerId))
+            {
+                return Unauthorized("User ID not found or invalid");
+            }
+            var buildingRooms = await _context.Building
+                                                .Include(r => r.Rooms)
+                                                .Where(b => b.OwnerID == ownerId)
+                                                .Select(b => new
+                                                {
+                                                    BuildingID = b.BuildingID,
+                                                    BuildingName = b.Name,
+                                                    BuildingAddress = b.Address,
+                                                    Rooms = b.Rooms.Select(r => new
+                                                    {
+                                                        RoomID = r.RoomID,
+                                                        RoomNumber = r.RoomNumber
+                                                    }).ToList()
+                                                })
+                                                .ToListAsync();
+
+            return Ok(buildingRooms);
+        }
+
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateBuilding(int id, UpdateBuildingDTO updateDTO)
         {
@@ -85,7 +115,9 @@ namespace BACKEND.Controllers
             _context.Building.Add(building);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetBuildingSummary), new { id = building.BuildingID }, null);
+            var readDTO = _mapper.Map<ReadBuildingDTO>(building);
+
+            return CreatedAtAction(nameof(GetBuildingSummary), new { id = building.BuildingID }, readDTO);
         }
     }
 }

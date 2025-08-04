@@ -38,6 +38,8 @@ namespace BACKEND.Namespace
             var result = _mapper.Map<List<ContractDTOs>>(contracts);
             return Ok(result);
         }
+
+
         [HttpPost("create")]
         public async Task<IActionResult> CreateContract([FromBody] CreateContractDTO request)
         {
@@ -54,17 +56,19 @@ namespace BACKEND.Namespace
 
             // find tenant
             var tenant = await _context.Tenant
-                .Include(t => t.ContractDetails)
+                // .Include(t => t.ContractDetails)
                 .FirstOrDefaultAsync(t => t.CCCD == request.CCCD);
 
             if (tenant == null)
                 return NotFound(new { message = "tenant not found" });
 
             // check if tenant is in another room
-            var isInAnotherRoom = tenant.ContractDetails.Any(cd =>
-                cd.EndDate >= DateOnly.FromDateTime(DateTime.Today));
+            // var isInAnotherRoom = tenant.ContractDetails.Any(cd => cd.EndDate == null);
 
-            if (isInAnotherRoom)
+            var isInAnotherRoom = await _context.ContractDetail
+                    .FirstOrDefaultAsync(cd => cd.EndDate == null && cd.TenantID == tenant.Id);
+
+            if (isInAnotherRoom != null)
                 return BadRequest(new { message = "tenant is in another room" });
 
             // create contract
@@ -76,12 +80,12 @@ namespace BACKEND.Namespace
                 EndDate = request.EndDate,
                 Status = EContractStatus.Unsigned,
                 RoomID = room.RoomID,
-                Description = "lòng tôi tan nát khi nhận ra ...",
+                Description = null,
                 ContractCode = "C" + room.RoomNumber + DateTime.Now.ToString("yyyyMMddHHmmss")
             };
 
             _context.Contract.Add(contract);
-            await _context.SaveChangesAsync(); 
+            await _context.SaveChangesAsync();
 
             // create contract detail
             var contractDetail = new ContractDetail

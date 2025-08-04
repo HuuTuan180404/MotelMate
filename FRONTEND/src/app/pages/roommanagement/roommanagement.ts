@@ -23,6 +23,8 @@ import { RoomModel } from '../../models/Room.model';
 import { AddRoom } from './addroom/addroom';
 import { RoomService } from '../../services/roomservice';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 
 @Component({
   selector: 'app-roommanagement',
@@ -39,9 +41,12 @@ import { MatButtonModule } from '@angular/material/button';
     MatSliderModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
   ],
   templateUrl: './roommanagement.html',
   styleUrl: './roommanagement.css',
+  // standalone: true,
 })
 export class RoomManagement implements OnInit, AfterViewInit {
   isFilterPanelOpen = false;
@@ -245,18 +250,18 @@ export class RoomManagement implements OnInit, AfterViewInit {
   }
 
   viewRoomDetail(id: number): void {
-    this.roomService.getRoomById(id).subscribe({
-      next: (data) => {
-        this.dialog.open(RoomDetail, {
-          maxWidth: '90vw',
-          maxHeight: '90vh',
-          data: data,
-        });
-      },
-      error: (error) => {
-        console.error('Error loading room detail:', error);
-      },
+    this.dialog.open(RoomDetail, {
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      data: id,
     });
+
+    // this.roomService.getRoomById(id).subscribe({
+    //   next: (data) => {},
+    //   error: (error) => {
+    //     console.error('Error loading room detail:', error);
+    //   },
+    // });
   }
 
   onClick_btnCreate(): void {
@@ -264,23 +269,10 @@ export class RoomManagement implements OnInit, AfterViewInit {
       height: 'auto',
       maxHeight: '90vh',
       minWidth: '60vw',
-      data: {
-        formData: {
-          buildingID: 1,
-          roomNumber: 1,
-          maxGuests: 2,
-          area: 2.4,
-          price: 1300000,
-          images: [],
-          description: '',
-          assets: [],
-        },
-      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        // Reload tất cả dữ liệu
         this.loadAllRooms();
       }
     });

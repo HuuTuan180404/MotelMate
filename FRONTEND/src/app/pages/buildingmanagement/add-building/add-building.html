@@ -1,0 +1,56 @@
+<div class="dialog-wrapper">
+  <form [formGroup]="buildingForm" (ngSubmit)="save()" class="custom-dialog-container">
+    <div class="dialog-header">
+      <h2>Add New Building</h2>
+    </div>
+
+    <div class="dialog-body">
+      <!-- Name Field -->
+      <mat-form-field appearance="outline" floatLabel="auto">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name" />
+        <mat-error *ngIf="buildingForm.get('name')?.hasError('required') && buildingForm.get('name')?.touched">
+          Name is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Address Field -->
+      <mat-form-field appearance="outline" floatLabel="auto">
+        <mat-label>Address</mat-label>
+        <input matInput formControlName="address" />
+        <mat-error *ngIf="buildingForm.get('address')?.hasError('required') && buildingForm.get('address')?.touched">
+          Address is required
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Hidden real input -->
+        <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" hidden />
+
+        <!-- Custom Button -->
+        <button mat-stroked-button color="primary" (click)="fileInput.click()">
+        <mat-icon>cloud_upload</mat-icon> Upload Image
+        </button>
+
+        <mat-error *ngIf="formSubmitted && !buildingForm.get('imageURL')?.value">
+          Image is required
+        </mat-error>
+
+        <!-- Show selected file name -->
+        <div *ngIf="selectedFile" class="file-name">
+        Selected File: {{ selectedFile.name }}
+        </div>
+
+        <!-- Image Preview -->
+        <div *ngIf="previewURL" class="image-preview">
+        <img [src]="previewURL" alt="Preview" style="max-width: 100%; height: auto;" />
+        </div>
+
+
+    </div>
+
+    <div class="button-group">
+      <button class="btn-cancel" type="button" (click)="cancel()">Cancel</button>
+      <button class="btn-submit" type="submit">+ Add</button>
+    </div>
+  </form>
+</div>

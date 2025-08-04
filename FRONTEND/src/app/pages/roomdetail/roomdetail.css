@@ -21,7 +21,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 var(--padding-margin);
+  padding: 16px var(--padding-margin);
+  border-bottom: 1px solid #ccc;
+}
+
+.dialog-title > h2 {
+  flex: 1;
+  text-align: center;
 }
 
 #btnApply {
@@ -60,11 +66,17 @@
 .gallery {
   width: 100%;
   display: flex;
-  flex-direction: column-reverse;
+  /* flex-direction: column-reverse; */
+  flex-direction: column;
+  margin-bottom: auto;
 }
 
 .main-image {
   flex: 1;
+  width: 100%;
+  height: 80%;
+  aspect-ratio: 1/1;
+  position: relative;
 }
 
 .main-image > img {
@@ -74,11 +86,28 @@
   border-radius: var(--border-radius);
 }
 
+.main-image > mat-icon {
+  position: absolute;
+  bottom: 5px;
+  right: 5px;
+  background-color: #fff;
+  border-radius: 8px;
+  z-index: 1000;
+  color: #e53935;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.main-image > mat-icon:hover {
+  transform: scale(1.1);
+}
+
 .thumbnails {
   display: flex;
   overflow-x: auto;
   gap: 5px;
-  margin-top: var(--padding-margin);
+  margin-bottom: var(--padding-margin);
+  margin-top: 20%;
 }
 
 .thumbnails::-webkit-scrollbar {
@@ -259,12 +288,60 @@
   width: 40px;
   border-radius: 50%;
   object-fit: cover;
-  align-self: center;
   margin-bottom: var(--padding-margin);
 }
 
-.member > div > div {
+.row-info-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-margin);
+}
+
+.row-info-container > :nth-child(1) {
+  flex: 1;
+  align-items: center;
   margin-top: var(--padding-margin);
+}
+
+.row-info-container > :nth-child(2) {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--padding-margin);
+}
+
+.row-info-container > :nth-child(2) > :last-child {
+  gap: var(--padding-margin);
+  margin-left: auto;
+}
+
+.icon-actions mat-icon {
+  cursor: pointer;
+  font-size: 24px;
+  transition: color 0.3s ease, transform 0.2s ease;
+  color: #616161; /* Màu xám trung tính ban đầu */
+}
+
+.icon-actions mat-icon:hover {
+  transform: scale(1.1);
+}
+
+/* Màu cụ thể cho từng icon nếu muốn */
+.icon-actions mat-icon:first-child {
+  color: #e53935; /* đỏ - delete */
+}
+
+.icon-actions mat-icon:first-child:hover {
+  color: #c62828;
+}
+
+.icon-actions mat-icon:last-child {
+  color: #1e88e5; /* xanh dương - eye */
+}
+
+.icon-actions mat-icon:last-child:hover {
+  color: #1565c0;
 }
 
 .member label {
@@ -329,6 +406,7 @@
   display: grid;
   gap: 12px;
   grid-template-columns: 1fr;
+  overflow: auto;
 
   @media (min-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
@@ -363,6 +441,13 @@
   white-space: nowrap;
 }
 
+.asset-item > div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .quantity-chip {
   background-color: #e3f2fd;
   color: #1976d2;
@@ -370,14 +455,75 @@
   font-weight: 600;
 }
 
+.asset-item > div > mat-icon {
+  cursor: pointer;
+}
+
 /* button add */
+.add-container {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.add-container ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
 .btn-add {
   background-color: var(--create-btn) !important;
   color: white !important;
 }
 
-.btn-add:hover {
-  /* transform: translateY(-2px);
-  box-shadow: 0 6px 14px rgba(99, 102, 241, 0.5);
-  background: linear-gradient(135deg, #4338ca, #4f46e5); */
+.dialog-actions {
+  border-top: 1px solid #ccc;
+  padding: 16px var(--padding-margin);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* select bar */
+.assets-header > .add-container {
+  width: 40%;
+}
+
+.assets-header > .add-container > mat-form-field {
+  width: 100%;
+  max-width: 320px;
+  margin-left: auto;
+}
+
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  border-radius: 8px;
+}
+
+.mat-select-trigger {
+  padding: 12px 16px;
+  min-height: 48px;
+}
+
+.mat-select-panel {
+  margin-bottom: 16px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+mat-option {
+  padding: 12px 16px;
+  min-height: 48px;
+}
+
+::ng-deep .professional-panel {
+  margin-bottom: 10px !important;
+}
+
+.mat-option:hover {
+  background-color: #f5f5f5;
+}
+
+.mat-chip {
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border-radius: 16px;
+  margin: 2px 4px 2px 0;
 }

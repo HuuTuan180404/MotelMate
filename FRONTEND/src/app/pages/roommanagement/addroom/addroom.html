@@ -16,7 +16,6 @@
           <mat-icon>info</mat-icon>
           Basic Information
         </h3>
-
         <div class="form-row">
           <!-- Chọn tòa nhà (Multiple Select) -->
           <mat-form-field
@@ -29,7 +28,7 @@
                 {{ selectedBuildingName }}
               </mat-select-trigger>
               <mat-option
-                *ngFor="let building of buildings"
+                *ngFor="let building of _buildings"
                 [value]="building.buildingID"
               >
                 <div class="building-option">
@@ -53,6 +52,7 @@
           <mat-form-field appearance="outline" class="form-field">
             <mat-label>Số phòng</mat-label>
             <input
+              #roomNumberInput
               matInput
               formControlName="roomNumber"
               placeholder="VD: P101, A201"
@@ -245,7 +245,7 @@
                 class="asset-checkbox"
               >
                 <div class="asset-info">
-                  <span class="asset-name">{{ asset.assetName }}</span>
+                  <span class="asset-name">{{ asset.name }}</span>
                 </div>
               </mat-checkbox>
             </div>

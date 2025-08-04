@@ -14,4 +14,12 @@ export class TenantService {
   getAllTenants(): Observable<TenantModel[]> {
     return this.http.get<TenantModel[]>(this.apiTenant);
   }
+
+  getTenantDetail(id: number): Observable<TenantModel> {
+    return this.http.get<TenantModel>(`${this.apiTenant}/${id}`);
+  }
+
+  getTenantDetailByCCCD(cccd: string): Observable<TenantModel> {
+    return this.http.get<TenantModel>(`${this.apiTenant}/by-cccd/${cccd}`);
+  }
 }

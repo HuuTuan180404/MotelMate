@@ -1,3 +1,5 @@
+using BACKEND.RoomDTO.DTOs;
+
 namespace BACKEND.DTOs.BuildingDTO
 {
     public class ReadBuildingDTO
@@ -12,5 +14,4 @@ namespace BACKEND.DTOs.BuildingDTO
         public int MaintenanceRooms { get; set; }
         public int TotalTenants { get; set; }
     }
-    
 }

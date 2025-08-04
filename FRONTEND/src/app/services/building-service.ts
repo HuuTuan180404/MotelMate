@@ -20,8 +20,16 @@ export class BuildingService {
     return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
+  addBuilding(building: Partial<Building>): Observable<Building> {
+    return this.http.post<Building>(this.apiUrl, building);
+  }
+
+  updateBuilding(id: number, data: Partial<Building>): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, data);
+  }
+
   // lấy tòa nhà và phòng của tòa nhà - Tu
   getBuildingWithRooms(): Observable<object[]> {
-    return this.http.get<object[]>(`${environment.apiUrl}/api/noti/with-rooms`);
+    return this.http.get<object[]>(`${this.apiUrl}/with-rooms`);
   }
 }

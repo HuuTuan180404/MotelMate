@@ -1,6 +1,14 @@
-import { ChangeDetectorRef, Component, Inject, NgZone } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Inject,
+  NgZone,
+  ViewChild,
+} from '@angular/core';
 import {
   MAT_DIALOG_DATA,
+  MatDialog,
   MatDialogModule,
   MatDialogRef,
 } from '@angular/material/dialog';
@@ -23,8 +31,14 @@ import { MatCardModule } from '@angular/material/card';
 import { MatProgressSpinner } from '@angular/material/progress-spinner';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { Asset } from '../../../models/Asset.model';
+import { AssetModel } from '../../../models/Asset.model';
 import { CreateRoomModel, RoomImageModel } from '../../../models/Room.model';
+import { BuildingService } from '../../../services/building-service';
+import { BuildingWithRoomsModel } from '../../../models/Building.model';
+import { AssetService } from '../../../services/asset-service';
+import { ConfirmDialog } from '../../service/confirm-dialog/confirm-dialog';
+import { DialogAction, ReusableDialog } from '../../dialog/dialog';
+import { RoomService } from '../../../services/roomservice';
 
 export interface Building {
   buildingID: number;
@@ -54,75 +68,14 @@ export interface Building {
   styleUrl: './addroom.css',
 })
 export class AddRoom {
+  @ViewChild('roomNumberInput') roomNumberInput!: ElementRef<HTMLInputElement>;
   roomForm: FormGroup;
   isLoading = false;
 
   // Mock data - thay thế bằng service thực tế
-  buildings: Building[] = [
-    {
-      buildingID: 1,
-      buildingName: 'Tòa nhà A',
-      buildingAddress: '123 Đường ABC',
-    },
-    {
-      buildingID: 2,
-      buildingName: 'Tòa nhà B',
-      buildingAddress: '456 Đường DEF',
-    },
-    {
-      buildingID: 3,
-      buildingName: 'Tòa nhà C',
-      buildingAddress: '789 Đường GHI',
-    },
-    {
-      buildingID: 4,
-      buildingName: 'Tòa nhà D',
-      buildingAddress: '101 Đường JKL',
-    },
-    {
-      buildingID: 5,
-      buildingName: 'Tòa nhà E',
-      buildingAddress: '202 Đường MNO',
-    },
-  ];
+  _buildings: BuildingWithRoomsModel[] = [];
 
-  availableAssets: Asset[] = [
-    {
-      assetID: 1,
-      assetName: 'Giường đơn',
-      assetType: 'Nội thất',
-    },
-    {
-      assetID: 2,
-      assetName: 'Tủ quần áo',
-      assetType: 'Nội thất',
-    },
-    {
-      assetID: 3,
-      assetName: 'Bàn học',
-      assetType: 'Nội thất',
-    },
-    {
-      assetID: 4,
-      assetName: 'Ghế xoay',
-      assetType: 'Nội thất',
-    },
-    {
-      assetID: 5,
-      assetName: 'Điều hòa',
-      assetType: 'Điện tử',
-    },
-    {
-      assetID: 6,
-      assetName: 'Tủ lạnh mini',
-      assetType: 'Điện tử',
-    },
-    {
-      assetID: 7,
-      assetName: 'Máy nước nóng',
-      assetType: 'Điện tử',
-    },
-  ];
+  _availableAssets: AssetModel[] = [];
 
   roomImages: RoomImageModel[] = [];
   selectedAssets: number[] = [];
@@ -134,10 +87,14 @@ export class AddRoom {
     private cdr: ChangeDetectorRef,
     private fb: FormBuilder,
     public dialogRef: MatDialogRef<AddRoom>,
+    public matDialog: MatDialog,
+    private buildingService: BuildingService,
+    private assetService: AssetService,
+    private roomService: RoomService,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.roomForm = this.fb.group({
-      buildingID: [[], Validators.required], // Changed to array for multiple selection
+      buildingID: ['', Validators.required], // Changed to array for multiple selection
       roomNumber: [
         '',
         [Validators.required, Validators.pattern(/^[A-Za-z0-9]+$/)],
@@ -149,16 +106,32 @@ export class AddRoom {
       price: ['', [Validators.required, Validators.min(0)]],
       description: ['', [Validators.maxLength(1000)]],
     });
-  }
 
-  ngOnInit(): void {
-    console.log('Create room dialog initialized');
+    this.buildingService.getBuildingWithRooms().subscribe({
+      next: (data: any) => {
+        this._buildings = data;
+        this.cdr.detectChanges();
+      },
+      error: (error: any) => {
+        console.error('Error loading rooms:', error);
+      },
+    });
+
+    this.assetService.getAllAssets().subscribe({
+      next: (data: any) => {
+        this._availableAssets = data;
+        this.cdr.detectChanges();
+      },
+      error: (error: any) => {
+        console.error('Error loading rooms:', error);
+      },
+    });
   }
 
   // Building selection methods for multiple select
   get selectedBuildingName(): string {
     const selectedId = this.roomForm.get('buildingID')?.value;
-    const building = this.buildings.find((b) => b.buildingID === selectedId);
+    const building = this._buildings.find((b) => b.buildingID === selectedId);
     return building
       ? `${building.buildingName} - ${building.buildingAddress}`
       : '';
@@ -170,17 +143,11 @@ export class AddRoom {
   }
 
   getSelectedBuildingName(): string {
-    const selected = this.roomForm.get('buildingID')?.value || [];
-    if (selected.length === 0) return '';
+    const selected = this.roomForm.get('buildingID')?.value || '';
+    if (selected === '') return '';
 
-    const selectedNames = selected
-      .map((id: number) => {
-        const building = this.buildings.find((b) => b.buildingID === id);
-        return building ? building.buildingName : '';
-      })
-      .filter((name: string) => name);
-
-    return selectedNames.join(', ');
+    const building = this._buildings.find((b) => b.buildingID === selected);
+    return building ? building.buildingName : '';
   }
 
   // Image handling methods
@@ -216,7 +183,6 @@ export class AddRoom {
           };
 
           this.roomImages.push(roomImage);
-          console.log('Added image:', roomImage.name);
           resolve();
         };
 
@@ -283,55 +249,119 @@ export class AddRoom {
         this.selectedAssets.splice(index, 1);
       }
     }
-    console.log('Selected assets:', this.selectedAssets);
   }
 
   isAssetSelected(assetId: number): boolean {
     return this.selectedAssets.includes(assetId);
   }
 
-  getAssetsByType(type: string): Asset[] {
-    return this.availableAssets.filter((asset) => asset.assetType === type);
+  getAssetsByType(type: string): AssetModel[] {
+    return this._availableAssets.filter((asset) => asset.type === type);
   }
 
   getAssetTypes(): string[] {
-    return [...new Set(this.availableAssets.map((asset) => asset.assetType))];
+    return [...new Set(this._availableAssets.map((asset) => asset.type))].sort(
+      (a, b) => a.localeCompare(b)
+    );
   }
 
   getAssetName(assetId: number): string | undefined {
-    return this.availableAssets.find((a) => a.assetID === assetId)?.assetName;
+    return this._availableAssets.find((a) => a.assetID === assetId)?.name;
   }
 
   // Form methods
   onCancel(): void {
-    // console.log('Cancel create room');
-    // this.dialogRef.close();
-    console.log(this.roomImages);
+    this.dialogRef.close(false);
   }
 
   onSave(): void {
     if (this.roomForm.valid) {
-      this.isLoading = true;
-
       const formData = this.roomForm.value;
-      const roomData: CreateRoomModel = {
-        buildingID: formData.buildingID, // Changed to buildingID
-        roomNumber: formData.roomNumber,
-        area: formData.area,
-        price: formData.price,
-        description: formData.description,
-        images: this.roomImages,
-        selectedAssets: this.selectedAssets,
-      };
+      const roomsInBuilding = this._buildings.find(
+        (building) => building.buildingID === formData.buildingID
+      )?.rooms;
 
-      console.log('Creating room with data:', roomData);
+      const checkRoomNumberExists = roomsInBuilding?.some(
+        (room) => room.roomNumber === formData.roomNumber
+      );
 
-      // Simulate API call
-      setTimeout(() => {
-        this.isLoading = false;
-        console.log('Room created successfully!');
-        this.dialogRef.close(roomData);
-      }, 2000);
+      if (checkRoomNumberExists) {
+        const actions: DialogAction[] = [
+          {
+            label: 'Cancel',
+            bgColor: 'warn',
+            callback: () => {
+              return false;
+            },
+          },
+          {
+            label: 'Ok',
+            bgColor: 'primary',
+            callback: () => {
+              return true;
+            },
+          },
+        ];
+
+        const dialogResult = this.matDialog.open(ReusableDialog, {
+          data: {
+            icon: 'error',
+            title: 'Error',
+            message: 'Number of rooms already exists!',
+            actions: actions,
+          },
+        });
+
+        dialogResult.afterClosed().subscribe((result) => {
+          this.roomForm.get('roomNumber')?.setValue('');
+        });
+
+        return;
+      }
+      // this.isLoading = true;
+
+      const formDataToSend = new FormData();
+      formDataToSend.append('buildingID', formData.buildingID);
+      formDataToSend.append('roomNumber', formData.roomNumber);
+      formDataToSend.append('area', formData.area);
+      formDataToSend.append('price', formData.price);
+      formDataToSend.append('description', formData.description);
+
+      this.roomImages.forEach((img, index) => {
+        formDataToSend.append('images', img.file);
+      });
+
+      this.selectedAssets.forEach((id) => {
+        formDataToSend.append('selectedAssetIDs', id.toString());
+      });
+
+      this.roomService.postNewRoom(formDataToSend).subscribe({
+        next: (res: any) => {
+          const actions: DialogAction[] = [
+            {
+              label: 'Ok',
+              bgColor: 'primary',
+              callback: () => {
+                return true;
+              },
+            },
+          ];
+
+          const dialogResult = this.matDialog.open(ReusableDialog, {
+            data: {
+              icon: 'done',
+              title: 'Info',
+              message: 'New room created successfully.',
+              actions: actions,
+            },
+          });
+
+          dialogResult.afterClosed().subscribe((result) => {
+            this.dialogRef.close(true);
+          });
+        },
+        error: (err: any) => console.error('Error adding room', err),
+      });
     } else {
       this.markFormGroupTouched();
       console.log('Form is invalid');
@@ -366,34 +396,4 @@ export class AddRoom {
       currency: 'VND',
     }).format(price);
   }
-
-  // uploadedImageUrls: string[] = [];
-
-  // uploadToCloudinary(): void {
-  //   const cloudName = environment.cloudinary.cloudName;
-  //   const uploadPreset = environment.cloudinary.uploadPreset;
-
-  //   this.uploadedImageUrls = [];
-
-  //   this.selectedImages.forEach((file) => {
-  //     const formData = new FormData();
-  //     formData.append('file', file);
-  //     formData.append('upload_preset', uploadPreset);
-
-  //     fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-  //       method: 'POST',
-  //       body: formData,
-  //     })
-  //       .then((res) => res.json())
-  //       .then((data) => {
-  //         if (data.secure_url) {
-  //           this.uploadedImageUrls.push(data.secure_url);
-  //           // console.log(data.secure_url);
-  //         }
-  //       })
-  //       .catch((err) => console.error('Upload lỗi:', err));
-  //   });
-
-  //   console.log(this.uploadedImageUrls);
-  // }
 }

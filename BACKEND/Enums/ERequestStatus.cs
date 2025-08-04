@@ -2,8 +2,8 @@ namespace BACKEND.Enums
 {
     public enum ERequestStatus
     {
-        Sent,
-        InProgress,
-        Done
+        Pending,     // Chờ duyệt
+        Approved,    // Đã duyệt
+        Rejected   
     }
 }

@@ -9,7 +9,11 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
@@ -22,6 +26,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { BuildingWithRoomsModel } from '../../models/Building.model';
 import { BuildingService } from '../../services/building-service';
+import { NotificationService } from '../../services/notification-service';
+import { CreateNotificationDTO } from '../../models/SendNotification.model';
+import { DialogAction, ReusableDialog } from '../dialog/dialog';
 
 @Component({
   selector: 'app-sentrequest',
@@ -46,13 +53,6 @@ export class SendNotification {
   _buildingWithRooms?: BuildingWithRoomsModel[];
   notificationForm: FormGroup;
 
-  // ADDED: Thêm notification types để sử dụng trong template
-  notificationTypes = [
-    { value: 'info', label: 'Thông tin', icon: 'info' },
-    { value: 'warning', label: 'Cảnh báo', icon: 'warning' },
-    { value: 'urgent', label: 'Khẩn cấp', icon: 'priority_high' },
-  ];
-
   isLoading = false;
 
   // UPDATED: Sử dụng interface room object thay vì string array
@@ -63,7 +63,9 @@ export class SendNotification {
 
   constructor(
     private buildingService: BuildingService,
+    private notificationService: NotificationService,
     private fb: FormBuilder,
+    public matDialog: MatDialog,
     public dialogRef: MatDialogRef<SendNotification>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
@@ -71,7 +73,6 @@ export class SendNotification {
     this.notificationForm = this.fb.group({
       title: ['', Validators.required],
       content: ['', Validators.required],
-      type: ['info'], // ADDED: Thêm field type
       targetType: ['building'], // building, room
       selectedBuildings: [[]],
       selectedBuilding: [''], // Cho option room
@@ -93,7 +94,6 @@ export class SendNotification {
     // Theo dõi thay đổi loại đối tượng
     this.notificationForm.get('targetType')?.valueChanges.subscribe((value) => {
       this.resetSelections();
-      console.log('Target type changed to:', value);
     });
 
     // Theo dõi thay đổi tòa nhà được chọn (cho option room)
@@ -101,7 +101,6 @@ export class SendNotification {
       .get('selectedBuilding')
       ?.valueChanges.subscribe((buildingId) => {
         this.updateFilteredRooms(buildingId);
-        console.log('Selected building changed to:', buildingId);
       });
   }
 
@@ -112,7 +111,6 @@ export class SendNotification {
       selectedRooms: [],
     });
     this.filteredRooms = [];
-    console.log('Selections reset');
   }
 
   // UPDATED: Sử dụng buildingID (number) thay vì string
@@ -128,11 +126,6 @@ export class SendNotification {
 
     if (selectedBuilding) {
       this.filteredRooms = selectedBuilding.rooms;
-      console.log(
-        'Filtered rooms for building:',
-        selectedBuilding.buildingName,
-        this.filteredRooms
-      );
     }
 
     // Reset room selections khi đổi tòa nhà
@@ -142,27 +135,67 @@ export class SendNotification {
   }
 
   onCancel(): void {
-    console.log('Hủy gửi thông báo');
     this.dialogRef.close();
   }
 
   onSend(): void {
     if (this.isFormValid()) {
       this.isLoading = true;
-      const formData = this.notificationForm.value;
 
-      console.log('Đang gửi thông báo...', {
-        ...formData,
-        recipients: this.getTotalRooms(),
-        recipientDetails: this.getRoomDetails(),
+      const formValue = this.notificationForm.value;
+
+      const payload: CreateNotificationDTO = {
+        title: formValue.title,
+        content: formValue.content,
+        selectedBuildings:
+          formValue.targetType === 'building'
+            ? formValue.selectedBuildings
+            : [],
+        selectedRooms:
+          formValue.targetType === 'room' ? formValue.selectedRooms : [],
+      };
+
+      const actions: DialogAction[] = [
+        {
+          label: 'Cancel',
+          bgColor: 'warn',
+          callback: () => {
+            return false;
+          },
+        },
+        {
+          label: 'Ok',
+          bgColor: 'primary',
+          callback: () => {
+            return true;
+          },
+        },
+      ];
+
+      const dialogResult = this.matDialog.open(ReusableDialog, {
+        data: {
+          icon: 'notifications',
+          title: 'Notification',
+          message: 'Are you sure you want to send this notification?',
+          actions: actions,
+        },
       });
 
-      // Giả lập gửi thông báo
-      setTimeout(() => {
-        this.isLoading = false;
-        console.log('Gửi thông báo thành công!');
-        this.dialogRef.close(formData);
-      }, 2000);
+      dialogResult.afterClosed().subscribe((result) => {
+        if (result) {
+          this.notificationService.sendNotification(payload).subscribe({
+            next: () => {
+              this.isLoading = false;
+              this.dialogRef.close();
+              alert('Gửi thông báo thành công!');
+            },
+            error: (err) => {
+              this.isLoading = false;
+              console.log(err);
+            },
+          });
+        }
+      });
     } else {
       console.log('Form không hợp lệ');
     }
@@ -263,14 +296,12 @@ export class SendNotification {
     this.notificationForm.patchValue({
       selectedBuildings: allBuildingIds,
     });
-    console.log('Đã chọn tất cả tòa nhà:', allBuildingIds);
   }
 
   clearAllBuildings(): void {
     this.notificationForm.patchValue({
       selectedBuildings: [],
     });
-    console.log('Đã bỏ chọn tất cả tòa nhà');
   }
 
   selectAllRooms(): void {
@@ -278,14 +309,12 @@ export class SendNotification {
     this.notificationForm.patchValue({
       selectedRooms: [...this.filteredRooms],
     });
-    console.log('Đã chọn tất cả phòng:', this.filteredRooms);
   }
 
   clearAllRooms(): void {
     this.notificationForm.patchValue({
       selectedRooms: [],
     });
-    console.log('Đã bỏ chọn tất cả phòng');
   }
 
   // UPDATED: Sử dụng buildingID (number) thay vì string
@@ -306,11 +335,6 @@ export class SendNotification {
         ),
       });
     }
-
-    console.log(
-      'Tòa nhà được chọn:',
-      this.notificationForm.get('selectedBuildings')?.value
-    );
   }
 
   // UPDATED: Xử lý room object thay vì string
@@ -325,7 +349,7 @@ export class SendNotification {
       // UPDATED: Kiểm tra roomID để tránh duplicate
       if (!currentRooms.some((r: any) => r.roomID === room.roomID)) {
         this.notificationForm.patchValue({
-          selectedRooms: [...currentRooms, room],
+          selectedRooms: [...currentRooms, room.roomID],
         });
       }
     } else {
@@ -335,11 +359,6 @@ export class SendNotification {
         ),
       });
     }
-
-    console.log(
-      'Phòng được chọn:',
-      this.notificationForm.get('selectedRooms')?.value
-    );
   }
 
   // ADDED: Method để kiểm tra room đã được chọn chưa (dùng trong template)

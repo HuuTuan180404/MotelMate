@@ -68,7 +68,7 @@ export class TenantManagement implements AfterViewInit, OnInit {
       height: 'auto',
       maxHeight: '90vh',
       minWidth: '60vw',
-      data: row,
+      data: row.id,
     });
   }
 

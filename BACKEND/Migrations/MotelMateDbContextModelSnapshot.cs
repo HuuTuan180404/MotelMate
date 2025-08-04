@@ -269,7 +269,7 @@ namespace BACKEND.Migrations
                     b.Property<DateOnly>("StartDate")
                         .HasColumnType("date");
 
-                    b.Property<DateOnly>("EndDate")
+                    b.Property<DateOnly?>("EndDate")
                         .HasColumnType("date");
 
                     b.Property<bool?>("IsRoomRepresentative")

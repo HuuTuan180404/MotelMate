@@ -1,24 +1,26 @@
 import { TenantModel } from './Tenant.model';
 
-export interface RoomDetailModel {
-  roomID: number;
-  roomNumber: string;
-  area: number;
-  price: number;
-  status: string;
-  description: string;
+export class RoomDetailModel {
+  roomID: number = -1;
+  roomNumber: string = '';
+  area: number = 0;
+  price: number = 0;
+  status: string = '';
+  description: string = '';
 
-  buildingID: number;
-  buildingName: string;
-  buildingAddress: string;
+  buildingID: number = -1;
+  buildingName: string = '';
+  buildingAddress: string = '';
 
-  ownerID: number;
-  ownerFullName: string;
-  ownerPhoneNumber: string;
+  ownerID: number = -1;
+  ownerFullName: string = '';
+  ownerPhoneNumber: string = '';
 
-  urlRoomImages: string[];
-
-  members: TenantModel[];
-
-  assetData: object[];
+  urlRoomImages: string[] = [];
+  members: TenantModel[] = [];
+  assetData: {
+    assetID: number;
+    assetName: string;
+    quantity: number;
+  }[] = [];
 }

@@ -16,8 +16,7 @@ namespace BACKEND.Models
         [Required]
         public DateOnly StartDate { get; set; }
 
-        [Required]
-        public DateOnly EndDate { get; set; }
+        public DateOnly? EndDate { get; set; }
 
         public bool? IsRoomRepresentative { get; set; }
 

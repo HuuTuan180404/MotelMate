@@ -236,11 +236,15 @@ th {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex: 1 1 auto;
 }
 
 .building-name {
   font-size: 18px;
   font-weight: bold;
+}
+.spacer {
+  flex-grow: 1;
 }
 
 .building-address {
