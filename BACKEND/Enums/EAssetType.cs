@@ -4,6 +4,7 @@ namespace BACKEND.Enums
     {
         Furniture,
         Appliance,
-        Electronic
+        Electronic,
+        Others
     }
 }

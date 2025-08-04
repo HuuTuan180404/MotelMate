@@ -25,7 +25,20 @@ namespace BACKEND.Controllers
                                 }).ToList();
             return Ok(values);
         }
-        
+
+        [HttpGet("asset-types")]
+        public ActionResult<IEnumerable<EnumDTO>> GetAssetTypes()
+        {
+            var values = Enum.GetValues(typeof(EAssetType))
+                                .Cast<EAssetType>()
+                                .Select(e => new EnumDTO
+                                {
+                                    Name = e.ToString(),
+                                    Value = (int)e
+                                }).ToList();
+            return Ok(values);
+        }
+
         [HttpGet("contract-statuses")]
         public ActionResult<IEnumerable<EnumDTO>> GetEContractStatus()
         {
