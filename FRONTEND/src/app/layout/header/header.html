@@ -10,20 +10,13 @@
       <span class="badge"></span>
     </div>
 
-    <button
-      aria-label="Send message"
-      class="message-icon"
-      (click)="sendMessage()"
-    >
+    <button aria-label="Send message" class="message-icon" (click)="sendMessage()">
       <i class="fa-sharp fa-solid fa-paper-plane fa-lg"></i>
     </button>
 
     <div class="avatar" (click)="openProfileDialog()">
-      <img
-        src="https://github.githubassets.com/favicons/favicon.svg"
-        alt="avatar"
-      />
-      <span class="name">Tuan</span>
+      <img [src]="profileImage" alt="avatar" />
+      <span class="name">{{ profileName }}</span>
     </div>
   </div>
 </header>
