@@ -63,111 +63,115 @@
     <p>Loading rooms...</p>
   </div>
 
-  <!-- Rooms Grid -->
-  <div class="rooms" *ngIf="!isLoading">
-    <div
-      class="card"
-      (click)="viewRoomDetail(room.roomID)"
-      *ngFor="let room of displayedRooms; trackBy: trackByRoomId"
-      [attr.data-room-id]="room.roomID"
-    >
-      <div class="image">
-        <img
-          aria-label="Room image"
-          [src]="room.urlImage"
-          [alt]="'Room ' +
+  <div class="rooms-container">
+    <!-- Rooms Grid -->
+    <div class="rooms" *ngIf="!isLoading">
+      <div
+        class="card"
+        (click)="viewRoomDetail(room.roomID)"
+        *ngFor="let room of displayedRooms; trackBy: trackByRoomId"
+        [attr.data-room-id]="room.roomID"
+      >
+        <div class="image">
+          <img
+            aria-label="Room image"
+            [src]="room.urlImage"
+            [alt]="'Room ' +
         room.roomNumber"
-          (error)="handleImageError(room)"
-          loading="lazy"
-        />
-        <!-- Status badge -->
-        <div class="status-badge" [ngClass]="'status-' + room.status">
-          {{ room.status }}
+            (error)="handleImageError(room)"
+            loading="lazy"
+          />
+          <!-- Status badge -->
+          <div class="status-badge" [ngClass]="'status-' + room.status">
+            {{ room.status }}
+          </div>
         </div>
-      </div>
-      <div class="info">
-        <div class="section-room-status">
-          <span
-            class="icon-status"
-            [ngClass]="{
+        <div class="info">
+          <div class="section-room-status">
+            <span
+              class="icon-status"
+              [ngClass]="{
               'status-Available': room.status === 'Available',
               'status-Occupied': room.status === 'Occupied',
               'status-Maintenance': room.status === 'Maintenance'
             }"
-          ></span>
-          <label>{{ room.status }}</label>
-        </div>
-        <div class="groupPrice">
-          <h4 class="buildingID">Building: {{ room.buildingName }}</h4>
-        </div>
-        <div class="section-room-number">
-          <h4 class="roomID">Code: {{ room.roomNumber }}</h4>
-        </div>
-        <div class="section-price">
-          <span class="material-symbols-outlined">money_bag</span>
-          <label class="price">{{ room.price | number: "1.0-0" }} VND</label>
-        </div>
-        <div class="section-avatars" *ngIf="room.urlAvatars.length > 0">
-          <div class="imgs">
-            <img
-              *ngFor="let item of room.urlAvatars | slice: 0:4; let i = index"
-              [src]="item"
-              alt="Avatar"
-              (error)="handleAvatarError(room, i)"
-              loading="lazy"
-            />
-            <span
-              *ngIf="room.urlAvatars.length > 4"
-              class="more-avatars"
-              (click)="showMoreAvatars(room); $event.stopPropagation()"
-              matTooltip="View more avatars"
-            >
-              +{{ room.urlAvatars.length - 4 }}
-            </span>
+            ></span>
+            <label>{{ room.status }}</label>
+          </div>
+          <div class="groupPrice">
+            <h4 class="buildingID">Building: {{ room.buildingName }}</h4>
+          </div>
+          <div class="section-room-number">
+            <h4 class="roomID">Code: {{ room.roomNumber }}</h4>
+          </div>
+          <div class="section-price">
+            <span class="material-symbols-outlined">money_bag</span>
+            <label class="price">{{ room.price | number: "1.0-0" }} VND</label>
+          </div>
+
+          <div class="section-avatars">
+            <div class="imgs">
+              <img
+                *ngFor="let item of room.urlAvatars | slice: 0:4; let i = index"
+                [src]="item"
+                alt="Avatar"
+                (error)="handleAvatarError(room, i)"
+                loading="lazy"
+              />
+              <span
+                *ngIf="room.urlAvatars.length > 4"
+                class="more-avatars"
+                (click)="showMoreAvatars(room); $event.stopPropagation()"
+                matTooltip="View more avatars"
+              >
+                +{{ room.urlAvatars.length - 4 }}
+              </span>
+            </div>
           </div>
         </div>
       </div>
+
+      <!-- Empty State -->
+      <div *ngIf="displayedRooms.length === 0" class="empty-state">
+        <mat-icon>home</mat-icon>
+        <h3>No rooms found</h3>
+        <p
+          *ngIf="searchText || buildingCode || minPrice > sliderMin || maxPrice < sliderMax"
+        >
+          Try adjusting your search or filter criteria
+        </p>
+        <p
+          *ngIf="!searchText && !buildingCode && minPrice <= sliderMin && maxPrice >= sliderMax"
+        >
+          No rooms available at the moment
+        </p>
+        <button
+          mat-stroked-button
+          (click)="clearFilters()"
+          *ngIf="searchText || buildingCode || minPrice > sliderMin || maxPrice < sliderMax"
+        >
+          Clear Filters
+        </button>
+      </div>
     </div>
 
-    <!-- Empty State -->
-    <div *ngIf="displayedRooms.length === 0" class="empty-state">
-      <mat-icon>home</mat-icon>
-      <h3>No rooms found</h3>
-      <p
-        *ngIf="searchText || buildingCode || minPrice > sliderMin || maxPrice < sliderMax"
+    <div
+      class="pagination-container"
+      *ngIf="!isLoading && totalFilteredRooms > pageSize"
+    >
+      <mat-paginator
+        [length]="totalFilteredRooms"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="pageSizeOptions"
+        [pageIndex]="currentPage"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
       >
-        Try adjusting your search or filter criteria
-      </p>
-      <p
-        *ngIf="!searchText && !buildingCode && minPrice <= sliderMin && maxPrice >= sliderMax"
-      >
-        No rooms available at the moment
-      </p>
-      <button
-        mat-stroked-button
-        (click)="clearFilters()"
-        *ngIf="searchText || buildingCode || minPrice > sliderMin || maxPrice < sliderMax"
-      >
-        Clear Filters
-      </button>
+      </mat-paginator>
     </div>
   </div>
 
   <!-- Pagination -->
-  <div
-    class="pagination-container"
-    *ngIf="!isLoading && totalFilteredRooms > pageSize"
-  >
-    <mat-paginator
-      [length]="totalFilteredRooms"
-      [pageSize]="pageSize"
-      [pageSizeOptions]="pageSizeOptions"
-      [pageIndex]="currentPage"
-      (page)="onPageChange($event)"
-      showFirstLastButtons
-    >
-    </mat-paginator>
-  </div>
 
   <!-- Filter Panel -->
   <div class="filter-panel" [class.open]="isFilterPanelOpen" #filterPanel>

@@ -18,6 +18,12 @@ export class RoomService {
     return this.http.get<RoomModel[]>(`${this.apiUrl}/room`);
   }
 
+  getRoom(id: number): Observable<RoomModel> {
+    return this.http.get<RoomModel>(
+      `${this.apiUrl}/room/room-management/${id}`
+    );
+  }
+
   getRoomById(id: number): Observable<RoomDetailModel> {
     return this.http.get<RoomDetailModel>(`${this.apiUrl}/room/${id}`);
   }
