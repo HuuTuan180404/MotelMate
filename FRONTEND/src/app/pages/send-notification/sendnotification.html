@@ -1,0 +1,196 @@
+<div class="notification-popup">
+  <div class="popup-header">
+    <h2 mat-dialog-title>
+      <mat-icon>notifications</mat-icon>
+      Send Notification
+    </h2>
+    <button mat-icon-button mat-dialog-close>
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content class="popup-content">
+    <form [formGroup]="notificationForm">
+      <!-- title of noti -->
+      <div class="form-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Title</mat-label>
+          <input
+            matInput
+            formControlName="title"
+            placeholder="Nhập tiêu đề..."
+          />
+        </mat-form-field>
+      </div>
+
+      <!-- content of noti -->
+      <div class="form-section">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Content</mat-label>
+          <textarea
+            matInput
+            formControlName="content"
+            rows="4"
+            placeholder="Input..."
+          ></textarea>
+        </mat-form-field>
+      </div>
+
+      <!-- recipient -->
+      <div class="form-section">
+        <h3>Notification Recipient</h3>
+        <mat-radio-group formControlName="targetType" class="target-options">
+          <!-- by building -->
+          <mat-radio-button value="building">
+            <div class="option-content">
+              <mat-icon>apartment</mat-icon>
+              <div class="option-text">
+                <span class="option-title">By Building</span>
+                <span class="option-desc">
+                  Send to all tenants in the building
+                </span>
+              </div>
+            </div>
+          </mat-radio-button>
+
+          <!-- by room -->
+          <mat-radio-button value="room">
+            <div class="option-content">
+              <mat-icon>door_front</mat-icon>
+              <div class="option-text">
+                <span class="option-title">By Room</span>
+                <span class="option-desc">
+                  Select specific rooms within the building
+                </span>
+              </div>
+            </div>
+          </mat-radio-button>
+        </mat-radio-group>
+
+        <!-- select by building -->
+        <div
+          *ngIf="notificationForm.get('targetType')?.value === 'building'"
+          class="selection-area"
+        >
+          <div class="selection-header">
+            <h4>Select Building</h4>
+            <div class="selection-actions">
+              <button type="button" mat-button (click)="selectAllBuildings()">
+                Select All
+              </button>
+              <button type="button" mat-button (click)="clearAllBuildings()">
+                Deselect All
+              </button>
+            </div>
+          </div>
+
+          <!-- UPDATED: Sử dụng _buildingWithRooms thay vì buildings -->
+          <div class="building-list" *ngIf="_buildingWithRooms">
+            <mat-checkbox
+              *ngFor="let building of _buildingWithRooms"
+              [checked]="notificationForm.get('selectedBuildings')?.value?.includes(building.buildingID)"
+              (change)="onBuildingChange(building.buildingID, $event.checked)"
+              class="building-checkbox"
+            >
+              <div class="building-info">
+                <span class="building-name">{{ building.buildingName }}</span>
+                <span class="building-address">
+                  {{ building.buildingAddress }}
+                </span>
+                <span class="building-count">
+                  {{ building.rooms.length }} phòng
+                </span>
+              </div>
+            </mat-checkbox>
+          </div>
+
+          <!-- ADDED: Loading state khi đang tải dữ liệu -->
+          <div *ngIf="!_buildingWithRooms" class="loading-state">
+            <mat-spinner diameter="30"></mat-spinner>
+            <span>Loading...</span>
+          </div>
+        </div>
+
+        <!-- select by room -->
+        <div
+          *ngIf="notificationForm.get('targetType')?.value === 'room'"
+          class="selection-area"
+        >
+          <!-- UPDATED: Sử dụng _buildingWithRooms và buildingID -->
+          <mat-form-field
+            appearance="outline"
+            class="full-width"
+            *ngIf="_buildingWithRooms"
+          >
+            <mat-label>Select Building</mat-label>
+            <mat-select formControlName="selectedBuilding">
+              <mat-option
+                *ngFor="let building of _buildingWithRooms"
+                [value]="building.buildingID"
+              >
+                {{ building.buildingName }} ({{ building.rooms.length }} rooms)
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div *ngIf="filteredRooms.length > 0" class="room-selection">
+            <div class="selection-header">
+              <h4>Chọn phòng</h4>
+              <div class="selection-actions">
+                <button type="button" mat-button (click)="selectAllRooms()">
+                  Select All
+                </button>
+                <button type="button" mat-button (click)="clearAllRooms()">
+                  Deselect All
+                </button>
+              </div>
+            </div>
+
+            <div class="room-grid">
+              <mat-checkbox
+                *ngFor="let room of filteredRooms"
+                [checked]="isRoomSelected(room)"
+                (change)="onRoomChange(room, $event.checked)"
+                class="room-checkbox"
+              >
+                {{ room.roomNumber }}
+              </mat-checkbox>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- summary -->
+      <div class="summary-section">
+        <mat-card>
+          <mat-card-content>
+            <div class="summary-item">
+              <mat-icon>people</mat-icon>
+              <strong> Total: {{getTotalRooms()}} room(s) </strong>
+            </div>
+
+            <div class="summary-item" *ngIf="getRoomDetails()">
+              <mat-icon>info</mat-icon>
+              <span>{{ getRoomDetails() }}</span>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="popup-actions">
+    <button mat-button (click)="onCancel()" [disabled]="isLoading">
+      Cancel
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSend()"
+      [disabled]="!isFormValid() || isLoading"
+    >
+      <mat-spinner *ngIf="isLoading" diameter="20"></mat-spinner>
+      {{ isLoading ? 'Sending...' : 'Send' }}
+    </button>
+  </mat-dialog-actions>
+</div>

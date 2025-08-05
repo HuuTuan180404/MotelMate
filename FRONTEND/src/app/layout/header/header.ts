@@ -1,7 +1,7 @@
 import { ProfileService } from './../../services/profileservice';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { SendNotification } from '../../pages/sendrequest/sendnotification';
+import { SendNotification } from '../../pages/send-notification/sendnotification';
 import { Observable } from 'rxjs';
 import { TenantModel } from '../../models/Tenant.model';
 import { Profile } from '../../pages/profile/profile';
