@@ -100,3 +100,6 @@
   align-items: center;
   justify-content: center;
 }
+::ng-deep .snackbar-error .mat-mdc-snackbar-surface {
+  background-color:#da3131  !important;
+}

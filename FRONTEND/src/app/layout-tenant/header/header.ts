@@ -5,6 +5,7 @@ import { SendNotification } from '../../pages/sendrequest/sendnotification';
 import { Observable } from 'rxjs';
 import { TenantModel } from '../../models/Tenant.model';
 import { Profile } from '../../pages/profile/profile';
+import { ProfileTenant } from '../../pages-tenant/profile-tenant/profile-tenant';
 
 @Component({
   selector: 'app-header',
@@ -29,7 +30,7 @@ export class Header implements OnInit {
   }
 
   openProfileDialog(): void {
-    const dialogRef = this.dialogProfile.open(Profile, {
+    const dialogRef = this.dialogProfile.open(ProfileTenant, {
       width: '60%',
       maxWidth: '60rem',
       maxHeight: '90vh',

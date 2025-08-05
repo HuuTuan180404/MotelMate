@@ -5,6 +5,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { MatIconModule } from '@angular/material/icon';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 export interface DashboardInfoDTO {
   totalRevenue: number;
@@ -35,15 +36,16 @@ export class Dashboard {
   pieChartData?: ChartData<'pie', number[], string>;
 
   stats = {
-    revenue: '$999,999',
-    buildings: 99,
-    rooms: 99,
-    tenants: 99,
+    revenue: '0VND',
+    buildings: 0,
+    rooms: 0,
+    tenants: 0,
   };
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private http: HttpClient
+    private http: HttpClient,
+    private _snackBar: MatSnackBar
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
     if (this.isBrowser) {
@@ -171,6 +173,16 @@ export class Dashboard {
         },
         error: (err) => {
           console.error('Failed to load dashboard data', err);
+          this._snackBar.open(
+            'Failed to load chart data: ' +
+              (err.error.message || 'Unknown error'),
+            'Close',
+            {
+              duration: 2000,
+              panelClass: ['snackbar-error'],
+              verticalPosition: 'top',
+            }
+          );
         },
       });
   }
