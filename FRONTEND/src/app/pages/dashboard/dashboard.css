@@ -1,7 +1,7 @@
 :host {
   display: flex;
   flex-direction: column;
-  height: 85vh;
+  height: 90vh;
   background-color: var(--bg-color);
 }
 
@@ -71,7 +71,7 @@
   display: flex;
   gap: 1rem;
   margin: var(--padding-margin);
-  height: 60%;
+  height: 65%;
 }
 
 .pie-container, .bar-container {
@@ -99,4 +99,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+::ng-deep .snackbar-error .mat-mdc-snackbar-surface {
+  background-color:#da3131  !important;
 }

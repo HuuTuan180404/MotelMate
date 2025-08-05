@@ -1,65 +1,120 @@
 <div class="dialog-wrapper">
-<form [formGroup]="invoiceForm" (ngSubmit)="save()" class="custom-dialog-container">
-  <div class="dialog-header">
-    <h2>Create Invoice</h2>
-  </div>
+  <form [formGroup]="invoiceForm" (ngSubmit)="createBatch()" class="custom-dialog-container">
+    <div class="dialog-header">
+      <h2>Create Invoice</h2>
+    </div>
 
-  <div class="dialog-body">
-    <!-- Building -->
-    <mat-form-field appearance="outline" floatLabel="auto">
-      <mat-label>Building</mat-label>
-      <input matInput formControlName="building" />
-      <mat-error *ngIf="invoiceForm.get('building')?.hasError('required') && invoiceForm.get('building')?.touched">
-        Building is required
-      </mat-error>
-    </mat-form-field>
+    <div class="dialog-body">
+      <!-- Building, Period, Due Date -->
+      <mat-form-field appearance="outline" floatLabel="auto">
+        <mat-label>Building</mat-label>
+        <mat-select formControlName="buildingId">
+          <mat-option *ngFor="let b of buildings" [value]="b.buildingID">{{ b.name }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="invoiceForm.get('buildingId')?.hasError('required') && invoiceForm.get('buildingId')?.touched">
+          Building is required
+        </mat-error>
+      </mat-form-field>
 
-    <!-- Room -->
-    <mat-form-field appearance="outline" floatLabel="auto">
-      <mat-label>Room</mat-label>
-      <input matInput type="number" formControlName="room" />
-      <mat-error *ngIf="invoiceForm.get('room')?.hasError('required') && invoiceForm.get('room')?.touched">
-        Room is required
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field appearance="outline" floatLabel="auto">
+        <mat-label>Period Start</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="periodStart" (dateChange)="onDateChange()">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+        <mat-error *ngIf="invoiceForm.get('periodStart')?.hasError('required') && invoiceForm.get('periodStart')?.touched">
+          Period Start is required
+        </mat-error>
+      </mat-form-field>
 
-    <!-- Month -->
-    <mat-form-field appearance="outline" floatLabel="auto">
-      <mat-label>Month</mat-label>
-      <input matInput formControlName="month" placeholder="MM/YYYY" />
-      <mat-error *ngIf="invoiceForm.get('month')?.hasError('required') && invoiceForm.get('month')?.touched">
-        Month is required
-      </mat-error>
-    </mat-form-field>
+      <mat-form-field appearance="outline" floatLabel="auto">
+        <mat-label>Period End</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="periodEnd" (dateChange)="onDateChange()">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+        <mat-error *ngIf="invoiceForm.get('periodEnd')?.hasError('required') && invoiceForm.get('periodEnd')?.touched">
+          Period End is required
+        </mat-error>
+        <mat-error *ngIf="invoiceForm.get('periodEnd')?.hasError('periodEndBeforeStart')">
+          Period End must be after Period Start
+        </mat-error>
 
-    <!-- Due Date -->
-    <mat-form-field appearance="outline" floatLabel="auto">
-      <mat-label>Due Date</mat-label>
-      <input matInput formControlName="due" placeholder="DD/MM/YYYY" />
-      <mat-error *ngIf="invoiceForm.get('due')?.hasError('required') && invoiceForm.get('due')?.touched">
-        Due Date is required
-      </mat-error>
-    </mat-form-field>
+      </mat-form-field>
 
-    <!-- Electric -->
-    <mat-form-field appearance="outline" floatLabel="auto">
-      <mat-label>Electric (kWh)</mat-label>
-      <input matInput type="number" formControlName="electric" (input)="calculateTotal()" />
-    </mat-form-field>
+      <mat-form-field appearance="outline" floatLabel="auto">
+        <mat-label>Due Date</mat-label>
+        <input matInput [matDatepicker]="duePicker" formControlName="dueDate" (dateChange)="onDateChange()">
+        <mat-datepicker-toggle matSuffix [for]="duePicker"></mat-datepicker-toggle>
+        <mat-datepicker #duePicker></mat-datepicker>
+        <mat-error *ngIf="invoiceForm.get('dueDate')?.hasError('required') && invoiceForm.get('dueDate')?.touched">
+          Due Date is required
+        </mat-error>
+        <mat-error *ngIf="invoiceForm.get('dueDate')?.hasError('dueDateBeforeEnd')">
+          Due Date must be after Period End
+        </mat-error>
 
-    <!-- Water -->
-    <mat-form-field appearance="outline" floatLabel="auto">
-      <mat-label>Water (m³)</mat-label>
-      <input matInput type="number" formControlName="water" (input)="calculateTotal()" />
-    </mat-form-field>
+      </mat-form-field>
 
-    <!-- Total -->
-    <p><strong>Total:</strong> {{ total | number }}</p>
-  </div>
+      <button mat-button color="primary" type="button" (click)="loadDrafts()">Load Drafts</button>
 
-  <div class="button-group">
-    <button class="btn-cancel" type="button" (click)="cancel()">Cancel</button>
-    <button class="btn-submit" type="submit">Create</button>
-  </div>
-</form>
+      <!-- DRAFT TABLE -->
+      <div *ngIf="drafts.length > 0" class="draft-table">
+        <table mat-table [dataSource]="drafts" class="mat-elevation-z2">
+          <!-- Room Column -->
+          <ng-container matColumnDef="room">
+            <th mat-header-cell *matHeaderCellDef> Room </th>
+            <td mat-cell *matCellDef="let draft"> {{draft.roomNumber}} </td>
+          </ng-container>
+
+          <!-- Services Column -->
+          <ng-container matColumnDef="services">
+            <th mat-header-cell *matHeaderCellDef> Services </th>
+            <td mat-cell *matCellDef="let draft">
+              <div *ngFor="let service of draft.services; let i = index">
+                <ng-container *ngIf="isElectricOrWater(service.name); else otherService">
+                  {{service.name}}
+                  <input 
+                    type="number" 
+                    [(ngModel)]="service.quantity" 
+                    name="qty_{{draft.contractID}}_{{i}}" 
+                    [ngModelOptions]="{standalone: true}" 
+                    min="0" 
+                    style="width: 60px;" />
+                  <span>{{service.unit}}</span>
+                </ng-container>
+                <ng-template #otherService>
+                  <mat-checkbox 
+                    [(ngModel)]="service.selected" 
+                    name="selected_{{draft.contractID}}_{{i}}" 
+                    [ngModelOptions]="{standalone: true}" 
+                    (change)="toggleServiceSelection(service)">
+                    {{service.name}}
+                  </mat-checkbox>
+                </ng-template>
+              </div>
+            </td>
+          </ng-container>
+
+          <!-- Extra Costs -->
+          <ng-container matColumnDef="extra">
+            <th mat-header-cell *matHeaderCellDef> Extra Costs </th>
+            <td mat-cell *matCellDef="let draft">
+              <button mat-mini-button type="button" (click)="addExtraCost(draft)">+ Add</button>
+              <div *ngFor="let extra of draft.extraCosts">
+                {{extra.description}} - {{extra.amount}} VND
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="button-group">
+      <button class="btn-cancel" type="button" (click)="cancel()">Cancel</button>
+      <button class="btn-submit" type="submit">Create</button>
+    </div>
+  </form>
 </div>
