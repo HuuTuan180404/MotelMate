@@ -11,6 +11,7 @@ namespace BACKEND.DTOs.RoomDTO
         public string RoomNumber { get; set; }
         public double Area { get; set; }
         public decimal Price { get; set; }
+        public int MaxGuests { get; set; }
         public string? Description { get; set; }
         public List<int>? AddedMembers { get; set; }
         public List<int>? DeletedMembers { get; set; }
