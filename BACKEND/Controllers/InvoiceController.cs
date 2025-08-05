@@ -31,7 +31,7 @@ namespace BACKEND.Controllers
 
             return Ok(invoices);
         }
-        
+
         // GET: api/Invoice/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<ReadInvoiceDetailDTO>> GetInvoiceDetail(int id)
@@ -139,7 +139,7 @@ namespace BACKEND.Controllers
                                 var applicableQty = Math.Min(remainingQuantity, tierRange);
 
                                 initialPrice += applicableQty * tier.GovUnitPrice;
-                                customerPrice += applicableQty * service.CustomerPrice; 
+                                customerPrice += applicableQty * service.CustomerPrice;
 
                                 remainingQuantity -= applicableQty;
                             }
@@ -156,13 +156,178 @@ namespace BACKEND.Controllers
                     }
                 }
             }
-            // Recalculate TotalInitialAmount & TotalAmount
-            invoice.TotalInitialAmount = invoice.InvoiceDetail.Sum(d => d.InitialPrice) + invoice.ExtraCosts.Sum(e => e.Amount);
-            invoice.TotalAmount = invoice.InvoiceDetail.Sum(d => d.Price) + invoice.ExtraCosts.Sum(e => e.Amount);
+            var contract = await _context.Contract
+                .Include(c => c.Room)
+                .FirstOrDefaultAsync(c => c.ContractID == invoice.ContractID);
+
+            if (contract != null)
+            {
+                invoice.TotalInitialAmount = invoice.InvoiceDetail.Sum(d => d.InitialPrice) + invoice.ExtraCosts.Sum(e => e.Amount) + contract.Price;
+                invoice.TotalAmount = invoice.InvoiceDetail.Sum(d => d.Price) + invoice.ExtraCosts.Sum(e => e.Amount) + contract.Price;
+            }
+            else
+            {
+                invoice.TotalInitialAmount = invoice.InvoiceDetail.Sum(d => d.InitialPrice) + invoice.ExtraCosts.Sum(e => e.Amount);
+                invoice.TotalAmount = invoice.InvoiceDetail.Sum(d => d.Price) + invoice.ExtraCosts.Sum(e => e.Amount);
+            }
 
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+        
+        [HttpGet("Draft")]
+        public async Task<IActionResult> GetInvoiceDrafts([FromQuery] int buildingId, [FromQuery] DateOnly periodStart, [FromQuery] DateOnly periodEnd, [FromQuery] DateOnly dueDate)
+        {
+            var activeContracts = await _context.Contract
+                .Include(c => c.Room).ThenInclude(r => r.Building)
+                .Where(c => c.Status == EContractStatus.Active && c.Room.BuildingID == buildingId)
+                .ToListAsync();
+
+            var services = await _context.Services.ToListAsync();
+
+            var drafts = activeContracts.Select(c => new InvoiceDraftDto
+            {
+                ContractID = c.ContractID,
+                RoomNumber = c.Room.RoomNumber,
+                PeriodStart = periodStart,
+                PeriodEnd = periodEnd,
+                DueDate = dueDate,
+                Services = services.Select(s => new ServiceDraftDto
+                {
+                    ServiceID = s.ServiceID,
+                    Name = s.Name,
+                    Unit = s.Unit
+                }).ToList()
+            }).ToList();
+
+            return Ok(drafts);
+        }
+
+        [HttpPost("BatchCreateWithNotification")]
+        public async Task<IActionResult> BatchCreateWithNotification([FromBody] List<BatchInvoiceDto> invoiceDtos)
+        {
+            foreach (var dto in invoiceDtos)
+            {
+                var contract = await _context.Contract
+                    .Include(c => c.Room).ThenInclude(r => r.Building)
+                    .FirstOrDefaultAsync(c => c.ContractID == dto.ContractId);
+
+                if (contract == null) continue;
+                var randomSuffix = new Random().Next(1000, 9999);
+                var invoice = new Invoice
+                {
+                    ContractID = dto.ContractId,
+                    InvoiceCode = $"INV-{DateTime.Now:yyyyMMdd}-{randomSuffix}",
+                    PeriodStart = dto.PeriodStart,
+                    PeriodEnd = dto.PeriodEnd,
+                    DueDate = dto.DueDate,
+                    Status = EInvoiceStatus.Unpaid,
+                    Description = string.IsNullOrWhiteSpace(dto.Description)
+                        ? $"Invoice for Room {contract.Room.RoomNumber} - Period {dto.PeriodStart:yyyy-MM-dd} to {dto.PeriodEnd:yyyy-MM-dd}"
+                        : dto.Description,
+                    TotalInitialAmount = contract.Price, // đã cộng giá phòng
+                    TotalAmount = contract.Price,
+                    // InvoiceDetail = new List<InvoiceDetail>() 
+                };
+
+                _context.Invoice.Add(invoice);
+                await _context.SaveChangesAsync();
+
+                foreach (var serviceItem in dto.Services)
+                {
+                    var service = await _context.Services
+                        .Include(s => s.ServiceTier)
+                        .FirstOrDefaultAsync(s => s.ServiceID == serviceItem.ServiceId);
+
+                    if (service == null) continue;
+
+                    decimal initialPrice = 0;
+                    decimal customerPrice = 0;
+                    decimal remainingQuantity = serviceItem.Quantity;
+
+                    if (service.IsTiered == true && service.ServiceTier != null && service.ServiceTier.Any())
+                    {
+                        var tiers = service.ServiceTier.OrderBy(t => t.FromQuantity).ToList();
+
+                        foreach (var tier in tiers)
+                        {
+                            if (remainingQuantity <= 0) break;
+
+                            var tierRange = tier.ToQuantity - tier.FromQuantity + 1;
+                            var applicableQty = Math.Min(remainingQuantity, tierRange);
+
+                            initialPrice += applicableQty * tier.GovUnitPrice;
+                            customerPrice += applicableQty * service.CustomerPrice;
+
+                            remainingQuantity -= applicableQty;
+                        }
+                    }
+                    else
+                    {
+                        initialPrice = serviceItem.Quantity * service.InitialPrice;
+                        customerPrice = serviceItem.Quantity * service.CustomerPrice;
+                    }
+
+                    // FIX: Gán InvoiceID + ServiceID (Composite Key)
+                    var detail = new InvoiceDetail
+                    {
+                        InvoiceID = invoice.InvoiceID,  // FIX: Gán InvoiceID thủ công
+                        ServiceID = service.ServiceID,
+                        Quantity = serviceItem.Quantity,
+                        InitialPrice = initialPrice,
+                        Price = customerPrice
+                    };
+
+                    invoice.TotalInitialAmount += detail.InitialPrice;
+                    invoice.TotalAmount += detail.Price;
+
+                    _context.InvoiceDetails.Add(detail);  // FIX: Add vào DbSet, KHÔNG add vào navigation
+                }
+
+                foreach (var extra in dto.ExtraCosts)
+                    {
+                        var extraCost = new ExtraCost
+                        {
+                            Invoice = invoice,
+                            Description = extra.Description,
+                            Amount = extra.Amount
+                        };
+
+                        invoice.TotalAmount += extra.Amount;
+                        _context.ExtraCosts.Add(extraCost);
+                    }
+
+                _context.Invoice.Update(invoice);
+
+                // Tìm tất cả tenants đang ở phòng (EndDate == null)
+                var activeTenants = await _context.ContractDetail
+                    .Where(cd => cd.ContractID == dto.ContractId && cd.EndDate == null)
+                    .Select(cd => cd.TenantID)
+                    .ToListAsync();
+
+                // Nếu có tenants thì tạo 1 Noti duy nhất
+                if (activeTenants.Any())
+                {
+                    var noti = new Noti
+                    {
+                        Title = "New Invoice Available",
+                        Content = $"Invoice {invoice.InvoiceCode} for room {contract.Room.RoomNumber} is ready. Total: {invoice.TotalAmount} VND.",
+                        OwnerID = contract.Room.Building.OwnerID,
+                        NotiRecipients = activeTenants.Select(tenantId => new NotiRecipient
+                        {
+                            TenantID = tenantId
+                        }).ToList()
+                    };
+
+                    _context.Noti.Add(noti);
+                }
+
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Invoices created and notifications sent." });
         }
 
     }

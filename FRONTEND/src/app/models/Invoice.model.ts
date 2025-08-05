@@ -60,3 +60,33 @@ export interface UpdateInvoiceDetail {
   quantity: number;
 }
 
+export interface ServiceDraftDto {
+  serviceID: number;
+  name: string;
+  unit: string;
+}
+
+export interface InvoiceDraftDto {
+  contractID: number;
+  roomNumber: string;
+  periodStart: string;
+  periodEnd: string;
+  dueDate: string;
+  services: ServiceDraftDto[];
+}
+
+export interface BatchInvoiceDto {
+  contractId: number;
+  periodStart: string;
+  periodEnd: string;
+  dueDate: string;
+  description?: string;
+  services: {
+    serviceId: number;
+    quantity: number;
+  }[];
+  extraCosts: {
+    description: string;
+    amount: number;
+  }[];
+}

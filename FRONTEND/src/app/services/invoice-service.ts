@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { ReadInvoice, ReadInvoiceDetail, UpdateInvoice } from '../models/Invoice.model';
+import { ReadInvoice, ReadInvoiceDetail, UpdateInvoice, BatchInvoiceDto, InvoiceDraftDto } from '../models/Invoice.model';
 
 @Injectable({
   providedIn: 'root'
@@ -25,6 +25,21 @@ export class InvoiceService {
   }
   updateInvoice(id: number, data: UpdateInvoice): Observable<void> {
     return this.http.put<void>(`${this.apiUrl}/${id}`, data);
+  }
+
+  getInvoiceDrafts(buildingId: number, periodStart: string, periodEnd: string, dueDate: string): Observable<InvoiceDraftDto[]> {
+    return this.http.get<InvoiceDraftDto[]>(`${this.apiUrl}/Draft`, {
+      params: {
+        buildingId: buildingId.toString(),
+        periodStart: periodStart,
+        periodEnd: periodEnd,
+        dueDate: dueDate
+      }
+    });
+  }
+
+  batchCreateWithNotification(data: BatchInvoiceDto[]): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/BatchCreateWithNotification`, data);
   }
 
 }
