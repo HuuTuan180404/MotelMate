@@ -1,0 +1,127 @@
+<div class="main-container">
+  <div class="room-detail-container" *ngIf="room">
+    <div class="main-content">
+      <h2>Thông tin chi tiết phòng {{room?.roomNumber}}</h2>
+
+      <!-- Gallery ảnh phòng -->
+      <div class="card image-gallery">
+        <div class="card-header">
+          <h3>Hình ảnh phòng</h3>
+        </div>
+        <div class="card-body" *ngIf="hasImages">
+          <div class="gallery-container">
+            <div class="main-image">
+              <img
+                [src]="_currentImage"
+                alt="Ảnh phòng {{selectedImageIndex + 1}}"
+                class="main-img"
+              />
+            </div>
+            <div class="thumbnail-list">
+              <div
+                *ngFor="let image of room?.urlRoomImages; let i = index"
+                class="thumbnail-item"
+                (click)="selectImage(image)"
+              >
+                <img
+                  [src]="image"
+                  alt="Thumbnail {{i + 1}}"
+                  class="thumbnail-img"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mô tả phòng -->
+      <div class="card description">
+        <div class="card-header">
+          <h3>Mô tả phòng</h3>
+        </div>
+        <div class="card-body">
+          <p class="description-text">{{room?.description}}</p>
+        </div>
+      </div>
+
+      <!-- Thông tin cơ bản về phòng -->
+      <div class="card room-info">
+        <div class="card-header">
+          <h3>Thông tin phòng</h3>
+        </div>
+        <div class="card-body">
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="label">Số người hiện tại:</span>
+              <span class="value"
+                >{{room?.members?.length}}/{{room?.maxGuests}} người</span
+              >
+            </div>
+            <div class="info-item">
+              <span class="label">Số phòng:</span>
+              <span class="value">#{{room?.roomNumber}}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Giá thuê/tháng:</span>
+              <span class="value price">{{formatCurrency(room?.price)}}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Diện tích:</span>
+              <span class="value">{{room?.area}} m²</span>
+            </div>
+          </div>
+
+          <!-- Tài sản trong phòng -->
+          <div class="assets-section">
+            <h4>Tài sản hiện có trong phòng:</h4>
+            <div class="assets-list">
+              <span *ngFor="let asset of room?.assetData" class="asset-tag"
+                >{{asset.assetName}}</span
+              >
+            </div>
+          </div>
+
+          <!-- Checkbox tìm người ở ghép -->
+          <div class="roommate-section">
+            <label class="checkbox-container">
+              <input
+                type="checkbox"
+                [(ngModel)]="_isNeedRoommate"
+                (change)="onRoommateToggle()"
+              />
+              <span class="checkmark"></span>
+              <span class="checkbox-label">Cần tìm người ở ghép</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Thông tin tòa nhà -->
+      <div class="card building-info">
+        <div class="card-header">
+          <h3>Thông tin tòa nhà</h3>
+        </div>
+        <div class="card-body">
+          <div class="info-grid">
+            <div class="info-item full-width">
+              <span class="label">Tên tòa nhà:</span>
+              <span class="value">{{room?.buildingName}}</span>
+            </div>
+            <div class="info-item full-width">
+              <span class="label">Địa chỉ:</span>
+              <span class="value">{{room?.buildingAddress}}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Chủ tòa nhà:</span>
+              <span class="value">{{room?.ownerFullName}}</span>
+            </div>
+            <div class="info-item">
+              <span class="label">Số điện thoại:</span>
+              <span class="value phone">{{room?.ownerPhoneNumber}}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

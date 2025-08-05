@@ -4,6 +4,7 @@ namespace BACKEND.Enums
     {
         Available,
         Occupied,
-        Maintenance
+        Maintenance,
+        LookingForRoommate
     }
 }

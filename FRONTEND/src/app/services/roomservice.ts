@@ -35,4 +35,9 @@ export class RoomService {
   updateRoom(formData: FormData): Observable<any> {
     return this.http.put(`${this.apiUrl}/room/update-room`, formData);
   }
+
+  // =============TENANT==========================================================
+  getRoom_Tenant(): Observable<RoomDetailModel> {
+    return this.http.get<RoomDetailModel>(`${this.apiUrl}/room/by-tenant-id`);
+  }
 }

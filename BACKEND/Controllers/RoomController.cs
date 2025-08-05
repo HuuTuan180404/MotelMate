@@ -1,4 +1,5 @@
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using AutoMapper;
 using BACKEND.Data;
@@ -97,6 +98,26 @@ namespace BACKEND.Controllers
             return Ok(_mapper.Map<ReadRoomDetailDTO>(room));
         }
 
+        [HttpGet("by-tenant-id")]
+        public async Task<ActionResult<ReadRoomDetailDTO>> GetRoomDetailByTenantID()
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdStr, out var userId))
+                return Unauthorized("User ID not found or invalid");
+
+            var roomId = await _context.ContractDetail
+                                        .Where(cd => cd.EndDate == null && cd.TenantID == userId)
+                                        .Include(cd => cd.Contract)
+                                            .ThenInclude(c => c.Room)
+                                        .Select(cd => cd.Contract.Room.RoomID)
+                                        .FirstOrDefaultAsync();
+
+            if (roomId == 0) return NotFound(new { messase = "Not found room id" });
+
+            var result = await GetRoomDetail(roomId);
+            return result.Result!;
+        }
+
 
         [HttpPost("add-room")]
         public async Task<IActionResult> UploadRoom(
@@ -109,9 +130,7 @@ namespace BACKEND.Controllers
             [FromForm] List<int>? selectedAssetIDs)
         {
             if (IsExistsRoomByNumber(buildingID, roomNumber))
-            {
                 return BadRequest(new { Message = "Room number already exists" });
-            }
 
             try
             {
@@ -220,13 +239,6 @@ namespace BACKEND.Controllers
 
             if (!ModelState.IsValid)
                 return BadRequest(new { Message = "Invalid input" });
-
-
-            // Console.WriteLine(request.ToString());
-
-            // return Ok();
-
-
             try
             {
 
@@ -290,6 +302,7 @@ namespace BACKEND.Controllers
                 room.RoomNumber = request.RoomNumber;
                 room.Area = request.Area;
                 room.Price = request.Price;
+                room.MaxGuests = request.MaxGuests;
                 room.Description = request.Description;
 
                 // Xóa ảnh
@@ -358,43 +371,23 @@ namespace BACKEND.Controllers
                             });
                         }
 
-                        Console.WriteLine("@@@@@@@@@@@@@@@@@@@@@@");
                     }
                 }
-                else
-                {
-                    Console.WriteLine("############################");
-                }
-
-                Console.WriteLine("Assets trong request:");
-                if (request.Assets == null)
-                {
-                    Console.WriteLine("request.Assets == null");
-                }
-                else
-                {
-                    Console.WriteLine($"request.Assets.Count = {request.Assets.Count}");
-                    foreach (var asset in request.Assets)
-                    {
-                        Console.WriteLine($"AssetID: {asset.AssetID}, Quantity: {asset.Quantity}");
-                    }
-                }
-
 
                 // Lưu thay đổi trước khi xử lý thành viên
                 await _context.SaveChangesAsync();
 
-                // Tìm hợp đồng đang hoạt động
                 contract = await _context.Contract
-                   .Where(c => c.RoomID == room.RoomID && c.Status != EContractStatus.Terminated)
-                   .FirstOrDefaultAsync();
-
-                if (contract == null)
-                    return BadRequest(new { Message = "Active contract not found for room" });
+                                      .Where(c => c.RoomID == room.RoomID && c.Status != EContractStatus.Terminated)
+                                      .FirstOrDefaultAsync();
 
                 // Thêm thành viên mới
                 if (request.AddedMembers?.Any() == true)
                 {
+                    // Tìm hợp đồng đang hoạt động
+                    if (contract == null)
+                        return BadRequest(new { Message = "Active contract not found for room" });
+
                     foreach (var memberId in request.AddedMembers)
                     {
                         _context.ContractDetail.Add(new ContractDetail
@@ -410,6 +403,9 @@ namespace BACKEND.Controllers
                 // Cập nhật kết thúc hợp đồng cho thành viên xóa
                 if (request.DeletedMembers?.Any() == true)
                 {
+                    if (contract == null)
+                        return BadRequest(new { Message = "Active contract not found for room" });
+
                     var contractDetails = await _context.ContractDetail
                         .Where(cd => cd.ContractID == contract.ContractID && request.DeletedMembers.Contains(cd.TenantID))
                         .ToListAsync();
