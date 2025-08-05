@@ -1,0 +1,36 @@
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <img src="assets/images/logo.svg" alt="logo" />
+  </div>
+
+  <ul class="sidebar-links">
+    <h3><span>Main menu</span></h3>
+
+    <!-- Các menu thường -->
+    <li *ngFor="let item of mainMenu">
+      <ng-container>
+        <a [routerLink]="item.route" routerLinkActive="active">
+          <span class="material-symbols-outlined">{{item.icon}}</span>
+          {{item.label}}
+        </a>
+      </ng-container>
+      <!-- Menu Requests có dropdown -->
+
+    </li>
+
+    <h3><span>Account</span></h3>
+    <li *ngFor="let item of accountMenu">
+      <!-- Nếu có action thì gọi hàm -->
+      <a *ngIf="item.action" (click)="item.action()" class="clickable-link">
+        <span class="material-symbols-outlined">{{ item.icon }}</span>
+        {{ item.label }}
+      </a>
+
+      <!-- Nếu có route thì dùng routerLink -->
+      <a *ngIf="!item.action && item.route" [routerLink]="item.route" routerLinkActive="active">
+        <span class="material-symbols-outlined">{{ item.icon }}</span>
+        {{ item.label }}
+      </a>
+    </li>
+  </ul>
+</aside>

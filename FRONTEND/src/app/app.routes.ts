@@ -1,3 +1,4 @@
+import { Component } from '@angular/core';
 import { Routes } from '@angular/router';
 import { Listinvoice } from './pages/listinvoice/listinvoice';
 import { RoomManagement } from './pages/roommanagement/roommanagement';
@@ -15,19 +16,21 @@ import { AccountTypeSelection } from './auth/register/account-selection/account-
 import { TenantRegister } from './auth/register/tenant-register/tenant-register';
 import { OwnerRegister } from './auth/register/owner-register/owner-register';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
+import { LayoutTenant } from './layout-tenant/layout';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: Login},
-  { path: 'register', component: AccountTypeSelection},
-  { path: 'register/tenant', component: TenantRegister},
-  { path: 'register/owner', component: OwnerRegister},
+  { path: 'login', component: Login },
+  { path: 'register', component: AccountTypeSelection },
+  { path: 'register/tenant', component: TenantRegister },
+  { path: 'register/owner', component: OwnerRegister },
   { path: 'forgot-password', component: ForgotPasswordComponent },
   // { path: 'register/owner'},
   {
     path: '',
     component: Layout,
     canActivate: [AuthGuard],
+    data: { expectedRole: 'Owner' },
     children: [
       { path: 'invoices', component: Listinvoice },
       { path: 'rooms', component: RoomManagement },
@@ -42,5 +45,11 @@ export const routes: Routes = [
       { path: 'assets', component: AssetManagement },
       { path: 'services', component: Service },
     ],
+  },
+  {
+    path: 'tenant',
+    component: LayoutTenant,
+    canActivate: [AuthGuard],
+    data: { expectedRole: 'Tenant' },
   },
 ];

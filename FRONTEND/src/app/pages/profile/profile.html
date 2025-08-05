@@ -1,9 +1,5 @@
 <div class="dialog-header">
   <h2>Profile</h2>
-  <div>
-    <button mat-stroked-button color="warn" *ngIf="editMode()" (click)="cancelEdit()">Cancel</button>
-    <button mat-stroked-button color="primary" *ngIf="!editMode()" (click)="enableEdit()">Edit</button>
-  </div>
 </div>
 
 <!-- Body -->
@@ -11,10 +7,8 @@
   <!-- Left -->
   <div class="left-section">
     <img [src]="profileImage" class="profile-img" alt="Profile photo" />
-    <button mat-stroked-button class="upload-btn">
-      Upload Photo
-      <input type="file" (change)="onFileSelected($event)" hidden />
-    </button>
+    <input type="file" accept="image/*" #fileInput hidden (change)="onFileSelected($event)" />
+    <button mat-stroked-button class="upload-btn" (click)="fileInput.click()" [disabled]="!editMode()">Upload Photo</button>
 
     <button class="change-password-btn" mat-flat-button color="primary" (click)="togglePasswordSection()">
       {{ showPasswordSection() ? 'Cancel Password Change' : 'Change Password' }}
@@ -25,7 +19,10 @@
       <form [formGroup]="changePasswordForm">
         <mat-form-field class="hihi change-password-element" appearance="outline">
           <mat-label>Old Password</mat-label>
-          <input matInput type="password" formControlName="oldPassword" />
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="oldPassword" />
+          <button mat-icon-button matSuffix tabindex="-1" type="button" (click)="hidePassword = !hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
           <mat-error *ngIf="changePasswordForm.controls['oldPassword'].hasError('required')">
             Old password is required
           </mat-error>
@@ -33,15 +30,29 @@
 
         <mat-form-field class="change-password-element" appearance="outline">
           <mat-label>New Password</mat-label>
-          <input matInput type="password" formControlName="newPassword" />
+          <input matInput [type]="hideNewPassword ? 'password' : 'text'" formControlName="newPassword" />
+          <button mat-icon-button matSuffix tabindex="-1" type="button" (click)="hideNewPassword = !hideNewPassword">
+            <mat-icon>{{ hideNewPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
           <mat-error *ngIf="changePasswordForm.controls['newPassword'].hasError('required')">
             New password is required
+          </mat-error>
+          <mat-error
+            *ngIf="changePasswordForm.controls['newPassword'].hasError('minlength') && !changePasswordForm.controls['newPassword'].errors?.['weakPassword']">
+            Min 6 characters
+          </mat-error>
+          <mat-error *ngIf="changePasswordForm.controls['newPassword'].hasError('weakPassword')">
+            Required uppercase, lowercase, number and special character
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Confirm New Password</mat-label>
-          <input matInput type="password" formControlName="confirmPassword" />
+          <input matInput [type]="hideConfirmPassword ? 'password' : 'text'" formControlName="confirmPassword" />
+          <button mat-icon-button matSuffix tabindex="-1" type="button"
+            (click)="hideConfirmPassword = !hideConfirmPassword">
+            <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
           <mat-error *ngIf="changePasswordForm.controls['confirmPassword'].hasError('required')">
             Please confirm your password
           </mat-error>
@@ -52,7 +63,8 @@
         </mat-form-field>
       </form>
 
-      <button class="change-password-btn" mat-flat-button color="accent" (click)="changePassword()" [disabled]="changePasswordForm.invalid">Submit</button>
+      <button class="change-password-btn" mat-flat-button color="accent" (click)="changePassword()"
+        [disabled]="changePasswordForm.invalid">Submit</button>
     </div>
   </div>
 
@@ -78,6 +90,9 @@
         <input matInput formControlName="bday" [readonly]="!editMode()" />
         <mat-error *ngIf="form.get('bday')?.hasError('required')">
           Birthday is required
+        </mat-error>
+        <mat-error *ngIf="form.get('bday')?.hasError('pattern')">
+          Invalid date format - DD/MM/YYYY
         </mat-error>
       </mat-form-field>
     </div>
@@ -140,7 +155,10 @@
 <!-- Footer -->
 <div class="dialog-footer">
   <button mat-stroked-button (click)="dialogRef.close()">Close</button>
-  <button mat-flat-button color="primary" (click)="accept()" [disabled]="form.invalid || !editMode() || !hasChanges()">
+  <button mat-stroked-button color="warn" *ngIf="editMode()" (click)="cancelEdit()">Cancel</button>
+  <button mat-stroked-button color="primary" *ngIf="!editMode()" (click)="enableEdit()">Edit</button>
+  <button mat-flat-button color="primary" *ngIf="editMode()" (click)="accept()"
+    [disabled]="form.invalid || !editMode() || !hasChanges()">
     Accept
   </button>
 </div>

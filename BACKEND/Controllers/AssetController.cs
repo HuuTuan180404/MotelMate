@@ -2,6 +2,7 @@ using System.Security.Claims;
 using AutoMapper;
 using BACKEND.Data;
 using BACKEND.DTOs.RoomDTO;
+using BACKEND.Models;
 using BACKEND.RoomDTO.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -24,8 +25,7 @@ namespace BACKEND.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/tenant
-        [Authorize]
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadAssetDTO>>> GetAssets()
         {
@@ -40,5 +40,34 @@ namespace BACKEND.Controllers
                     .ToListAsync();
             return Ok(_mapper.Map<List<ReadAssetDTO>>(assets));
         }
+
+
+        [HttpPost("add-asset")]
+        public async Task<IActionResult> AddAsset(ReadAssetDTO asset)
+        {
+            var newAsset = _mapper.Map<Asset>(asset);
+            if (asset.AssetID == null)
+            {
+                _context.Asset.Add(newAsset);
+                await _context.SaveChangesAsync();
+                return Ok(new
+                {
+                    message = "Created Successfully!",
+                    assetID = newAsset.AssetID
+                });
+            }
+            else
+            {
+                _context.Asset.Update(newAsset);
+                await _context.SaveChangesAsync();
+
+                return Ok(new
+                {
+                    message = "Updated Successfully!",
+                    assetID = newAsset.AssetID
+                });
+            }
+        }
+
     }
 }

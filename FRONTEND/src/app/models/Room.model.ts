@@ -22,8 +22,26 @@ export interface CreateRoomModel {
 export interface RoomImageModel {
   id: string;
   file: File;
-  url: string;
+  url: string | ArrayBuffer | null;
   isThumb: boolean;
   name: string;
   size: number;
+}
+
+export interface UpdateRoomAssetDTO {
+  assetID: number;
+  quantity: number;
+}
+
+export interface UpdateRoomDTO {
+  roomID: number;
+  roomNumber: string;
+  area: number;
+  price: number;
+  description?: string;
+  addedMembers?: number[];
+  deletedMembers?: number[];
+  deletedImages?: string[];
+  assets?: UpdateRoomAssetDTO[];
+  terminateContract: boolean;
 }

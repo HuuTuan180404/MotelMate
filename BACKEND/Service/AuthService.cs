@@ -31,7 +31,7 @@ namespace BACKEND.Service
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null) return false;
             user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, newPassword);
-            
+
             var result = await _userManager.UpdateAsync(user);
 
             return result.Succeeded;
@@ -53,7 +53,7 @@ namespace BACKEND.Service
                 if (existingUser != null)
                     return (false, new { message = "Email already exists" });
                 Account user = CreateUserFromModel(model);
-                
+
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (!result.Succeeded)
                     return (false, result.Errors);
@@ -174,6 +174,16 @@ namespace BACKEND.Service
                 .Where(x => x.Token.Name == "RefreshToken" && x.Token.Value == refreshToken)
                 .Select(x => x.User)
                 .FirstOrDefaultAsync() ?? throw new Exception("Invalid refresh token");
+        }
+        public async Task<bool> ChangePasswordAsync(int userId, ChangePassDTO dto)
+        {
+            var account = await _context.Users.FindAsync(userId);
+            if (account == null) return false;
+
+            var result = await _userManager.ChangePasswordAsync(account, dto.OldPassword, dto.NewPassword);
+            if (!result.Succeeded)
+                return false;
+            return true;
         }
     }
 }

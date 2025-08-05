@@ -155,7 +155,6 @@ export class AddContractDialogComponent {
         this.dialogRef.close(this.formData);
       },
       (error) => {
-        console.error(error);
         this._snackBar.open(
           'Failed to create contract: ' +
             (error.error.message || 'Unknown error'),

@@ -35,7 +35,7 @@ import { AssetModel } from '../../../models/Asset.model';
 import { CreateRoomModel, RoomImageModel } from '../../../models/Room.model';
 import { BuildingService } from '../../../services/building-service';
 import { BuildingWithRoomsModel } from '../../../models/Building.model';
-import { AssetService } from '../../../services/assetservice';
+import { AssetService } from '../../../services/asset-service';
 import { ConfirmDialog } from '../../service/confirm-dialog/confirm-dialog';
 import { DialogAction, ReusableDialog } from '../../dialog/dialog';
 import { RoomService } from '../../../services/roomservice';

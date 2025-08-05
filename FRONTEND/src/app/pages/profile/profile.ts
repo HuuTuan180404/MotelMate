@@ -1,9 +1,19 @@
-import { Component, signal, computed, effect, inject } from '@angular/core';
+import {
+  Component,
+  signal,
+  computed,
+  effect,
+  inject,
+  OnInit,
+  NgZone,
+  ChangeDetectorRef,
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
@@ -21,7 +31,28 @@ import {
   transition,
   animate,
 } from '@angular/animations';
+import { AuthService, ChangePassDTO } from '../../auth/auth.service';
+import { ProfileDTO, ProfileService } from '../../services/profileservice';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatIconModule } from '@angular/material/icon';
+import { url } from 'inspector';
+export function strongPasswordValidator(
+  control: AbstractControl
+): ValidationErrors | null {
+  const value = control.value;
 
+  if (!value) return null;
+
+  const hasUpperCase = /[A-Z]/.test(value);
+  const hasLowerCase = /[a-z]/.test(value);
+  const hasNumber = /[0-9]/.test(value);
+  const hasSpecialChar = /[\W_]/.test(value); // _ và các ký tự đặc biệt
+
+  const passwordValid =
+    hasUpperCase && hasLowerCase && hasNumber && hasSpecialChar;
+
+  return passwordValid ? null : { weakPassword: true };
+}
 @Component({
   selector: 'app-profile-dialog',
   standalone: true,
@@ -36,6 +67,7 @@ import {
     MatSelectModule,
     MatButtonModule,
     MatOptionModule,
+    MatIconModule,
   ],
   animations: [
     trigger('slideToggle', [
@@ -45,8 +77,12 @@ import {
     ]),
   ],
 })
-export class Profile {
-  profileImage = 'https://i.imgur.com/8Km9tLL.png';
+export class Profile implements OnInit {
+  private profileService = inject(ProfileService);
+  private authservice = inject(AuthService);
+  private _snackBar = inject(MatSnackBar);
+
+  profileImage = '../../assets/images/avatar_error.png';
   editMode = signal(false);
   showPasswordSection = signal(false);
   private fb = inject(FormBuilder);
@@ -54,42 +90,62 @@ export class Profile {
   form: FormGroup;
   originalValue: any;
   changePasswordForm: FormGroup;
+  hidePassword = true;
+  hideNewPassword = true;
+  hideConfirmPassword = true;
+  selectedAvatarFile: File | null = null;
 
-  oldPassword = this.fb.control('', Validators.required);
-  newPassword = this.fb.control('', Validators.required);
-  confirmPassword = this.fb.control('', Validators.required);
-
-  constructor(public dialogRef: MatDialogRef<Profile>) {
+  constructor(
+    public dialogRef: MatDialogRef<Profile>,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
+  ) {
     this.form = this.fb.group({
-      fullname: ['Tôn Viết Tri', Validators.required],
-      role: ['Owner'],
-      email: [
-        'tonviettri2004@gmail.com',
-        [Validators.required, Validators.email],
+      fullname: ['', Validators.required],
+      role: [''],
+      email: ['', [Validators.required, Validators.email]],
+      phoneNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
+      bday: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/),
+        ],
       ],
-      phoneNumber: [
-        '0969696969',
-        [Validators.required, Validators.pattern(/^\d{10}$/)],
-      ],
-      bday: ['13/06/2004', Validators.required],
-      bankcode: ['123', Validators.required],
-      accountno: ['123456789', Validators.required],
-      accountname: ['ACCOUNT BANK NAME', Validators.required],
+      bankcode: ['', Validators.required],
+      accountno: ['', Validators.required],
+      accountname: ['', Validators.required],
     });
-    this.changePasswordForm = this.fb.group({
-      oldPassword: this.oldPassword,
-      newPassword: this.newPassword,
-      confirmPassword: this.confirmPassword,
-    },
-    { validators: this.passwordMatchValidator });
-    this.originalValue = this.form.getRawValue();
+    this.changePasswordForm = this.fb.group(
+      {
+        oldPassword: ['', Validators.required],
+        newPassword: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(6),
+            strongPasswordValidator,
+          ],
+        ],
+        confirmPassword: ['', Validators.required],
+      },
+      { validators: this.passwordMatchValidator }
+    );
   }
 
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
+      this.selectedAvatarFile = file;
+
       const reader = new FileReader();
-      reader.onload = () => (this.profileImage = reader.result as string);
+      reader.onload = () => {
+        this.zone.run(() => {
+          this.profileImage = reader.result as string;
+          this.form.get('urlAvatar')?.setValue(this.profileImage);
+          this.cdr.markForCheck();
+        });
+      };
       reader.readAsDataURL(file);
     }
   }
@@ -101,13 +157,15 @@ export class Profile {
   cancelEdit() {
     this.editMode.set(false);
     this.form.reset(this.originalValue);
+    this.selectedAvatarFile = null;
   }
 
   hasChanges(): boolean {
     return (
       this.editMode() &&
-      JSON.stringify(this.form.getRawValue()) !==
-        JSON.stringify(this.originalValue)
+      (JSON.stringify(this.form.getRawValue()) !==
+        JSON.stringify(this.originalValue) ||
+        this.selectedAvatarFile !== null)
     );
   }
   passwordMatchValidator(control: AbstractControl) {
@@ -135,32 +193,124 @@ export class Profile {
     }
     return null;
   }
+  ngOnInit(): void {
+    this.loadProfile();
+  }
+  loadProfile() {
+    this.profileService.getProfile().subscribe((data) => {
+      this.form.patchValue({
+        urlAvatar: data.urlAvatar || this.profileImage,
+        fullname: data.fullName,
+        email: data.email,
+        phoneNumber: data.phoneNumber,
+        bday: this.formatISOToDDMMYYYY(data.bdate),
+        role: data.role,
+        accountname: data.accountName,
+        accountno: data.accountNo,
+        bankcode: data.bankCode,
+      });
+      this.profileImage = data.urlAvatar || this.profileImage;
+      this.originalValue = this.form.getRawValue();
+    });
+  }
   accept() {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
     }
+
     if (this.hasChanges()) {
-      console.log('Accepted form value:', this.form.getRawValue());
-      this.originalValue = this.form.getRawValue();
-      this.editMode.set(false);
+      const formValue = this.form.getRawValue();
+      formValue.bdate = this.parseDDMMYYYYToISO(formValue.bday);
+
+      const formData = new FormData();
+
+      // Đưa thông tin hồ sơ
+      for (const key in formValue) {
+        if (formValue.hasOwnProperty(key)) {
+          formData.append(key, formValue[key]);
+        }
+      }
+
+      // Thêm ảnh nếu có
+      if (this.selectedAvatarFile) {
+        formData.append('addedImages', this.selectedAvatarFile);
+      }
+
+      this.profileService.updateProfile(formData).subscribe({
+        next: () => {
+          this.originalValue = this.form.getRawValue();
+          this.editMode.set(false);
+          this._snackBar.open('Profile updated successfully!', 'Close', {
+            duration: 4000,
+            panelClass: ['snackbar-success'],
+            verticalPosition: 'top',
+          });
+        },
+        error: (err) => {
+          this._snackBar.open(
+            'Cannot update profile: ' + (err.error.message || 'Unknown error'),
+            'Close',
+            {
+              duration: 4000,
+              panelClass: ['snackbar-error'],
+              verticalPosition: 'top',
+            }
+          );
+        },
+      });
+      this.selectedAvatarFile = null;
     }
   }
 
   changePassword() {
-    if (this.newPassword.value !== this.confirmPassword.value) {
-      alert('New password and confirm password do not match.');
+    if (this.changePasswordForm.invalid) {
+      this.changePasswordForm.markAllAsTouched();
       return;
     }
-    console.log(
-      'Changing password:',
-      this.oldPassword.value,
-      this.newPassword.value
-    );
-    this.oldPassword.reset();
-    this.newPassword.reset();
-    this.confirmPassword.reset();
-    this.showPasswordSection.set(false);
+    const dto: ChangePassDTO = {
+      oldPassword: this.changePasswordForm.get('oldPassword')!.value || '',
+      newPassword: this.changePasswordForm.get('newPassword')!.value || '',
+    };
+
+    this.authservice.changePassword(dto).subscribe({
+      next: () => {
+        this.changePasswordForm.reset();
+        this.showPasswordSection.set(false);
+        this._snackBar.open(
+          'Change password successful please login again!',
+          'Close',
+          {
+            duration: 4000,
+            panelClass: ['snackbar-success'],
+            verticalPosition: 'top',
+          }
+        );
+        this.authservice.logout();
+      },
+      error: (err) =>
+        this._snackBar.open(
+          'Cannot change password: ' + (err.error.message || 'Unknown error'),
+          'Close',
+          {
+            duration: 4000,
+            panelClass: ['snackbar-error'],
+            verticalPosition: 'top',
+          }
+        ),
+    });
+  }
+  private parseDDMMYYYYToISO(dateStr: string): string {
+    var [day, month, year] = dateStr.split('/');
+    while (year.length < 4) year = '0' + year;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  private formatISOToDDMMYYYY(isoDate: string): string {
+    const date = new Date(isoDate);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // JS months are 0-based
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
   }
   togglePasswordSection() {
     this.showPasswordSection.update((v) => !v);

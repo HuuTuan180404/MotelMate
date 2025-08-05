@@ -1,0 +1,128 @@
+.asset-dialog {
+  min-width: 500px;
+  max-width: 600px;
+
+  .dialog-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #1976d2;
+    font-weight: 600;
+    margin-bottom: 0;
+
+    .title-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .dialog-content {
+    padding: 20px 24px;
+    max-height: 70vh;
+    overflow-y: auto;
+
+    .asset-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+
+      .full-width {
+        width: 100%;
+      }
+
+      mat-form-field {
+        .mat-mdc-form-field-subscript-wrapper {
+          margin-top: 4px;
+        }
+      }
+
+      /* // Custom styling for select */
+      mat-select {
+        .mat-mdc-select-value {
+          color: rgba(0, 0, 0, 0.87);
+        }
+      }
+
+      /* // Custom styling for textarea */
+      textarea {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      /* // Input icons styling */
+      mat-icon[matSuffix] {
+        color: rgba(0, 0, 0, 0.54);
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+
+  .dialog-actions {
+    padding: 16px 24px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    border-top: 1px solid #e0e0e0;
+    margin-top: 0;
+
+    .cancel-button {
+      color: #666;
+
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.04);
+      }
+    }
+
+    .save-button {
+      background-color: #1976d2;
+      color: white;
+
+      &:disabled {
+        background-color: rgba(0, 0, 0, 0.12);
+        color: rgba(0, 0, 0, 0.26);
+      }
+
+      &:not(:disabled):hover {
+        background-color: #1565c0;
+      }
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 100px;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+/* // Responsive design */
+@media (max-width: 600px) {
+  .asset-dialog {
+    min-width: 90vw;
+    max-width: 95vw;
+
+    .dialog-content {
+      padding: 16px;
+    }
+
+    .dialog-actions {
+      padding: 12px 16px;
+      flex-direction: column-reverse;
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}

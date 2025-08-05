@@ -1,0 +1,100 @@
+<div class="asset-dialog">
+  <h2 mat-dialog-title class="dialog-title">
+    <mat-icon class="title-icon">add_business</mat-icon>
+    Tạo tài sản mới
+  </h2>
+
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="assetForm" class="asset-form">
+      <!-- Loại tài sản -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Loại tài sản</mat-label>
+        <mat-select formControlName="type" required>
+          <mat-option value="">-- Chọn loại tài sản --</mat-option>
+          <mat-option *ngFor="let type of _assetTypes" [value]="type.name">
+            {{ type.name }}
+          </mat-option>
+        </mat-select>
+        <mat-error
+          *ngIf="assetForm.get('type')?.invalid && assetForm.get('type')?.touched"
+        >
+          {{ getErrorMessage('type') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Tên tài sản -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Tên tài sản</mat-label>
+        <input
+          matInput
+          formControlName="name"
+          placeholder="Nhập tên tài sản"
+          required
+        />
+        <mat-icon matSuffix>label</mat-icon>
+        <mat-error
+          *ngIf="assetForm.get('name')?.invalid && assetForm.get('name')?.touched"
+        >
+          {{ getErrorMessage('name') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Giá -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Giá (VNĐ)</mat-label>
+        <input
+          matInput
+          type="number"
+          formControlName="price"
+          placeholder="0"
+          required
+          min="0"
+        />
+        <mat-icon matSuffix>attach_money</mat-icon>
+        <mat-error
+          *ngIf="assetForm.get('price')?.invalid && assetForm.get('price')?.touched"
+        >
+          {{ getErrorMessage('price') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Mô tả -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Mô tả</mat-label>
+        <textarea
+          matInput
+          formControlName="description"
+          placeholder="Nhập mô tả chi tiết về tài sản..."
+          rows="4"
+          maxlength="500"
+        >
+        </textarea>
+        <mat-hint align="end">
+          {{ assetForm.get('description')?.value?.length || 0 }}/500
+        </mat-hint>
+        <mat-error
+          *ngIf="assetForm.get('description')?.invalid && assetForm.get('description')?.touched"
+        >
+          {{ getErrorMessage('description') }}
+        </mat-error>
+      </mat-form-field>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()" class="cancel-button">
+      <mat-icon>close</mat-icon>
+      Hủy
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      (click)="onSave()"
+      [disabled]="assetForm.invalid"
+      class="save-button"
+    >
+      <mat-icon>save</mat-icon>
+      Lưu tài sản
+    </button>
+  </mat-dialog-actions>
+</div>

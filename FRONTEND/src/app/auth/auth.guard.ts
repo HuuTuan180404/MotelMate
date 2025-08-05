@@ -1,7 +1,12 @@
 import { jwtDecode } from 'jwt-decode';
 import { AuthService } from './auth.service';
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import {
+  CanActivate,
+  Router,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+} from '@angular/router';
 import { Observable, of, catchError, map, take } from 'rxjs';
 
 interface DecodedToken {
@@ -9,13 +14,10 @@ interface DecodedToken {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   canActivate(
     route: ActivatedRouteSnapshot,
@@ -25,6 +27,13 @@ export class AuthGuard implements CanActivate {
 
     // if token is valid, allow access
     if (token && this.isTokenValid(token)) {
+      const userRole = this.authService.getRole();
+      const expectedRole: string | undefined =
+        route.data['expectedRole'] || route.parent?.data['expectedRole'];
+      if (expectedRole && userRole !== expectedRole) {
+        this.router.navigate(['/login']);
+        return of(false);
+      }
       this.authService.setAuthenticationState(true);
       return of(true);
     }

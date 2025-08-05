@@ -1,17 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AssetManagement } from './assetmanagement';
+import { Sidebar } from './sidebar';
 
-describe('Assetmanagement', () => {
-  let component: AssetManagement;
-  let fixture: ComponentFixture<AssetManagement>;
+describe('Sidebar', () => {
+  let component: Sidebar;
+  let fixture: ComponentFixture<Sidebar>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AssetManagement],
-    }).compileComponents();
+      imports: [Sidebar]
+    })
+    .compileComponents();
 
-    fixture = TestBed.createComponent(AssetManagement);
+    fixture = TestBed.createComponent(Sidebar);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -25,13 +25,19 @@ export interface CreateContractDTO {
 @Injectable({ providedIn: 'root' })
 export class ContractService {
   private apiUrl = `${environment.apiUrl}/api/Contract/all`;
+  private api = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) {}
 
   getAllContracts(): Observable<ContractDTO[]> {
     return this.http.get<ContractDTO[]>(`${this.apiUrl}`);
   }
+
   createContract(dto: CreateContractDTO): Observable<any> {
     return this.http.post(`${environment.apiUrl}/api/Contract/create`, dto);
+  }
+
+  terminateContractByRoomID(roomID: number): Observable<any> {
+    return this.http.post(`${this.api}/Contract/terminate-by-room`, roomID);
   }
 }

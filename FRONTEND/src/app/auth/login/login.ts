@@ -56,9 +56,13 @@ export class Login {
   }
 
   async ngOnInit() {
-    const isAuth = await firstValueFrom(this.authService.isAuthenticated());
-    if (isAuth) {
-      this.router.navigate(['/dashboard']);
+    if (!this.authService.hasToken()) this.authService.refreshToken();
+    if (this.authService.hasToken()){
+      if (this.authService.getRole() === 'Tenant') {
+        this.router.navigate(['/tenant']);
+      } else {
+        this.router.navigate(['/dashboard']);
+      }
     }
   }
 
@@ -68,10 +72,13 @@ export class Login {
     const { username, password } = this.form.value;
     this.authService.login({ username, password }).subscribe({
       next: () => {
-        this.router.navigate(['/dashboard']);
+        if (this.authService.getRole() === 'Tenant') {
+          this.router.navigate(['/tenant']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
       },
       error: (err) => {
-        console.error('Login failed', err);
         this._snackBar.open(
           'Failed to login: Invalid username or password',
           'Close',
