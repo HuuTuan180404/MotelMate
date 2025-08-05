@@ -1,9 +1,10 @@
 :host {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 85vh;
   background-color: var(--bg-color);
 }
+
 .header-container {
   border-radius: 10px;
   display: flex;
@@ -21,22 +22,81 @@
   margin: 0;
 }
 
-.chart-container{
-  height: 30%;
+/* === Stats Section === */
+.stats-container {
+  display: flex;
+  justify-content: space-between;
   margin: var(--padding-margin);
-  display:flex;
-  gap: 1%;
-}
-.bar-chart{
-  border-radius: var(--border-radius);
-  background-color: white;
-  flex: 1.5 1 0;
+  gap: 1rem;
+  height: 20%;
 }
 
-.pie-chart{
-  border-radius: var(--border-radius);
-  background-color: white;
+.stat-box {
   flex: 1 1 0;
+  background-color: #ffffff;
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap:1rem
+}
+.stat-content{
+  display: flex;
+  flex-direction: column;
+}
+.stat-icon {
+  font-size: 3rem;
+  width: auto;
+  height: auto;
+
 }
 
+.stat-box h3 {
+  margin: 0;
+  font-size: 1rem;
+  color: #6b7280;
+}
 
+.stat-box p {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #111827;
+}
+
+/* === Chart Section === */
+.chart-container {
+  display: flex;
+  gap: 1rem;
+  margin: var(--padding-margin);
+  height: 60%;
+}
+
+.pie-container, .bar-container {
+  background-color: #ffffff;
+  border-radius: var(--border-radius);
+  flex: 1;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.bar-chart{
+  height:90%;
+  width:99%;
+}
+.bar-container{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.pie-chart{
+  height: 100%;
+  width: 60%;
+}
+.pie-container{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
