@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
 export interface ProfileDTO {
+  urlAvatar: string;
   fullName: string;
   email: string;
   phoneNumber: string;
@@ -26,8 +27,8 @@ export class ProfileService {
     return this.http.get<ProfileDTO>(`${environment.apiUrl}/api/Account/get-profile`);
   }
 
-  updateProfile(dto: ProfileDTO): Observable<void> {
-    return this.http.put<void>(`${environment.apiUrl}/api/Account/update-profile`, dto);
+  updateProfile(formData: FormData): Observable<void> {
+    return this.http.put<void>(`${environment.apiUrl}/api/Account/update-profile`, formData);
   }
 
 }

@@ -127,9 +127,9 @@ namespace BACKEND.Controllers
 
         [HttpPut("update-profile")]
         [Authorize]
-        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDTO dto)
+        public async Task<IActionResult> UpdateProfile([FromForm] UpdateProfileDTO dto, [FromForm] List<IFormFile> addedImages)
         {
-            var success = await _profileService.UpdateProfileAsync(User, dto);
+            var success = await _profileService.UpdateProfileAsync(User, dto, addedImages);
             if (!success)
                 return BadRequest(new { message = "Update failed." });
 

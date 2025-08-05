@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, tap, catchError } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { jwtDecode, JwtPayload } from 'jwt-decode';
 
 export interface RegisterDto {
   userName: string;
@@ -140,7 +141,10 @@ export class AuthService {
       );
   }
   changePassword(dto: ChangePassDTO): Observable<void> {
-    return this.http.patch<void>(`${environment.apiUrl}/api/Account/change-password`, dto);
+    return this.http.patch<void>(
+      `${environment.apiUrl}/api/Account/change-password`,
+      dto
+    );
   }
   storeToken(accessToken: string): void {
     if (this.isBrowser) {
@@ -159,5 +163,20 @@ export class AuthService {
   setAuthenticationState(isAuthenticated: boolean): void {
     this.isAuthenticatedSubject.next(isAuthenticated);
   }
+  getRole(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
 
+    try {
+      const decoded: any = jwtDecode(token);
+      return (
+        decoded[
+          'http://schemas.microsoft.com/ws/2008/06/identity/claims/role'
+        ] || null
+      );
+    } catch (error) {
+      console.error('Invalid token format:', error);
+      return null;
+    }
+  }
 }

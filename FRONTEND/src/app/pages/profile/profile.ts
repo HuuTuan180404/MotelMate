@@ -5,6 +5,8 @@ import {
   effect,
   inject,
   OnInit,
+  NgZone,
+  ChangeDetectorRef,
 } from '@angular/core';
 import {
   AbstractControl,
@@ -33,6 +35,7 @@ import { AuthService, ChangePassDTO } from '../../auth/auth.service';
 import { ProfileDTO, ProfileService } from '../../services/profileservice';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatIconModule } from '@angular/material/icon';
+import { url } from 'inspector';
 export function strongPasswordValidator(
   control: AbstractControl
 ): ValidationErrors | null {
@@ -79,7 +82,7 @@ export class Profile implements OnInit {
   private authservice = inject(AuthService);
   private _snackBar = inject(MatSnackBar);
 
-  profileImage = 'https://i.imgur.com/8Km9tLL.png';
+  profileImage = '../../assets/images/avatar_error.png';
   editMode = signal(false);
   showPasswordSection = signal(false);
   private fb = inject(FormBuilder);
@@ -90,14 +93,25 @@ export class Profile implements OnInit {
   hidePassword = true;
   hideNewPassword = true;
   hideConfirmPassword = true;
+  selectedAvatarFile: File | null = null;
 
-  constructor(public dialogRef: MatDialogRef<Profile>) {
+  constructor(
+    public dialogRef: MatDialogRef<Profile>,
+    private cdr: ChangeDetectorRef,
+    private zone: NgZone
+  ) {
     this.form = this.fb.group({
       fullname: ['', Validators.required],
       role: [''],
       email: ['', [Validators.required, Validators.email]],
       phoneNumber: ['', [Validators.required, Validators.pattern(/^\d{10}$/)]],
-      bday: ['', [Validators.required,Validators.pattern(/^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/)]],
+      bday: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(/^(0[1-9]|[12]\d|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/),
+        ],
+      ],
       bankcode: ['', Validators.required],
       accountno: ['', Validators.required],
       accountname: ['', Validators.required],
@@ -122,8 +136,16 @@ export class Profile implements OnInit {
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (file) {
+      this.selectedAvatarFile = file;
+
       const reader = new FileReader();
-      reader.onload = () => (this.profileImage = reader.result as string);
+      reader.onload = () => {
+        this.zone.run(() => {
+          this.profileImage = reader.result as string;
+          this.form.get('urlAvatar')?.setValue(this.profileImage);
+          this.cdr.markForCheck();
+        });
+      };
       reader.readAsDataURL(file);
     }
   }
@@ -135,13 +157,15 @@ export class Profile implements OnInit {
   cancelEdit() {
     this.editMode.set(false);
     this.form.reset(this.originalValue);
+    this.selectedAvatarFile = null;
   }
 
   hasChanges(): boolean {
     return (
       this.editMode() &&
-      JSON.stringify(this.form.getRawValue()) !==
-        JSON.stringify(this.originalValue)
+      (JSON.stringify(this.form.getRawValue()) !==
+        JSON.stringify(this.originalValue) ||
+        this.selectedAvatarFile !== null)
     );
   }
   passwordMatchValidator(control: AbstractControl) {
@@ -175,6 +199,7 @@ export class Profile implements OnInit {
   loadProfile() {
     this.profileService.getProfile().subscribe((data) => {
       this.form.patchValue({
+        urlAvatar: data.urlAvatar || this.profileImage,
         fullname: data.fullName,
         email: data.email,
         phoneNumber: data.phoneNumber,
@@ -184,6 +209,7 @@ export class Profile implements OnInit {
         accountno: data.accountNo,
         bankcode: data.bankCode,
       });
+      this.profileImage = data.urlAvatar || this.profileImage;
       this.originalValue = this.form.getRawValue();
     });
   }
@@ -192,12 +218,26 @@ export class Profile implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
+
     if (this.hasChanges()) {
-      var dto: ProfileDTO = {
-        ...this.form.getRawValue(),
-      };
-      dto.bdate = this.parseDDMMYYYYToISO(this.form.value.bday);
-      this.profileService.updateProfile(dto).subscribe({
+      const formValue = this.form.getRawValue();
+      formValue.bdate = this.parseDDMMYYYYToISO(formValue.bday);
+
+      const formData = new FormData();
+
+      // Đưa thông tin hồ sơ
+      for (const key in formValue) {
+        if (formValue.hasOwnProperty(key)) {
+          formData.append(key, formValue[key]);
+        }
+      }
+
+      // Thêm ảnh nếu có
+      if (this.selectedAvatarFile) {
+        formData.append('addedImages', this.selectedAvatarFile);
+      }
+
+      this.profileService.updateProfile(formData).subscribe({
         next: () => {
           this.originalValue = this.form.getRawValue();
           this.editMode.set(false);
@@ -219,6 +259,7 @@ export class Profile implements OnInit {
           );
         },
       });
+      this.selectedAvatarFile = null;
     }
   }
 
@@ -261,7 +302,7 @@ export class Profile implements OnInit {
   }
   private parseDDMMYYYYToISO(dateStr: string): string {
     var [day, month, year] = dateStr.split('/');
-    while(year.length < 4) year = '0' + year;
+    while (year.length < 4) year = '0' + year;
     return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
   }
   private formatISOToDDMMYYYY(isoDate: string): string {
