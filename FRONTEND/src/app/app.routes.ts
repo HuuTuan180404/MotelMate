@@ -17,6 +17,7 @@ import { TenantRegister } from './auth/register/tenant-register/tenant-register'
 import { OwnerRegister } from './auth/register/owner-register/owner-register';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
 import { LayoutTenant } from './layout-tenant/layout';
+import { RoomManagementTenant } from './pages-tenant/room-management-tenant/room-management-tenant';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -51,5 +52,11 @@ export const routes: Routes = [
     component: LayoutTenant,
     canActivate: [AuthGuard],
     data: { expectedRole: 'Tenant' },
+    children: [
+      {
+        path: 'room-tenant',
+        component: RoomManagementTenant,
+      },
+    ],
   },
 ];
