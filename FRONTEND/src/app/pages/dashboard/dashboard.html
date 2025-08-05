@@ -1,21 +1,51 @@
 <div class="header-container">
   <h1 class="page-title">DASHBOARD</h1>
 </div>
+
+<div class="stats-container">
+  <div class="stat-box">
+    <mat-icon class="stat-icon" style="color: #45a9ea; ">attach_money</mat-icon>
+    <div class="stat-content">
+      <h3>Revenue</h3>
+      <p>{{ stats.revenue }}</p>
+    </div>
+  </div>
+  <div class="stat-box">
+    <mat-icon class="stat-icon" style="color: #ff9800">apartment</mat-icon>
+    <div class="stat-content">
+      <h3>Buildings</h3>
+      <p>{{ stats.buildings }}</p>
+    </div>
+  </div>
+  <div class="stat-box">
+    <mat-icon class="stat-icon" style="color: #4caf50">meeting_room</mat-icon>
+    <div class="stat-content">
+      <h3>Rooms</h3>
+      <p>{{ stats.rooms }}</p>
+    </div>
+  </div>
+  <div class="stat-box">
+    <mat-icon class="stat-icon" style="color: #f44336">people</mat-icon>
+    <div class="stat-content">
+      <h3>Tenants</h3>
+      <p>{{ stats.tenants }}</p>
+    </div>
+  </div>
+</div>
+
 <div class="chart-container" *ngIf="isBrowser">
-  <div class="bar-chart">
-    <canvas baseChart
-      [data]="barChartData"
-      [labels]="barChartLabels"
-      [options]="barChartOptions"
-      [type]="barChartType">
-    </canvas>
-  </div> 
-  <div class="pie-chart">
-    <canvas baseChart
-      [data]="pieChartData"
-      [labels]="pieChartLabels"
-      [options]="pieChartOptions"
-      [type]="pieChartType">
-    </canvas>
+  <div class="bar-container">
+    <div class="bar-chart">
+      <canvas baseChart [data]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
+        [type]="barChartType">
+      </canvas>
+    </div>
+  </div>
+  <div class="pie-container">
+    <div class="pie-chart">
+      <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [options]="pieChartOptions"
+        [type]="pieChartType">
+      </canvas>
+    </div>
   </div>
 </div>
