@@ -35,10 +35,10 @@ export class Dashboard {
   pieChartData?: ChartData<'pie', number[], string>;
 
   stats = {
-    revenue: '$150,000',
-    buildings: 8,
-    rooms: 120,
-    tenants: 90,
+    revenue: '$999,999',
+    buildings: 99,
+    rooms: 99,
+    tenants: 99,
   };
 
   constructor(
@@ -124,7 +124,7 @@ export class Dashboard {
 
           const now = new Date();
           const monthLabels: string[] = [];
-          for (let i = 4; i >= 1; i--) {
+          for (let i = 3; i >= 0; i--) {
             const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
             const label = `${(date.getMonth() + 1)
               .toString()
