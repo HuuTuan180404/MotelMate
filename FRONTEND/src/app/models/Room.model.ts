@@ -14,6 +14,7 @@ export interface CreateRoomModel {
   roomNumber: string;
   area: number;
   price: number;
+  maxGuests: number;
   description: string;
   images: RoomImageModel[];
   selectedAssetIDs: number[];
@@ -38,6 +39,7 @@ export interface UpdateRoomDTO {
   roomNumber: string;
   area: number;
   price: number;
+  maxGuests: number;
   description?: string;
   addedMembers?: number[];
   deletedMembers?: number[];

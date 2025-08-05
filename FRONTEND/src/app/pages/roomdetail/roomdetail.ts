@@ -416,6 +416,7 @@ export class RoomDetail {
       area: this._roomDetail.area,
       price: this._roomDetail.price,
       description: this._roomDetail.description,
+      maxGuests: this._roomDetail.maxGuests,
       addedMembers: this._addedMembers,
       deletedMembers: this._deleteMembers,
       deletedImages: this._deletedImages,

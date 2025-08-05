@@ -133,6 +133,16 @@
                     [(ngModel)]="_roomDetail.price"
                   />
                 </div>
+
+                <div>
+                  <label for="roomMaxGuests">Max Guests</label>
+                  <input
+                    id="roomMaxGuests"
+                    type="number"
+                    placeholder="0"
+                    [(ngModel)]="_roomDetail.maxGuests"
+                  />
+                </div>
               </div>
 
               <!-- description -->
@@ -156,7 +166,8 @@
             <mat-card-header class="card-header members-header">
               <mat-card-title class="card-header-title members-title">
                 <mat-icon>group</mat-icon>
-                Members
+                Members [
+                {{_roomDetail?.members?.length}}/{{_roomDetail?.maxGuests}} ]
               </mat-card-title>
               <div class="add-container">
                 <ng-container
@@ -310,7 +321,7 @@
   <div mat-mat-dialog-actions class="dialog-actions">
     <div class="btn-container">
       <button id="btnCancel" (click)="OnCancel()">Cancel</button>
-      <button id="btnApply" (click)="onUpdateRoom()">Apply</button>
+      <button id="btnApply" (click)="onUpdateRoom()">Save</button>
     </div>
   </div>
 </div>

@@ -6,6 +6,7 @@ export class RoomDetailModel {
   area: number = 0;
   price: number = 0;
   status: string = '';
+  maxGuests: number = 4;
   description: string = '';
 
   buildingID: number = -1;
