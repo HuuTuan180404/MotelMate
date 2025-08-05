@@ -56,7 +56,14 @@ export class Login {
   }
 
   async ngOnInit() {
-    this.router.navigate(['/dashboard']);
+    if (!this.authService.hasToken()) this.authService.refreshToken();
+    if (this.authService.hasToken()){
+      if (this.authService.getRole() === 'Tenant') {
+        this.router.navigate(['/tenant']);
+      } else {
+        this.router.navigate(['/dashboard']);
+      }
+    }
   }
 
   onSubmit() {
@@ -65,7 +72,11 @@ export class Login {
     const { username, password } = this.form.value;
     this.authService.login({ username, password }).subscribe({
       next: () => {
-        this.router.navigate(['/dashboard']);
+        if (this.authService.getRole() === 'Tenant') {
+          this.router.navigate(['/tenant']);
+        } else {
+          this.router.navigate(['/dashboard']);
+        }
       },
       error: (err) => {
         this._snackBar.open(
