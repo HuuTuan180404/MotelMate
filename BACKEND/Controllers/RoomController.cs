@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace BACKEND.Controllers
 {
@@ -129,7 +130,7 @@ namespace BACKEND.Controllers
                                         RoomID = roomID,
                                         ImageURL = imageUrl
                                     });
-                                    Console.WriteLine("Image uploaded to Cloudinary: " + imageUrl);
+                                    // Console.WriteLine("Image uploaded to Cloudinary: " + imageUrl);
                                 }
                                 else
                                 {
@@ -186,152 +187,70 @@ namespace BACKEND.Controllers
         }
 
 
-        // [HttpPost("update-room")]
-        // public async Task<IActionResult> UpdateRoom(
-        //     [FromForm] UpdateRoomDTO request,
-        //     [FromForm] List<IFormFile> addedImages)
-        // {
-
-        //     var room = await _context.Room.Where(r => r.RoomID == request.RoomID).FirstOrDefaultAsync();
-
-        //     if (room == null)
-        //     {
-        //         return NotFound(new { Message = "Room not found" });
-        //     }
-
-        //     if (request.RoomNumber != room.RoomNumber && IsExistsRoomByNumber(room.BuildingID.Value, request.RoomNumber))
-        //     {
-        //         return BadRequest(new { Message = "Room number already exists" });
-        //     }
-
-        //     // room info
-        //     room.RoomNumber = request.RoomNumber;
-        //     room.Area = request.Area;
-        //     room.Price = request.Price;
-        //     room.Description = request.Description;
-
-        //     // IMAGE
-
-        //     // delete image
-        //     foreach (var img in request.DeletedImages)
-        //     {
-        //         var imageRecord = await _context.RoomImage.FirstOrDefaultAsync(i => i.ImageURL == img);
-        //         if (imageRecord != null)
-        //         {
-        //             _context.RoomImage.Remove(imageRecord);
-        //         }
-        //     }
-
-        //     // add image
-        //     if (addedImages != null && addedImages.Any())
-        //     {
-        //         foreach (var file in addedImages)
-        //         {
-        //             if (file.Length > 0)
-        //             {
-        //                 var uploadParams = new ImageUploadParams
-        //                 {
-        //                     File = new FileDescription(room.RoomID + file.FileName, file.OpenReadStream()),
-        //                     Folder = "intern_motel_mate" // bạn có thể đổi tên folder trên Cloudinary
-        //                 };
-
-        //                 var uploadResult = await _cloudinary.UploadAsync(uploadParams);
-
-        //                 if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
-        //                 {
-        //                     string imageUrl = uploadResult.SecureUrl.ToString();
-
-        //                     _context.RoomImage.Add(new RoomImage
-        //                     {
-        //                         RoomID = room.RoomID,
-        //                         ImageURL = imageUrl
-        //                     });
-        //                     Console.WriteLine("Image uploaded to Cloudinary: " + imageUrl);
-        //                 }
-        //                 else
-        //                 {
-        //                     return StatusCode(500, new { Message = $"Upload failed for file {file.FileName}" });
-        //                 }
-        //             }
-        //         }
-        //     }
-
-        //     // asset
-        //     foreach (var asset in request.Assets)
-        //     {
-        //         // add/update asset
-        //         var roomAsset = await _context.RoomAsset.FirstOrDefaultAsync(ra => ra.AssetID == asset.AssetID && ra.RoomID == room.RoomID);
-        //         if (roomAsset != null) // asset có trong DB
-        //         {
-        //             roomAsset.Quantity = asset.Quantity;
-        //             if (asset.Quantity == 0) // delete
-        //             {
-        //                 _context.RoomAsset.Remove(roomAsset);
-        //             }
-        //         }
-        //         else // thêm asset
-        //         {
-        //             _context.RoomAsset.Add(new RoomAsset
-        //             {
-        //                 AssetID = asset.AssetID,
-        //                 RoomID = room.RoomID,
-        //                 Quantity = asset.Quantity,
-        //             });
-        //         }
-        //     }
-        //     await _context.SaveChangesAsync();  // save cả room info + image + asset
-
-        //     // member
-        //     var contractDetail = await _context.ContractDetail
-        //                                         .Include(cd => cd.Contract)
-        //                                         .Where(cd => cd.Contract.Status != EContractStatus.Terminated)
-        //                                         .FirstOrDefaultAsync();
-
-        //     if (contractDetail == null)
-        //     {
-        //         return BadRequest(new { Message = "Not found contract" });
-        //     }
-
-        //     foreach (var member in request.AddedMembers)
-        //     {
-        //         _context.ContractDetail.Add(new ContractDetail
-        //         {
-        //             ContractID = contractDetail.ContractID,
-        //             TenantID = member,
-        //             StartDate = DateOnly.FromDateTime(DateTime.Now),
-        //             EndDate = null
-        //         });
-        //     }
-
-        //     foreach (var member in request.DeletedMembers)
-        //     {
-        //         var tenantInContractDetail = await _context.ContractDetail
-        //                                             .Include(cd => cd.Tenant)
-        //                                             .Where(cd => cd.Tenant.Id == member)
-        //                                             .FirstOrDefaultAsync();
-        //         tenantInContractDetail.EndDate = DateOnly.FromDateTime(DateTime.Now);
-        //         _context.ContractDetail.Update(tenantInContractDetail);
-        //     }
-        //     await _context.SaveChangesAsync();  // save add + delete tenant
-
-        //     return Ok(new
-        //     {
-        //         Message = "Room updated successfully",
-        //         RoomID = room.RoomID
-        //     });
-        // }
-
-
-        [HttpPost("update-room")]
+        [HttpPut("update-room")]
         public async Task<IActionResult> UpdateRoom(
-            [FromForm] UpdateRoomDTO request,
+            [FromForm] string body,
             [FromForm] List<IFormFile> addedImages)
         {
+
             if (!ModelState.IsValid)
                 return BadRequest(new { Message = "Invalid input" });
 
+
+            // Console.WriteLine(request.ToString());
+
+            // return Ok();
+
+
             try
             {
+
+                var request = JsonConvert.DeserializeObject<UpdateRoomDTO>(body);
+
+                Contract? contract = null;
+
+                if (request.TerminateContract == true)
+                {
+                    var roomID = request.RoomID;
+
+                    contract = await _context.Contract
+                                                .Include(c => c.ContractDetail)
+                                                .Include(c => c.Room)
+                                                .Where(c => c.RoomID == roomID && c.Status != EContractStatus.Terminated)
+                                                .FirstOrDefaultAsync();
+
+                    if (contract == null)
+                    {
+                        return NotFound(new { Message = "Không tìm thấy hợp đồng đang hoạt động cho phòng này." });
+                    }
+
+                    // chuyển lại available cho phòng
+                    contract.Room.Status = ERoomStatus.Available;
+
+                    // Cập nhật trạng thái hợp đồng
+                    contract.Status = EContractStatus.Terminated;
+                    contract.EndDate = DateOnly.FromDateTime(DateTime.Now);
+
+                    // Cập nhật EndDate cho tất cả tenant trong hợp đồng
+                    foreach (var detail in contract.ContractDetail)
+                    {
+                        if (detail.EndDate == null)
+                        {
+                            detail.EndDate = DateOnly.FromDateTime(DateTime.Now);
+                        }
+                    }
+
+                    await _context.SaveChangesAsync();
+
+                    return Ok(new
+                    {
+                        Message = "The contract has been successfully terminated.",
+                        ContractID = contract.ContractID,
+                        RoomID = roomID
+                    });
+                }
+
+
                 var room = await _context.Room.FirstOrDefaultAsync(r => r.RoomID == request.RoomID);
 
                 if (room == null)
@@ -413,16 +332,37 @@ namespace BACKEND.Controllers
                                 Quantity = asset.Quantity
                             });
                         }
+
+                        Console.WriteLine("@@@@@@@@@@@@@@@@@@@@@@");
                     }
                 }
+                else
+                {
+                    Console.WriteLine("############################");
+                }
+
+                Console.WriteLine("Assets trong request:");
+                if (request.Assets == null)
+                {
+                    Console.WriteLine("request.Assets == null");
+                }
+                else
+                {
+                    Console.WriteLine($"request.Assets.Count = {request.Assets.Count}");
+                    foreach (var asset in request.Assets)
+                    {
+                        Console.WriteLine($"AssetID: {asset.AssetID}, Quantity: {asset.Quantity}");
+                    }
+                }
+
 
                 // Lưu thay đổi trước khi xử lý thành viên
                 await _context.SaveChangesAsync();
 
                 // Tìm hợp đồng đang hoạt động
-                var contract = await _context.Contract
-                    .Where(c => c.RoomID == room.RoomID && c.Status != EContractStatus.Terminated)
-                    .FirstOrDefaultAsync();
+                contract = await _context.Contract
+                   .Where(c => c.RoomID == room.RoomID && c.Status != EContractStatus.Terminated)
+                   .FirstOrDefaultAsync();
 
                 if (contract == null)
                     return BadRequest(new { Message = "Active contract not found for room" });
@@ -467,6 +407,7 @@ namespace BACKEND.Controllers
             {
                 return StatusCode(500, new { Message = "Server error", Details = ex.Message });
             }
+
         }
 
         private int GetRoomIDByRoomNumber(int buildingID, string roomNumber)

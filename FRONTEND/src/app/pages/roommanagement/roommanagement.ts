@@ -25,6 +25,8 @@ import { RoomService } from '../../services/roomservice';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { BuildingService } from '../../services/building-service';
+import { BuildingWithRoomsModel } from '../../models/Building.model';
 
 @Component({
   selector: 'app-roommanagement',
@@ -75,18 +77,27 @@ export class RoomManagement implements OnInit, AfterViewInit {
   constructor(
     private dialog: MatDialog,
     private roomService: RoomService,
+    private buildingService: BuildingService,
     private cdr: ChangeDetectorRef
   ) {}
 
-  options = [
-    { name: 'All', code: -1 },
-    { name: 'One', code: 1 },
-    { name: 'Two', code: 2 },
-    { name: 'Three', code: 3 },
-  ];
+  options: BuildingWithRoomsModel[] = [];
 
   ngOnInit(): void {
     this.loadAllRooms();
+    this.loadBuildingSelection();
+  }
+
+  loadBuildingSelection() {
+    this.buildingService.getBuildingWithRooms().subscribe({
+      next: (data: any) => {
+        this.options = data;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error loading rooms:', error);
+      },
+    });
   }
 
   ngAfterViewInit(): void {
@@ -245,16 +256,21 @@ export class RoomManagement implements OnInit, AfterViewInit {
   }
 
   showMoreAvatars(room: RoomModel): void {
-    // Implement avatar dialog
     console.log('Show more avatars for room:', room.roomID);
   }
 
   viewRoomDetail(id: number): void {
-    this.dialog.open(RoomDetail, {
+    const result = this.dialog.open(RoomDetail, {
       maxWidth: '90vw',
       maxHeight: '90vh',
       data: id,
     });
+
+    if (result) {
+      // const index = this.allRooms.findIndex((x) => x.roomID === id);
+      // this.allRooms.splice(index, 1);
+      this.loadAllRooms();
+    }
 
     // this.roomService.getRoomById(id).subscribe({
     //   next: (data) => {},

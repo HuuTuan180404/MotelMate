@@ -206,8 +206,11 @@
             [(value)]="buildingCode"
             (selectionChange)="onBuildingChange()"
           >
-            <mat-option *ngFor="let option of options" [value]="option.code">
-              {{ option.name }}
+            <mat-option
+              *ngFor="let option of options"
+              [value]="option.buildingID"
+            >
+              {{ option.buildingName }}
             </mat-option>
           </mat-select>
         </mat-form-field>

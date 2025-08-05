@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { RoomModel } from '../models/Room.model';
+import { RoomModel, UpdateRoomDTO } from '../models/Room.model';
 import { RoomDetail } from '../pages/roomdetail/roomdetail';
 import { RoomDetailModel } from '../models/RoomDetail.model';
 
@@ -24,5 +24,9 @@ export class RoomService {
 
   postNewRoom(formData: FormData): Observable<any> {
     return this.http.post(`${this.apiUrl}/room/add-room`, formData);
+  }
+
+  updateRoom(formData: FormData): Observable<any> {
+    return this.http.put(`${this.apiUrl}/room/update-room`, formData);
   }
 }

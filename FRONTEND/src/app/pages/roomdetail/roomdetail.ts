@@ -38,9 +38,10 @@ import { AddContractDialogComponent } from '../contractsList/contractDialog/cont
 import { AssetModel } from '../../models/Asset.model';
 import { AssetService } from '../../services/asset-service';
 import { MatOptionSelectionChange } from '@angular/material/core';
-import { RoomImageModel } from '../../models/Room.model';
+import { RoomImageModel, UpdateRoomDTO } from '../../models/Room.model';
 import { TenantService } from '../../services/tenantservice';
 import { DialogAction, ReusableDialog } from '../dialog/dialog';
+import { ContractService } from '../../services/contractservice';
 @Component({
   selector: 'app-roomdetail',
   imports: [
@@ -69,7 +70,6 @@ export class RoomDetail {
   inputAddMemberID!: ElementRef<HTMLInputElement>;
 
   _roomDetail: RoomDetailModel = new RoomDetailModel();
-  _dbRoom: RoomDetailModel = new RoomDetailModel();
   _assetsData: AssetModel[] = [];
 
   _selectedMember: number | null = null;
@@ -102,6 +102,7 @@ export class RoomDetail {
     private dialog: MatDialog,
     private roomService: RoomService,
     private tenantService: TenantService,
+    private contractService: ContractService,
     private assetService: AssetService,
     public dialogRef: MatDialogRef<RoomDetail>,
     private cdr: ChangeDetectorRef
@@ -131,7 +132,6 @@ export class RoomDetail {
     this.roomService.getRoomById(this.roomID).subscribe({
       next: (data) => {
         this._roomDetail = { ...data };
-        this._dbRoom = { ...data };
         this._selectedAssets = [...this._roomDetail.assetData];
 
         if (this._roomDetail.urlRoomImages?.length > 0) {
@@ -394,44 +394,37 @@ export class RoomDetail {
       }
     }
 
+    const body: UpdateRoomDTO = {
+      roomID: this._roomDetail.roomID,
+      roomNumber: this._roomDetail.roomNumber,
+      area: this._roomDetail.area,
+      price: this._roomDetail.price,
+      description: this._roomDetail.description,
+      addedMembers: this._addedMembers,
+      deletedMembers: this._deleteMembers,
+      deletedImages: this._deletedImages,
+      assets: writeAsset,
+      terminateContract:
+        this._roomDetail.members.length === 0 && this._deleteMembers.length > 0,
+    };
+
     const formDataToSend = new FormData();
-
-    // Thông tin cơ bản
-    formDataToSend.append('roomID', this._roomDetail.roomID.toString());
-    formDataToSend.append('roomNumber', this._roomDetail.roomNumber);
-    formDataToSend.append('area', this._roomDetail.area.toString());
-    formDataToSend.append('price', this._roomDetail.price.toString());
-    formDataToSend.append('description', this._roomDetail.description);
-
-    // Thành viên: thêm
-    this._addedMembers.forEach((id) => {
-      formDataToSend.append('addedMembers', id.toString());
-    });
-
-    // Thành viên: xoá
-    this._deleteMembers.forEach((id) => {
-      formDataToSend.append('deletedMembers', id.toString());
-    });
-
-    // Ảnh: đã xoá
-    this._deletedImages.forEach((imgUrl) => {
-      formDataToSend.append('deletedImages', imgUrl);
-    });
-
     // Ảnh: thêm mới
     this._addedImages.forEach((image) => {
       formDataToSend.append('addedImages', image.file, image.name);
     });
 
-    // Tài sản: cập nhật số lượng
-    writeAsset.forEach((asset) => {
-      formDataToSend.append(
-        'assets',
-        JSON.stringify({
-          assetID: asset.assetID,
-          quantity: asset.quantity,
-        })
-      );
+    formDataToSend.append('body', JSON.stringify(body));
+
+    // gọi API update
+    this.roomService.updateRoom(formDataToSend).subscribe({
+      next: (data) => {
+        alert(data.message);
+        this.dialogRef.close(true);
+      },
+      error: (err) => {
+        console.error(err);
+      },
     });
   }
 
