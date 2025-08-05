@@ -89,15 +89,18 @@
   gap: 1rem;
 }
 
+.rooms-container {
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scroll-behavior: smooth;
+}
+
 /* Rooms Grid */
 .rooms {
   padding: var(--padding-margin) 0;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: 1.5rem;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scroll-behavior: smooth;
 }
 
 .card {
@@ -209,10 +212,12 @@
 
 .section-avatars {
   margin-top: 1rem;
+  min-height: 32px;
 }
 
 .imgs {
   display: flex;
+  min-height: 32px;
   gap: 0.25rem;
   align-items: center;
 }
@@ -270,18 +275,18 @@
 
 /* Pagination */
 .pagination-container {
-  position: sticky;
+  /* position: sticky; */
   width: 100%;
   border-radius: var(--border-radius);
   box-sizing: border-box;
-  right: 0;
-  bottom: 0;
+  /* right: 0; */
+  /* bottom: 0; */
   background: white;
   padding: var(--padding-margin);
   display: flex;
   justify-content: center;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-  z-index: 100;
+  /* z-index: 100; */
 }
 
 /* Filter Panel */

@@ -38,10 +38,15 @@ import { AddContractDialogComponent } from '../contractsList/contractDialog/cont
 import { AssetModel } from '../../models/Asset.model';
 import { AssetService } from '../../services/asset-service';
 import { MatOptionSelectionChange } from '@angular/material/core';
-import { RoomImageModel, UpdateRoomDTO } from '../../models/Room.model';
+import {
+  RoomImageModel,
+  RoomModel,
+  UpdateRoomDTO,
+} from '../../models/Room.model';
 import { TenantService } from '../../services/tenantservice';
 import { DialogAction, ReusableDialog } from '../dialog/dialog';
 import { ContractService } from '../../services/contractservice';
+import { MatSnackBar } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-roomdetail',
   imports: [
@@ -105,7 +110,8 @@ export class RoomDetail {
     private contractService: ContractService,
     private assetService: AssetService,
     public dialogRef: MatDialogRef<RoomDetail>,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private _snackBar: MatSnackBar
   ) {}
 
   ngOnInit() {
@@ -185,6 +191,10 @@ export class RoomDetail {
     this._selectedMember = id;
   }
 
+  OnCancel() {
+    this.dialogRef.close();
+  }
+
   get getAssetData(): {
     assetID: number;
     assetName: string;
@@ -238,10 +248,16 @@ export class RoomDetail {
       height: 'auto',
       maxHeight: '90vh',
       minWidth: '50vw',
+      data: {
+        buildingID: this._roomDetail.buildingID,
+        roomNumber: this._roomDetail.roomNumber,
+        deposit: this._roomDetail.price,
+        total: this._roomDetail.price,
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      console.log(`Dialog result: ${result}`);
+      console.log(`Dialog result: ${result.cccd}`);
     });
   }
 
@@ -419,10 +435,27 @@ export class RoomDetail {
     // gọi API update
     this.roomService.updateRoom(formDataToSend).subscribe({
       next: (data) => {
-        alert(data.message);
-        this.dialogRef.close(true);
+        this._snackBar.open(data.message, 'Close', {
+          duration: 4000,
+          panelClass: ['snackbar-success'],
+          verticalPosition: 'top',
+        });
+        this.roomService.getRoom(this._roomDetail.roomID).subscribe({
+          next: (data) => {
+            const updatedRoom: RoomModel = data;
+            this.dialogRef.close(updatedRoom);
+          },
+          error: (err) => {
+            console.error(err);
+          },
+        });
       },
       error: (err) => {
+        this._snackBar.open('Update failed', 'Close', {
+          duration: 4000,
+          panelClass: ['snackbar-error'],
+          verticalPosition: 'top',
+        });
         console.error(err);
       },
     });

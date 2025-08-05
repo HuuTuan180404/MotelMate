@@ -30,9 +30,7 @@
   text-align: center;
 }
 
-#btnApply {
-  background-color: #4caf50;
-  color: white;
+.dialog-actions > .btn-container > button {
   padding: 8px 16px;
   border: none;
   border-radius: 9999px;
@@ -41,10 +39,24 @@
   transition: background-color 0.2s ease;
 }
 
+#btnCancel {
+  background-color: #ccc;
+  margin: 0 10px;
+  color: #000;
+}
+
+#btnCancel:hover {
+  background-color: #e0e0e0;
+}
+
+#btnApply {
+  background-color: #4caf50;
+  color: white;
+}
+
 #btnApply:hover {
   background-color: #45a049;
 }
-
 .content {
   display: flex;
   flex-direction: column;
@@ -66,9 +78,12 @@
 .gallery {
   width: 100%;
   display: flex;
-  /* flex-direction: column-reverse; */
-  flex-direction: column;
-  margin-bottom: auto;
+  flex-direction: column-reverse;
+}
+
+.gallery > .upload-btn {
+  width: 50%;
+  margin: 0 auto;
 }
 
 .main-image {
@@ -107,7 +122,7 @@
   overflow-x: auto;
   gap: 5px;
   margin-bottom: var(--padding-margin);
-  margin-top: 20%;
+  margin-top: 1rem;
 }
 
 .thumbnails::-webkit-scrollbar {
@@ -320,7 +335,7 @@
   cursor: pointer;
   font-size: 24px;
   transition: color 0.3s ease, transform 0.2s ease;
-  color: #616161; /* Màu xám trung tính ban đầu */
+  color: #616161;
 }
 
 .icon-actions mat-icon:hover {
@@ -526,4 +541,11 @@ mat-option {
   color: #1976d2;
   border-radius: 16px;
   margin: 2px 4px 2px 0;
+}
+
+
+/* 
+ */
+ ::ng-deep .snackbar-error .mat-mdc-snackbar-surface {
+  background-color:#da3131  !important;
 }

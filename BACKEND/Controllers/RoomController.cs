@@ -46,13 +46,37 @@ namespace BACKEND.Controllers
             var rooms = await _context.Room
                                     .Include(r => r.Building)
                                     .Include(r => r.RoomImages)
-                                    .Include(r => r.Contracts.Where(c => c.Status == EContractStatus.Active)) // hợp đồng active
+                                    .Include(r => r.Contracts.Where(c => c.Status != EContractStatus.Terminated)) // hợp đồng active
                                         .ThenInclude(c => c.ContractDetail.Where(cd => cd.EndDate == null))
                                             .ThenInclude(cd => cd.Tenant)
                                     .Where(b => b.Building.Owner.Id == userId)
                                     .ToListAsync();
 
             return Ok(_mapper.Map<List<ReadRoomDTO>>(rooms));
+        }
+
+        // GET: api/room
+        [HttpGet("room-management/{id}")]
+        public async Task<ActionResult<ReadRoomDTO>> GetRoom(int id)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!long.TryParse(userIdStr, out var userId))
+            {
+                return Unauthorized("User ID not found or invalid");
+            }
+
+            var rooms = await _context.Room
+                                    .Include(r => r.Building)
+                                    .Include(r => r.RoomImages)
+                                    .Include(r => r.Contracts.Where(c => c.Status != EContractStatus.Terminated))
+                                        .ThenInclude(c => c.ContractDetail.Where(cd => cd.EndDate == null))
+                                            .ThenInclude(cd => cd.Tenant)
+                                    .Where(b => b.Building.Owner.Id == userId)
+                                    .FirstOrDefaultAsync(r => r.RoomID == id);
+
+            if (rooms == null) return NotFound(new { Message = "Room not found" });
+
+            return Ok(_mapper.Map<ReadRoomDTO>(rooms));
         }
 
         // GET: api/Rooms/5
@@ -64,7 +88,7 @@ namespace BACKEND.Controllers
                                     .Include(r => r.Building)
                                         .ThenInclude(b => b.Owner)
                                     .Include(r => r.RoomImages)
-                                    .Include(r => r.Contracts.Where(c => c.Status == EContractStatus.Active)) // hợp đồng active
+                                    .Include(r => r.Contracts) // hợp đồng active
                                         .ThenInclude(c => c.ContractDetail.Where(cd => cd.EndDate == null))
                                             .ThenInclude(cd => cd.Tenant)
                                     .Include(ra => ra.RoomAssets)
@@ -72,6 +96,7 @@ namespace BACKEND.Controllers
                                     .FirstOrDefaultAsync(r => r.RoomID == id);
             return Ok(_mapper.Map<ReadRoomDetailDTO>(room));
         }
+
 
         [HttpPost("add-room")]
         public async Task<IActionResult> UploadRoom(
