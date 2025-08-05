@@ -41,15 +41,45 @@ namespace BACKEND.Controllers
             {
                 return NotFound(new { message = "No buildings found" });
             }
-            
+            // Lấy 4 tháng gần nhất từ tháng hiện tại (VD: tháng 8 -> 5,6,7,8)
+            var now = DateTime.UtcNow;
+            var startMonth = DateOnly.FromDateTime(DateTime.UtcNow.AddMonths(-3));
+
+            // Lấy tất cả invoice trong khoảng 4 tháng gần đây
+            var recentInvoices = buildingList
+                .SelectMany(b => b.Rooms)
+                .SelectMany(r => r.Contracts)
+                .SelectMany(c => c.Invoice)
+                .Where(i =>
+                    i.Status == EInvoiceStatus.Paid &&
+                    i.PeriodEnd >= startMonth)
+                .ToList();
+
+            // Nhóm theo tháng/năm và tính tổng
+            var revenueByMonth = recentInvoices
+                .GroupBy(i => new { i.PeriodEnd.Year, i.PeriodEnd.Month })
+                .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
+                .Select(g => (int)g.Sum(i => i.TotalAmount))
+                .ToList();
+
+            // Bảo đảm luôn có 4 phần tử, thêm 0 nếu thiếu tháng
+            while (revenueByMonth.Count < 4)
+            {
+                revenueByMonth.Insert(0, 0);
+            }
+
             return Ok(new DashboardInfoDTO
             {
                 TotalBuilding = buildings.Count(),
                 TotalRooms = buildings.Sum(b => b.Rooms.Count()),
                 TotalTenants = buildings.Sum(b => b.Rooms.Sum(r => r.Contracts.Count(c => c.ContractDetail.Any(cd => cd.EndDate == null)))),
-                TotalRevenue = buildings.Sum(b => b.Rooms.Sum(r => r.Contracts.Sum(c => c.Invoice.Where(i => i.Status == EInvoiceStatus.Paid).Sum(i => i.TotalAmount)))),
-                RevenueByMonth = new List<int> { 120000, 95000, 130000, 110000 }, 
-                RoomsByStatus = new List<string> { "Available", "Maintainance", "Occupied" } 
+                TotalRevenue = (int)buildings.Sum(b => b.Rooms.Sum(r => r.Contracts.Sum(c => c.Invoice.Where(i => i.Status == EInvoiceStatus.Paid).Sum(i => i.TotalAmount)))),
+                RevenueByMonth = revenueByMonth,
+                RoomsByStatus = new List<int> {
+                    buildings.Sum(b => b.Rooms.Count(r => r.Status == ERoomStatus.Available)),
+                    buildings.Sum(b => b.Rooms.Count(r => r.Status == ERoomStatus.Maintenance)),
+                    buildings.Sum(b => b.Rooms.Count(r => r.Status == ERoomStatus.Occupied))
+                }
             });
         }
     }

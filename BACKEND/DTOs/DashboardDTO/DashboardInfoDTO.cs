@@ -10,8 +10,8 @@ namespace BACKEND.DTOs.DashboardDTO
         public int TotalBuilding { get; set; }
         public int TotalRooms { get; set; }
         public int TotalTenants { get; set; }
-        public decimal TotalRevenue { get; set; }
+        public int TotalRevenue { get; set; }
         public List<int> RevenueByMonth { get; set; }
-        public List<string> RoomsByStatus { get; set; } 
+        public List<int> RoomsByStatus { get; set; } 
     }
 }
