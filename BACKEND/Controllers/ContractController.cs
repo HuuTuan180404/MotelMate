@@ -4,6 +4,7 @@ using BACKEND.DTOs;
 using BACKEND.DTOs.ContractDTO;
 using BACKEND.Enums;
 using BACKEND.Models;
+using Bogus.DataSets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -109,5 +110,48 @@ namespace BACKEND.Namespace
                 ContractID = contract.ContractID
             });
         }
+
+
+        [HttpPost("terminate-by-room")]
+        public async Task<IActionResult> TerminateContractByRoom([FromBody] int roomID)
+        {
+            // Tìm hợp đồng còn hiệu lực của phòng
+            var contract = await _context.Contract
+                .Include(c => c.ContractDetail)
+                .Include(c => c.Room)
+                .Where(c => c.RoomID == roomID && c.Status != EContractStatus.Terminated)
+                .FirstOrDefaultAsync();
+
+            if (contract == null)
+            {
+                return NotFound(new { Message = "Không tìm thấy hợp đồng đang hoạt động cho phòng này." });
+            }
+
+            // chuyển lại available cho phòng
+            contract.Room.Status = ERoomStatus.Available;
+
+            // Cập nhật trạng thái hợp đồng
+            contract.Status = EContractStatus.Terminated;
+            contract.EndDate = DateOnly.FromDateTime(DateTime.Now);
+
+            // Cập nhật EndDate cho tất cả tenant trong hợp đồng
+            foreach (var detail in contract.ContractDetail)
+            {
+                if (detail.EndDate == null)
+                {
+                    detail.EndDate = DateOnly.FromDateTime(DateTime.Now);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                Message = "The contract has been successfully terminated.",
+                ContractID = contract.ContractID,
+                RoomID = roomID
+            });
+        }
+
     }
 }
