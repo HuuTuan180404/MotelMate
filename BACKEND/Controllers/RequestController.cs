@@ -6,6 +6,7 @@ using BACKEND.DTOs.RequestDTO;
 using BACKEND.Data;
 using AutoMapper.QueryableExtensions;
 using BACKEND.Enums;
+using System.Security.Claims;
 
 namespace BACKEND.Controllers
 {
@@ -77,68 +78,81 @@ namespace BACKEND.Controllers
             return Ok(result);
         }
 
-        // [HttpPost("{id}/approve")]
-        // public async Task<IActionResult> ApproveRequest(int id)
-        // {
-        //     var request = await _context.Request.Include(r => r.Tenant).FirstOrDefaultAsync(r => r.RequestID == id);
-        //     if (request == null) return NotFound("Request not found");
+        [HttpGet("MyRequests")]
+        public async Task<ActionResult<IEnumerable<ReadRequestDTO>>> GetMyRequests()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId)) return Unauthorized();
 
-        //     request.Status = ERequestStatus.Approved;
+            int tenantId = int.Parse(userId);
 
-        //     // Update liên quan Invoice
-        //     var invoice = await _context.Invoice.FirstOrDefaultAsync(i => i.InvoiceCode == request.Title);
-        //     if (invoice != null)
-        //     {
-        //         invoice.Status = BACKEND.Enums.EInvoiceStatus.Paid;
-        //     }
+            var requests = await _context.Request
+                .Where(r => r.TenantID == tenantId)
+                .Include(r => r.Tenant)
+                .Include(r => r.Tenant.ContractDetails)
+                    .ThenInclude(cd => cd.Contract)
+                        .ThenInclude(c => c.Room)
+                            .ThenInclude(rm => rm.Building)
+                .OrderByDescending(r => r.CreateAt)
+                .ToListAsync();
 
-        //     // Gửi Notification cho Tenant
-        //     var noti = new Noti
-        //     {
-        //         Title = "Payment Approved",
-        //         Content = $"Your payment request '{request.Title}' has been approved.",
-        //         OwnerID = request.OwnerID
-        //     };
-        //     _context.Noti.Add(noti);
-        //     await _context.SaveChangesAsync(); // Save to get NotiID
+            var result = requests.Select(r =>
+            {
+                var dto = _mapper.Map<ReadRequestDTO>(r);
 
-        //     _context.NotiRecipient.Add(new NotiRecipient
-        //     {
-        //         NotiID = noti.NotiID,
-        //         TenantID = request.TenantID
-        //     });
+                var contractDetail = r.Tenant.ContractDetails.FirstOrDefault(cd => cd.EndDate == null);
+                var room = contractDetail?.Contract?.Room;
+                var building = room?.Building;
 
-        //     await _context.SaveChangesAsync();
-        //     return Ok("Request approved successfully.");
-        // }
+                dto.RoomName = room?.RoomNumber;
+                dto.BuildingName = building?.Name;
 
-        // [HttpPost("{id}/reject")]
-        // public async Task<IActionResult> RejectRequest(int id)
-        // {
-        //     var request = await _context.Request.Include(r => r.Tenant).FirstOrDefaultAsync(r => r.RequestID == id);
-        //     if (request == null) return NotFound("Request not found");
+                return dto;
+            }).ToList();
 
-        //     request.Status = ERequestStatus.Rejected;
+            return Ok(result);
+        }
 
-        //     // Gửi Notification cho Tenant
-        //     var noti = new Noti
-        //     {
-        //         Title = "Payment Rejected",
-        //         Content = $"Your payment request '{request.Title}' has been rejected.",
-        //         OwnerID = request.OwnerID
-        //     };
-        //     _context.Noti.Add(noti);
-        //     await _context.SaveChangesAsync(); // Save to get NotiID
+        [HttpPost("SendFeedback")]
+        public async Task<IActionResult> SendFeedback([FromBody] CreateRequestDTO requestDto)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized("Invalid Token");
 
-        //     _context.NotiRecipient.Add(new NotiRecipient
-        //     {
-        //         NotiID = noti.NotiID,
-        //         TenantID = request.TenantID
-        //     });
+            int tenantId = int.Parse(userIdClaim.Value);
 
-        //     await _context.SaveChangesAsync();
-        //     return Ok("Request rejected successfully.");
-        // }
+            var tenant = await _context.Tenant.FindAsync(tenantId);
+            if (tenant == null) return NotFound("Tenant not found");
+
+            // Find Owner (Building Owner) via active ContractDetail
+            var activeContract = await _context.ContractDetail
+                .Include(cd => cd.Contract)
+                    .ThenInclude(c => c.Room)
+                        .ThenInclude(r => r.Building)
+                .FirstOrDefaultAsync(cd => cd.TenantID == tenantId && cd.EndDate == null);
+
+            if (activeContract == null) return BadRequest("No active contract found");
+
+            var ownerId = activeContract.Contract.Room.Building.OwnerID;
+
+            var request = new Request
+            {
+                Title = requestDto.Title,
+                Content = requestDto.Content,
+                Image = requestDto.Image,
+                Type = ERequestType.FeedBackOrIssue,
+                Status = ERequestStatus.Pending,
+                TenantID = tenantId,
+                OwnerID = ownerId,
+                CreateAt = DateTime.Now
+            };
+
+            _context.Request.Add(request);
+            await _context.SaveChangesAsync();
+
+            return Ok("Feedback request sent successfully.");
+        }
+
         [HttpPost("{id}/approve")]
         public async Task<IActionResult> ApproveRequest(int id)
         {

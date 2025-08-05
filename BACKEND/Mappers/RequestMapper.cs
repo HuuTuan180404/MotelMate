@@ -1,6 +1,7 @@
 using AutoMapper;
 using BACKEND.Models;
 using BACKEND.DTOs.RequestDTO;
+using BACKEND.Enums;
 
 namespace BACKEND.Mappers
 {
