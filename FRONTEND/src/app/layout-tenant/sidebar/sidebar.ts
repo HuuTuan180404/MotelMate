@@ -18,8 +18,8 @@ export class Sidebar {
     this.authService.logout();
   }
   mainMenu = [
-    { icon: 'dashboard', label: 'Dashboard', route: 'dashboard-tenant' },
-    { icon: 'bed', label: 'Room', route: 'room-tenant' },
+    { icon: 'dashboard', label: 'Dashboard', route: 'dashboard' },
+    { icon: 'bed', label: 'Room', route: 'room' },
     { icon: 'contract', label: 'Contract', route: '' },
     {
       icon: 'payment',

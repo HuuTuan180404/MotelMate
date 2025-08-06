@@ -55,11 +55,11 @@ export const routes: Routes = [
     data: { expectedRole: 'Tenant' },
     children: [
       {
-        path: 'room-tenant',
+        path: 'room',
         component: RoomManagementTenant,
       },
       {
-        path: 'dashboard-tenant',
+        path: 'dashboard',
         component: DashboardTenant,
       },
     ],

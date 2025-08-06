@@ -12,3 +12,5 @@ export interface RequestModel {
   roomName: string;
   buildingName: string;
 }
+
+
