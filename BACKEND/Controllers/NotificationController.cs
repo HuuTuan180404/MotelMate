@@ -122,19 +122,36 @@ namespace BACKEND.Controllers
         }
 
 
-        [HttpPatch("is-read")]
-        public async Task<IActionResult> IsRead(int notiID)
+        [HttpPatch("is-read-notification")]
+        public async Task<IActionResult> IsReadNotification([FromBody] List<int> notiIDs)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!int.TryParse(userIdStr, out var tenantID))
+            if (!int.TryParse(userIdStr, out var tenantId))
                 return Unauthorized("User ID không hợp lệ.");
 
-            var notiRecipient = await _context.NotiRecipient.FirstOrDefaultAsync(nr => nr.NotiID == notiID && nr.TenantID == tenantID);
+            if (notiIDs == null || notiIDs.Count == 0)
+                return BadRequest(new { message = "Danh sách thông báo trống." });
 
-            if (notiRecipient == null)
-                return NotFound(new { message = "Not found this notification" });
+            var notiRecipients = await _context.NotiRecipient
+                .Where(nr => notiIDs.Contains(nr.NotiID) && nr.TenantID == tenantId)
+                .ToListAsync();
 
-            return Ok();
+            // Kiểm tra xem có thông báo nào không tìm thấy
+            var foundIds = notiRecipients.Select(nr => nr.NotiID).ToList();
+            var notFoundIds = notiIDs.Except(foundIds).ToList();
+
+            if (notFoundIds.Any())
+                return NotFound(new { message = "Không tìm thấy các thông báo sau:", notFoundIds });
+
+            // Đánh dấu tất cả là đã đọc
+            foreach (var recipient in notiRecipients)
+            {
+                recipient.IsRead = true;
+            }
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Cập nhật trạng thái đọc thành công." });
         }
     }
 }

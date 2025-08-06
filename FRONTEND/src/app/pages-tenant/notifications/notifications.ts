@@ -26,7 +26,7 @@ import { ReadNotificationDTO } from '../../models/Notification.model';
   templateUrl: './notifications.html',
   styleUrl: './notifications.css',
 })
-export class Notifications implements OnInit {
+export class Notifications {
   // notifications!: ReadNotificationDTO[];
   notifications: ReadNotificationDTO[] = [];
 
@@ -38,7 +38,8 @@ export class Notifications implements OnInit {
     this.notificationService.tenantGetNotification().subscribe({
       next: (data) => {
         this.notifications = data.sort(
-          (a: any, b: any) => b.createAt.getTime() - a.createAt.getTime()
+          (a: any, b: any) =>
+            new Date(b.createAt).getTime() - new Date(a.createAt).getTime()
         );
         this.cdr.detectChanges();
       },
@@ -47,8 +48,6 @@ export class Notifications implements OnInit {
       },
     });
   }
-
-  ngOnInit(): void {}
 
   formatDateTime(date: Date | string): string {
     const d = new Date(date); // chuyển về Date object
@@ -82,14 +81,39 @@ export class Notifications implements OnInit {
   }
 
   markAsRead(notification: ReadNotificationDTO): void {
-    notification.isRead = true;
+    if (!notification || notification.isRead) {
+      return; // Không làm gì nếu null hoặc đã được đọc
+    }
 
-    
+    this.notificationService
+      .isReadNotification([notification.notiID])
+      .subscribe({
+        next: (data) => {
+          notification.isRead = true;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          alert(err.message);
+        },
+      });
   }
 
   markAllAsRead(): void {
-    this.notifications.forEach((notification) => {
-      notification.isRead = true;
+    const unreadNotifications = this.notifications.filter((n) => !n.isRead);
+    const notiIDs = unreadNotifications.map((n) => n.notiID);
+
+    if (notiIDs.length === 0) {
+      return; // Không có gì để cập nhật
+    }
+
+    this.notificationService.isReadNotification(notiIDs).subscribe({
+      next: () => {
+        unreadNotifications.forEach((n) => (n.isRead = true));
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        alert(err?.error?.message || 'Lỗi khi đánh dấu tất cả là đã đọc');
+      },
     });
   }
 

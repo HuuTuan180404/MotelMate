@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { ReadNotificationDTO } from '../models/Notification.model';
 
 @Injectable({
   providedIn: 'root',
@@ -15,6 +16,15 @@ export class NotificationService {
   }
 
   tenantGetNotification(): Observable<any> {
-    return this.http.get(`${this.api}/Notification/tenant-get-notification`);
+    return this.http.get<any>(
+      `${this.api}/Notification/tenant-get-notification`
+    );
+  }
+
+  isReadNotification(notificationID: number[]): Observable<any> {
+    return this.http.patch<any>(
+      `${this.api}/Notification/is-read-notification`,
+      notificationID
+    );
   }
 }
