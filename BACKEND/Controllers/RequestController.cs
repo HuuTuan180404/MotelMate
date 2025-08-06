@@ -268,9 +268,88 @@ namespace BACKEND.Controllers
         }
 
 
+
         // ===============TENANT=================
-        [HttpPost("create-request")]
-        public async Task<IActionResult> CreateRequest([FromForm] CreateRequestDTO request, [FromForm] IFormFile? images)
+        // [HttpPost("create-request")]
+        // public async Task<IActionResult> CreateRequest([FromForm] CreateRequestDTO request)
+        // {
+        //     // Validate request
+        //     if (!ModelState.IsValid)
+        //         return BadRequest(ModelState);
+
+        //     var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        //     if (!int.TryParse(userIdStr, out var userId))
+        //         return Unauthorized("Invalid User ID");
+
+        //     int ownerID = -1;
+
+        //     if (request.BuildingID == null)
+        //     {
+        //         ownerID = await _context.ContractDetail
+        //                    .Where(cd => cd.EndDate == null && cd.TenantID == userId)
+        //                    .Include(cd => cd.Contract)
+        //                        .ThenInclude(c => c.Room)
+        //                            .ThenInclude(r => r.Building)
+        //                    .Select(cd => cd.Contract.Room.Building.Owner.Id)
+        //                    .FirstOrDefaultAsync();
+        //     }
+        //     else
+        //     {
+        //         ownerID = await _context.Building
+        //                    .Where(b => b.BuildingID == request.BuildingID)
+        //                    .Select(cd => cd.OwnerID)
+        //                    .FirstOrDefaultAsync();
+        //     }
+
+        //     var newRequest = new Request
+        //     {
+        //         Title = request.Title,
+        //         Content = request.Content,
+        //         Type = Enum.Parse<ERequestType>(request.Type),
+        //         CreateAt = DateTime.Now,
+        //         Status = ERequestStatus.Pending,
+        //         TenantID = userId,
+        //     };
+
+
+        //     // Xử lý dữ liệu & lưu ảnh nếu cần
+        //     if (request.images != null && request.images.Length > 0)
+        //     {
+        //         // Save image logic here
+        //         if (request.images.Length > 0)
+        //         {
+        //             var uploadParams = new ImageUploadParams
+        //             {
+        //                 File = new FileDescription(request.images.FileName, request.images.OpenReadStream()),
+        //                 Folder = "intern_motel_mate" // bạn có thể đổi tên folder trên Cloudinary
+        //             };
+
+        //             var uploadResult = await _cloudinary.UploadAsync(uploadParams);
+
+        //             if (uploadResult.StatusCode == System.Net.HttpStatusCode.OK)
+        //             {
+        //                 string imageUrl = uploadResult.SecureUrl.ToString();
+        //                 newRequest.Image = imageUrl;
+        //             }
+        //             else
+        //             {
+        //                 return StatusCode(500, new { Message = $"Upload failed for file {request.images.FileName}" });
+        //             }
+        //         }
+
+        //     }
+
+        //     // Lưu request vào DB...
+        //     _context.Request.Add(newRequest);
+        //     await _context.SaveChangesAsync();
+
+        //     return Ok(new { message = "Request created successfully" });
+        // }
+
+
+        [HttpPost("create-feedback-issue")]
+        public async Task<IActionResult> CreateRequest([FromForm] CreateRequestDTO request)
         {
             // Validate request
             if (!ModelState.IsValid)
@@ -280,6 +359,12 @@ namespace BACKEND.Controllers
 
             if (!int.TryParse(userIdStr, out var userId))
                 return Unauthorized("Invalid User ID");
+
+            var isMyTenant = _context.ContractDetail
+                                .FirstOrDefault(cd => cd.EndDate == null && cd.TenantID == userId);
+
+            if (isMyTenant == null)
+                return BadRequest(new { message = "You are not a tenant" });
 
             int ownerID = -1;
 
@@ -305,22 +390,23 @@ namespace BACKEND.Controllers
             {
                 Title = request.Title,
                 Content = request.Content,
-                Type = Enum.Parse<ERequestType>(request.Type),
+                Type = ERequestType.FeedBackOrIssue,
                 CreateAt = DateTime.Now,
                 Status = ERequestStatus.Pending,
                 TenantID = userId,
+                OwnerID = ownerID,
             };
 
 
             // Xử lý dữ liệu & lưu ảnh nếu cần
-            if (images != null && images.Length > 0)
+            if (request.images != null && request.images.Length > 0)
             {
                 // Save image logic here
-                if (images.Length > 0)
+                if (request.images.Length > 0)
                 {
                     var uploadParams = new ImageUploadParams
                     {
-                        File = new FileDescription(images.FileName, images.OpenReadStream()),
+                        File = new FileDescription(request.images.FileName, request.images.OpenReadStream()),
                         Folder = "intern_motel_mate" // bạn có thể đổi tên folder trên Cloudinary
                     };
 
@@ -333,7 +419,7 @@ namespace BACKEND.Controllers
                     }
                     else
                     {
-                        return StatusCode(500, new { Message = $"Upload failed for file {images.FileName}" });
+                        return StatusCode(500, new { Message = $"Upload failed for file {request.images.FileName}" });
                     }
                 }
 
@@ -345,5 +431,10 @@ namespace BACKEND.Controllers
 
             return Ok(new { message = "Request created successfully" });
         }
+
+
+
+
+
     }
 }

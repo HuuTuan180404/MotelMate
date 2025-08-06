@@ -1,0 +1,175 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+}
+
+.header-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--padding-margin);
+  margin: var(--padding-margin);
+  background-color: #fff;
+  border-radius: var(--border-radius);
+}
+
+.right-section {
+  display: flex;
+  gap: 0 var(--padding-margin);
+  align-items: center;
+}
+
+/* ô search */
+::ng-deep .mat-mdc-form-field-flex {
+  height: 100%;
+  align-items: center !important;
+}
+::ng-deep .search-field .mat-mdc-text-field-wrapper {
+  height: 2rem;
+  padding: 0 0.5rem;
+}
+::ng-deep .mdc-floating-label {
+  overflow: visible !important;
+}
+::ng-deep .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.search-field > .mat-mdc-form-field-flex {
+  margin: auto 0;
+}
+
+.search-field mat-label {
+  position: relative;
+  top: -12px;
+}
+
+.search-field {
+  width: 300px;
+}
+
+.search-field .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+/* button create*/
+.create-btn {
+  display: flex;
+  align-items: center;
+  padding: var(--padding-margin);
+  color: #fff;
+  border: none;
+  border-radius: 9999px;
+  background-color: var(--create-btn);
+  cursor: pointer;
+}
+
+.create-btn:hover {
+  background-color: var(--create-btn-hover);
+}
+
+/* table */
+.table-container {
+  border-radius: var(--border-radius);
+  margin: 0 var(--padding-margin);
+  margin-bottom: var(--padding-margin);
+  overflow-y: auto;
+}
+
+.table-container .mat-mdc-cell {
+  padding: 16px 12px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.table-container::-webkit-scrollbar {
+  display: none;
+}
+
+#fullName {
+  display: flex;
+  align-items: center;
+  gap: 0 1rem;
+}
+
+#fullName img {
+  height: 40px;
+  aspect-ratio: 1 / 1;
+  border-radius: 50%;
+}
+
+.sticky-header {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 1;
+}
+
+mat-paginator {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  border: 0.5px solid #e5e7eb;
+}
+
+::ng-deep tr:hover {
+  background-color: #f1f1f1;
+}
+
+.mat-mdc-table {
+  background-color: #ffffff;
+}
+
+/* Status Styles */
+.status {
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  text-transform: capitalize;
+  font-size: 0.875rem;
+  color: white;
+}
+
+.status.available {
+  background-color: #4caf50;
+}
+
+.status.lookingforroommate {
+  background-color: #f44336;
+}
+
+/* btn apply */
+.btnApply {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+
+  background-color: #74b2f0; /* Màu primary */
+  color: white;
+  border: none;
+  border-radius: 6px;
+
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btnApply:hover {
+  background-color: #1565c0;
+}
+
+.btnApply mat-icon {
+  font-size: 20px;
+  vertical-align: middle;
+}

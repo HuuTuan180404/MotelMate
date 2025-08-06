@@ -3,6 +3,10 @@ export interface RoomModel {
   roomNumber: string;
   price: number;
   status: string;
+  area: number;
+  maxGuests: number;
+  description: string;
+  buildingAddress: string;
   buildingID: number;
   buildingName: string;
   urlImage: string;

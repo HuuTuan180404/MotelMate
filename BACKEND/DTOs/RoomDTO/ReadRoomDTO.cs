@@ -11,8 +11,11 @@ namespace BACKEND.RoomDTO.DTOs
         public string RoomNumber { get; set; }
         public decimal Price { get; set; }
         public string Status { get; set; }
+        public double Area { get; set; }
+        public int MaxGuests { get; set; }
         public Nullable<int> BuildingID { get; set; }
         public required string BuildingName { get; set; }
+        public required string BuildingAddress { get; set; }
         public string RoomImageUrl { get; set; }
         public List<string> UrlAvatars { get; set; }
     }

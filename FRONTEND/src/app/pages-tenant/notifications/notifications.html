@@ -1,0 +1,63 @@
+<div class="notification-dialog">
+  <div class="dialog-header">
+    <h2>Thông báo</h2>
+    <div class="header-actions">
+      <span class="unread-count" *ngIf="getUnreadCount() > 0">
+        {{getUnreadCount()}} chưa đọc
+      </span>
+      <button
+        class="btn-mark-all"
+        *ngIf="getUnreadCount() > 0"
+        (click)="markAllAsRead()"
+      >
+        Đánh dấu tất cả đã đọc
+      </button>
+      <button class="btn-close" (click)="closeDialog()">
+        <span class="close-icon">&times;</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="dialog-content">
+    <div class="notifications-list">
+      <div
+        *ngFor="let notification of notifications"
+        class="notification-item"
+        [class.unread]="!notification.isRead"
+        (click)="markAsRead(notification)"
+      >
+        <div class="notification-header">
+          <div class="notification-title">
+            <span class="title-text">{{notification.title}}</span>
+            <span class="unread-dot" *ngIf="!notification.isRead"></span>
+          </div>
+          <div class="notification-actions">
+            <span class="notification-time"
+              >{{formatTimeAgo(notification.sentDate)}}</span
+            >
+            <button
+              class="btn-delete"
+              (click)="deleteNotification(notification.id); $event.stopPropagation()"
+              title="Xóa thông báo"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+
+        <div class="notification-content">{{notification.content}}</div>
+
+        <div class="notification-footer">
+          <span class="full-datetime"
+            >📅 {{formatDateTime(notification.sentDate)}}</span
+          >
+        </div>
+      </div>
+
+      <div *ngIf="notifications.length === 0" class="empty-state">
+        <div class="empty-icon">📭</div>
+        <p>Không có thông báo nào</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -30,7 +30,10 @@ export class RequestService {
     return this.http.get<EnumModel[]>(`${this.api}/enum/request-types`);
   }
 
-  createRequest(formData: FormData): Observable<any> {
-    return this.http.post(`${this.api}/request/create-request`, formData);
+  createRequestFeedbackOrIssue(formData: FormData): Observable<any> {
+    return this.http.post(
+      `${this.api}/request/create-feedback-issue`,
+      formData
+    );
   }
 }

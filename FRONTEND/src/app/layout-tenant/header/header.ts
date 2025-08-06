@@ -7,6 +7,7 @@ import { TenantModel } from '../../models/Tenant.model';
 import { Profile } from '../../pages/profile/profile';
 import { ProfileTenant } from '../../pages-tenant/profile-tenant/profile-tenant';
 import { SendRequest } from '../../pages-tenant/send-request/send-request';
+import { Notifications } from '../../pages-tenant/notifications/notifications';
 
 @Component({
   selector: 'app-header',
@@ -19,15 +20,12 @@ export class Header implements OnInit {
   profileImage = '../../assets/images/avatar_error.png';
   profileName = '';
   constructor(
-    private dialogSendMessage: MatDialog,
+    private dialog: MatDialog,
     private dialogProfile: MatDialog,
     private profileService: ProfileService
   ) {}
   ngOnInit(): void {
     this.refreshProfile();
-  }
-  sendMessage() {
-    this.openNotificationPopup();
   }
 
   openProfileDialog(): void {
@@ -43,8 +41,8 @@ export class Header implements OnInit {
     });
   }
 
-  openNotificationPopup(): void {
-    const dialogRef = this.dialogSendMessage.open(SendRequest, {
+  openSendRequestDialog(): void {
+    const dialogRef = this.dialog.open(SendRequest, {
       width: '600px',
       maxWidth: '90vw',
       disableClose: false,
@@ -57,6 +55,7 @@ export class Header implements OnInit {
       }
     });
   }
+
   refreshProfile() {
     this.profileService.getProfile().subscribe((data) => {
       this.profileImage =
@@ -64,7 +63,23 @@ export class Header implements OnInit {
       this.profileName = data.fullName;
     });
   }
+
   showSuccessMessage(): void {
     alert('Gửi thông báo thành công!');
+  }
+
+  openNotificationDialog(): void {
+    const dialogRef = this.dialog.open(Notifications, {
+      width: '600px',
+      maxWidth: '90vw',
+      maxHeight: '80vh',
+      disableClose: false,
+      autoFocus: false,
+      // panelClass: 'notification-dialog-panel',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      console.log('Dialog was closed');
+    });
   }
 }
