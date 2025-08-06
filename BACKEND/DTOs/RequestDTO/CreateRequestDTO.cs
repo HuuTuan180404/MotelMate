@@ -6,7 +6,6 @@ namespace BACKEND.DTOs.RequestDTO
     {
         public string Title { get; set; } = null!;
         public string Content { get; set; } = null!;
-        public string Type { get; set; } = null!;
         public int? BuildingID { get; set; }
         public IFormFile? images { get; set; }
 

@@ -6,6 +6,5 @@ namespace BACKEND.Enums
         ExtendContract,
         RoomRegistration,
         FeedBackOrIssue,
-        Other
     }
 }
