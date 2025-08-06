@@ -36,6 +36,7 @@ export class InvoiceDetail {
   editing = false;
   originalData: any;
   statuses = ['Paid', 'Unpaid', 'Overdue'];
+  role: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<InvoiceDetail>,
@@ -46,6 +47,7 @@ export class InvoiceDetail {
   ) {}
 
   ngOnInit() {
+    this.role = this.data.role;
     this.originalData = JSON.parse(JSON.stringify(this.data));
   }
 
@@ -54,6 +56,7 @@ export class InvoiceDetail {
   }
 
   startEdit() {
+    if (this.role !== 'owner') return;
     this.editing = true;
   }
 
@@ -99,6 +102,8 @@ export class InvoiceDetail {
   }
 
   delete() {
+    if (this.role !== 'owner') return;
+
     const dialogRef = this.dialog.open(ConfirmDialog, {
       data: {
         title: 'Confirm Delete',
@@ -139,4 +144,18 @@ export class InvoiceDetail {
       this.data.due = `${year}-${month}-${day}`;
     }
   }
+
+  payInvoice() {
+    console.log('Pay invoice:', this.data.invoiceID);
+    // TODO: Call API to handle payment
+    this.snackBar.open('Payment successful!', 'Close', {
+      duration: 2000,
+      verticalPosition: 'top',
+      panelClass: 'custom-snackbar-success'
+    });
+    this.data.status = 'Paid';
+    this.dialogRef.close({ action: 'pay', invoiceID: this.data.invoiceID });
+  }
+
+
 }

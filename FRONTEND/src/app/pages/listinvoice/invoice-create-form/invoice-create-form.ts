@@ -207,7 +207,12 @@ export class InvoiceCreateForm {
 
   private formatDate(date: Date): string {
     if (!date) return '';
-    const d = new Date(date);
-    return d.toISOString().split('T')[0]; // yyyy-MM-dd
+
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+
+    return `${year}-${month}-${day}`; // yyyy-MM-dd (Local date)
   }
+
 }

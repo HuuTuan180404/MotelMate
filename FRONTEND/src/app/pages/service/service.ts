@@ -209,7 +209,7 @@ export class Service implements OnInit{
       this.snackBar.open('Customer price must be greater than 0.', 'Close', { duration: 3000, verticalPosition: 'top', panelClass: 'custom-snackbar' });
       return;
     }
-    if (service.initialPrice <= 0) {
+    if (!service.isTiered && service.initialPrice <= 0) {
       this.snackBar.open('Initial price must be greater than 0.', 'Close', { duration: 3000, verticalPosition: 'top', panelClass: 'custom-snackbar' });
       return;
     }

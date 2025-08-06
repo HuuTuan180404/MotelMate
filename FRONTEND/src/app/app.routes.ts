@@ -32,7 +32,7 @@ export const routes: Routes = [
     canActivate: [AuthGuard],
     data: { expectedRole: 'Owner' },
     children: [
-      { path: 'invoices', component: Listinvoice },
+      { path: 'invoices', component: Listinvoice, data: { role: 'owner' } },
       { path: 'rooms', component: RoomManagement },
       { path: 'buildings', component: Buildingmanagement },
       { path: 'contracts', component: ContractComponent },
@@ -51,5 +51,8 @@ export const routes: Routes = [
     component: LayoutTenant,
     canActivate: [AuthGuard],
     data: { expectedRole: 'Tenant' },
+     children: [
+      { path: 'invoices', component: Listinvoice, data: { role: 'tenant' } },
+    ],
   },
 ];

@@ -21,6 +21,7 @@ export class Sidebar {
     { icon: 'dashboard', label: 'Dashboard', route: '' },
     { icon: 'bed', label: 'Room', route: '' },
     { icon: 'contract', label: 'Contract', route: '' },
+    { icon: 'receipt', label: 'Invoice', route: 'invoices' },
     {
       icon: 'payment',
       label: 'Requests',

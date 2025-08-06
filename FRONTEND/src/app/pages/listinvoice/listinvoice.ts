@@ -19,6 +19,7 @@ import { MatDateRangeInput, MatDateRangePicker } from '@angular/material/datepic
 import { InvoiceService } from '../../services/invoice-service';
 import { ReadInvoice } from '../../models/Invoice.model';
 import { ReadInvoiceDetail } from '../../models/Invoice.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-listinvoice',
@@ -62,14 +63,19 @@ export class Listinvoice {
     endDate: null
   };
 
+  role: string = '';
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   constructor(
+    private route: ActivatedRoute,
     private dialog: MatDialog,
     private invoiceService: InvoiceService) {}
 
   ngOnInit(): void {
+    this.role = this.route.snapshot.data['role'];
+
     this.invoiceService.getInvoices().subscribe({
       next: (data) => {
         this.invoices = data;
@@ -141,6 +147,8 @@ export class Listinvoice {
   }
 
   exportInvoices() {
+    if (this.role !== 'owner') return;
+
     const rows = this.dataSource.data;
     const header = ['Building', 'Room', 'Month', 'Due', 'Total', 'Status'];
     const csvRows = [
@@ -167,7 +175,8 @@ export class Listinvoice {
           width: '600px',
           data: {
             ...detail,
-            invoiceID: inv.invoiceID  
+            invoiceID: inv.invoiceID,
+            role: this.role  
           }
         });
 
@@ -188,6 +197,8 @@ export class Listinvoice {
 
 
   openCreateForm() {
+    if (this.role !== 'owner') return;
+
     const dialogRef = this.dialog.open(InvoiceCreateForm, {
       panelClass: 'custom-dialog-panel',
     });
