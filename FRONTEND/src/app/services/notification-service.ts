@@ -13,4 +13,8 @@ export class NotificationService {
   sendNotification(data: any): Observable<any> {
     return this.http.post(`${this.api}/Notification/send-notification`, data);
   }
+
+  tenantGetNotification(): Observable<any> {
+    return this.http.get(`${this.api}/Notification/tenant-get-notification`);
+  }
 }

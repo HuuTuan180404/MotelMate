@@ -92,5 +92,49 @@ namespace BACKEND.Controllers
 
             return Ok(new { message = "Thông báo đã được gửi thành công!" });
         }
+
+
+        [HttpGet("tenant-get-notification")]
+        public async Task<ActionResult<IEnumerable<ReadNotificationDTO>>> GetNotifications()
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdStr, out var tenantID))
+                return Unauthorized("User ID không hợp lệ.");
+
+            var notis = await _context.NotiRecipient
+                                    .Where(nr => nr.TenantID == tenantID)
+                                    .Include(nr => nr.Noti)
+                                        .ThenInclude(n => n.Owner)
+                                    .Select(s => new ReadNotificationDTO
+                                    {
+                                        NotiID = s.NotiID,
+                                        Title = s.Noti.Title,
+                                        Content = s.Noti.Content,
+                                        CreateAt = s.Noti.CreateAt,
+                                        IsRead = s.IsRead,
+                                    })
+                                    .ToListAsync();
+
+            if (notis == null)
+                return NotFound(new { message = "Not found any notification" });
+
+            return Ok(notis);
+        }
+
+
+        [HttpPatch("is-read")]
+        public async Task<IActionResult> IsRead(int notiID)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdStr, out var tenantID))
+                return Unauthorized("User ID không hợp lệ.");
+
+            var notiRecipient = await _context.NotiRecipient.FirstOrDefaultAsync(nr => nr.NotiID == notiID && nr.TenantID == tenantID);
+
+            if (notiRecipient == null)
+                return NotFound(new { message = "Not found this notification" });
+
+            return Ok();
+        }
     }
 }
