@@ -21,10 +21,11 @@ export class Sidebar {
     { icon: 'dashboard', label: 'Dashboard', route: 'dashboard' },
     { icon: 'bed', label: 'Room', route: 'room' },
     { icon: 'contract', label: 'Contract', route: '' },
+    { icon: 'receipt', label: 'Invoice', route: 'invoices' },
     {
-      icon: 'payment',
+      icon: 'request_page',
       label: 'Requests',
-      route: '',
+      route: 'requests',
     },
   ];
 

@@ -7,7 +7,7 @@
       <mat-icon>close</mat-icon>
     </button>
     <!-- Export button -->
-    <button mat-icon-button (click)="exportInvoices()" matTooltip="Export to csv">
+    <button *ngIf="role === 'owner'" mat-icon-button (click)="exportInvoices()" matTooltip="Export to csv">
       <mat-icon>file_upload</mat-icon>
     </button>
     <mat-form-field appearance="outline" class="search-field">
@@ -20,9 +20,9 @@
       />
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
-    <button mat-flat-button class="create-btn" (click)="openCreateForm()" matTooltip="Create Invoice">
+    <button *ngIf="role === 'owner'" mat-flat-button class="create-btn" (click)="openCreateForm()" matTooltip="Create Invoice">
       <mat-icon>add</mat-icon> Create
-  </button>
+    </button>
   </div>
 </div>
 
@@ -34,8 +34,10 @@
     <div class="filters-container">
       <mat-form-field appearance="outline" class="filter-field">
         <mat-select [(ngModel)]="filters.building" (selectionChange)="applyFilters()" placeholder="Building">
-          <mat-option value="">Building</mat-option>
-          <mat-option *ngFor="let b of buildings" [value]="b">{{ b }}</mat-option>
+          <mat-option value="">All Buildings</mat-option>
+          <mat-option *ngFor="let b of buildings" [value]="b.name">
+            {{ b.name }}
+          </mat-option>
         </mat-select>
         <mat-icon matSuffix>apartment</mat-icon>
       </mat-form-field>

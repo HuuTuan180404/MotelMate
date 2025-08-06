@@ -90,3 +90,9 @@ export interface BatchInvoiceDto {
     amount: number;
   }[];
 }
+
+export interface OwnerBankInfo {
+  accountNo: number;
+  accountName: string;
+  bankCode: number;
+}
