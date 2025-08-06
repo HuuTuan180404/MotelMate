@@ -1,56 +1,43 @@
 <div class="tenant-request-dialog">
   <h2 mat-dialog-title class="dialog-title">
     <mat-icon>mail_outline</mat-icon>
-    Gửi yêu cầu đến chủ nhà
+    Send Request to Landlord
   </h2>
 
   <mat-dialog-content class="dialog-content">
     <form [formGroup]="requestForm" class="request-form">
       <!-- Title Field -->
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Tiêu đề yêu cầu</mat-label>
+        <mat-label>Request Title</mat-label>
         <input
           matInput
           formControlName="title"
-          placeholder="Nhập tiêu đề yêu cầu..."
+          placeholder="Enter request title..."
           maxlength="100"
         />
         <mat-hint align="end">
           {{requestForm.get('title')?.value?.length || 0}}/100
         </mat-hint>
         <mat-error *ngIf="requestForm.get('title')?.hasError('required')">
-          Tiêu đề là bắt buộc
-        </mat-error>
-      </mat-form-field>
-
-      <!-- Request Type -->
-      <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Loại yêu cầu</mat-label>
-        <mat-select formControlName="requestType">
-          <mat-option *ngFor="let type of requestTypes" [value]="type.value">
-            {{type.name}}
-          </mat-option>
-        </mat-select>
-        <mat-error *ngIf="requestForm.get('requestType')?.hasError('required')">
-          Vui lòng chọn loại yêu cầu
+          Title is required
         </mat-error>
       </mat-form-field>
 
       <!-- Content Field -->
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Nội dung chi tiết</mat-label>
+        <mat-label>Detailed Content</mat-label>
         <textarea
           matInput
           formControlName="content"
-          placeholder="Mô tả chi tiết yêu cầu của bạn..."
+          placeholder="Describe your request in detail..."
           rows="4"
           maxlength="1000"
         ></textarea>
-        <mat-hint align="end"
-          >{{requestForm.get('content')?.value?.length || 0}}/1000</mat-hint
-        >
+        <mat-hint align="end">
+          {{requestForm.get('content')?.value?.length || 0}}/1000
+        </mat-hint>
         <mat-error *ngIf="requestForm.get('content')?.hasError('required')">
-          Nội dung là bắt buộc
+          Content is required
         </mat-error>
       </mat-form-field>
 
@@ -58,7 +45,7 @@
       <div class="image-upload-section">
         <div class="upload-header">
           <mat-icon>photo_camera</mat-icon>
-          <span>Hình ảnh minh họa (tối đa {{maxImages}} ảnh)</span>
+          <span>Illustration Images (maximum {{maxImages}} images)</span>
         </div>
 
         <div class="upload-area" *ngIf="images.length < maxImages">
@@ -79,7 +66,7 @@
             class="upload-button"
           >
             <mat-icon>add_photo_alternate</mat-icon>
-            Chọn ảnh
+            Choose Images
           </button>
         </div>
 
@@ -108,7 +95,7 @@
 
   <mat-dialog-actions class="dialog-actions">
     <button mat-button type="button" (click)="onCancel()" class="cancel-button">
-      Hủy
+      Cancel
     </button>
     <button
       mat-raised-button
@@ -119,7 +106,7 @@
       class="submit-button"
     >
       <mat-icon>send</mat-icon>
-      Gửi yêu cầu
+      Send Request
     </button>
   </mat-dialog-actions>
 </div>
