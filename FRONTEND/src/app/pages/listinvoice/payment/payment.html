@@ -1,0 +1,13 @@
+<h2 mat-dialog-title>Payment</h2>
+<div mat-dialog-content>
+  <p>Invoice Code: {{ data.invoiceCode }}</p>
+  <p>Total Amount: {{ data.total | number }} VND</p>
+  <div class="qr-container">
+    <img [src]="qrUrl" alt="Payment QR" />
+  </div>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="confirmPayment()">Confirm</button>
+</div>

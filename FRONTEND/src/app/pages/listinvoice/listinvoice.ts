@@ -20,6 +20,8 @@ import { InvoiceService } from '../../services/invoice-service';
 import { ReadInvoice } from '../../models/Invoice.model';
 import { ReadInvoiceDetail } from '../../models/Invoice.model';
 import { ActivatedRoute } from '@angular/router';
+import { Building } from '../../models/Building.model';
+import { BuildingService } from '../../services/building-service';
 
 @Component({
   selector: 'app-listinvoice',
@@ -52,7 +54,7 @@ export class Listinvoice {
   displayedColumns: string[] = ['building', 'room', 'month', 'due', 'total', 'status'];
 
   searchTerm = '';
-  buildings = ['Tòa nhà j', 'QHome'];
+  buildings: Building[] = []; 
   statuses = ['Paid', 'Overdue', 'Unpaid'];
 
   filters = {
@@ -71,19 +73,39 @@ export class Listinvoice {
   constructor(
     private route: ActivatedRoute,
     private dialog: MatDialog,
-    private invoiceService: InvoiceService) {}
+    private invoiceService: InvoiceService,
+    private buildingService: BuildingService) {}
 
   ngOnInit(): void {
     this.role = this.route.snapshot.data['role'];
 
-    this.invoiceService.getInvoices().subscribe({
+    if (this.role === 'owner') {
+      this.invoiceService.getInvoices().subscribe({
+        next: (data) => {
+          this.invoices = data;
+          this.applyFilters();
+        },
+        error: (err) => {
+          console.error('Failed to fetch invoices', err);
+        }
+      });
+    } else if (this.role === 'tenant') {
+      this.invoiceService.getInvoicesForTenant().subscribe({
+        next: (data) => {
+          this.invoices = data;
+          this.applyFilters();
+        },
+        error: (err) => {
+          console.error('Failed to fetch tenant invoices', err);
+        }
+      });
+    }
+
+    this.buildingService.getBuildings().subscribe({
       next: (data) => {
-        this.invoices = data;
-        this.applyFilters();
+        this.buildings = data;
       },
-      error: (err) => {
-        console.error('Failed to fetch invoices', err);
-      }
+      error: (err) => console.error('Failed to fetch buildings', err)
     });
   }
 

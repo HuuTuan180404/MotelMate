@@ -76,21 +76,27 @@
             <span class="extra-cost-tag">(Extra Cost)</span>
           </td>
           <td colspan="2"></td>
-          <td colspan="2">
+          <!-- <td *ngIf="role === 'owner'" ></td> Empty Initial Price column if Owner -->
+          <td *ngIf="role === 'owner'"  colspan="2" >
             <ng-container *ngIf="editing; else readonlyCostAmount">
               <input type="number" [(ngModel)]="cost.amount" min="0" />
             </ng-container>
             <ng-template #readonlyCostAmount>{{ cost.amount | number }}</ng-template>
           </td>
+          <td *ngIf="role === 'tenant'">{{ cost.amount | number }}</td>
         </tr>
+  
+
          <tr>
           <td>Room Price</td>
           <td colspan="2"></td>
-          <td colspan="2">{{ data.roomPrice | number }}</td>
+          <td *ngIf="role === 'owner'" colspan="2" >{{ data.roomPrice | number }}</td> <!-- Empty Initial Price column if Owner -->
+          <td *ngIf="role === 'tenant'">{{ data.roomPrice | number }}</td>
         </tr>
+
         <tr class="total-row">
           <td colspan="3"><strong>Total</strong></td>
-          <td>{{ data.totalInitialAmount | number }}</td>
+          <td *ngIf="role === 'owner'">{{ data.totalInitialAmount | number }}</td>
           <td>{{ data.total | number }}</td>
         </tr>
       </tbody>

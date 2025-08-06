@@ -23,9 +23,9 @@ export class Sidebar {
     { icon: 'contract', label: 'Contract', route: '' },
     { icon: 'receipt', label: 'Invoice', route: 'invoices' },
     {
-      icon: 'payment',
+      icon: 'request_page',
       label: 'Requests',
-      route: '',
+      route: 'requests',
     },
   ];
 
