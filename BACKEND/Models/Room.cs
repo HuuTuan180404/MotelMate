@@ -32,6 +32,9 @@ namespace BACKEND.Models
         public ERoomStatus Status { get; set; }
         public string? Description { get; set; }
 
+        [Required]
+        public int MaxGuests { get; set; }
+
         [ForeignKey(nameof(Building))]
         public Nullable<int> BuildingID { get; set; }
 

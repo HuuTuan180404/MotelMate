@@ -1,10 +1,12 @@
 import { ProfileService } from './../../services/profileservice';
 import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { SendNotification } from '../../pages/sendrequest/sendnotification';
+import { SendNotification } from '../../pages/send-notification/sendnotification';
 import { Observable } from 'rxjs';
 import { TenantModel } from '../../models/Tenant.model';
 import { Profile } from '../../pages/profile/profile';
+import { ProfileTenant } from '../../pages-tenant/profile-tenant/profile-tenant';
+import { SendRequest } from '../../pages-tenant/send-request/send-request';
 
 @Component({
   selector: 'app-header',
@@ -17,7 +19,7 @@ export class Header implements OnInit {
   profileImage = '../../assets/images/avatar_error.png';
   profileName = '';
   constructor(
-    private dialogSendRequest: MatDialog,
+    private dialogSendMessage: MatDialog,
     private dialogProfile: MatDialog,
     private profileService: ProfileService
   ) {}
@@ -29,7 +31,7 @@ export class Header implements OnInit {
   }
 
   openProfileDialog(): void {
-    const dialogRef = this.dialogProfile.open(Profile, {
+    const dialogRef = this.dialogProfile.open(ProfileTenant, {
       width: '60%',
       maxWidth: '60rem',
       maxHeight: '90vh',
@@ -42,17 +44,16 @@ export class Header implements OnInit {
   }
 
   openNotificationPopup(): void {
-    const dialogRef = this.dialogSendRequest.open(SendNotification, {
-      width: '50%',
+    const dialogRef = this.dialogSendMessage.open(SendRequest, {
+      width: '600px',
       maxWidth: '90vw',
-      maxHeight: '90vh',
+      disableClose: false,
+      autoFocus: true,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe((result: object) => {
       if (result) {
-        console.log('Kết quả từ popup:', result);
-        this.lastNotification = result;
-        this.showSuccessMessage();
+        console.log(result);
       }
     });
   }

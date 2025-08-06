@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Addroom } from './addroom';
+import { PagesTenant } from './pages-tenant';
 
-describe('Addroom', () => {
-  let component: Addroom;
-  let fixture: ComponentFixture<Addroom>;
+describe('PagesTenant', () => {
+  let component: PagesTenant;
+  let fixture: ComponentFixture<PagesTenant>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Addroom]
+      imports: [PagesTenant]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(Addroom);
+    fixture = TestBed.createComponent(PagesTenant);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

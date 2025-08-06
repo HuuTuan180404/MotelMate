@@ -1,4 +1,10 @@
-import { Component, inject, Inject, signal } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  Inject,
+  signal,
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import {
   FormControl,
@@ -69,12 +75,12 @@ export interface Building {
 export class AddContractDialogComponent {
   private _snackBar = inject(MatSnackBar);
   formData: ContractFormData = {
-    buildingID: 0,
+    buildingID: -1,
     room: '',
     start: new Date(),
     end: new Date(),
-    deposit: 0,
-    total: 0,
+    deposit: -1,
+    total: -1,
     cccd: '',
     status: 'Unsigned',
   };
@@ -103,21 +109,38 @@ export class AddContractDialogComponent {
 
   constructor(
     public dialogRef: MatDialogRef<AddContractDialogComponent>,
-    private http: HttpClient
+    private http: HttpClient,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private cdr: ChangeDetectorRef
   ) {
     this.http
-      .get<{ name: string, buildingID: number }[]>(`${this.apiUrl}/api/Building`)
+      .get<{ name: string; buildingID: number }[]>(
+        `${this.apiUrl}/api/Building`
+      )
       .subscribe((response) => {
         this.buildings = response.map((b) => ({
           buildingID: b.buildingID,
           name: b.name,
         }));
+        this.cdr.detectChanges();
       });
+
     this.http
       .get<any[]>(`${this.apiUrl}/api/Enum/contract-statuses`)
       .subscribe((response) => {
         this.statuses = response.map((item) => item.name);
+        this.cdr.detectChanges();
       });
+  }
+
+  ngAfterViewInit() {
+    if (this.data) {
+      this.formData.buildingID = this.data.buildingID;
+      this.roomCtrl.setValue(this.data.roomNumber);
+      this.depositCtrl.setValue(this.data.deposit);
+      this.totalCtrl.setValue(this.data.total);
+      this.cdr.detectChanges();
+    }
   }
 
   onCancel(): void {
@@ -141,6 +164,7 @@ export class AddContractDialogComponent {
       this.cccdCtrl.invalid
     )
       return;
+
     const createDTO: CreateContractDTO = {
       buildingID: this.formData.buildingID,
       roomNumber: this.formData.room,
@@ -150,8 +174,14 @@ export class AddContractDialogComponent {
       price: this.formData.total,
       cccd: this.formData.cccd,
     };
+
     this.contractService.createContract(createDTO).subscribe(
       (response) => {
+        this._snackBar.open('Contract created successfully', 'Close', {
+          duration: 4000,
+          panelClass: ['snackbar-success'],
+          verticalPosition: 'top',
+        });
         this.dialogRef.close(this.formData);
       },
       (error) => {

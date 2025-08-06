@@ -5,6 +5,7 @@ namespace BACKEND.Enums
         Payment,
         ExtendContract,
         RoomRegistration,
-        FeedBackOrIssue
+        FeedBackOrIssue,
+        Other
     }
 }

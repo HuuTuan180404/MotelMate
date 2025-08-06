@@ -11,6 +11,26 @@
     <div class="room-info">
       <!-- /* images */ -->
       <div class="gallery">
+        <input
+          type="file"
+          #fileInput
+          (change)="onFileSelected($event)"
+          multiple
+          accept="image/*"
+          style="display: none"
+        />
+
+        <button
+          class="upload-btn"
+          type="button"
+          mat-raised-button
+          color="primary"
+          (click)="fileInput.click()"
+        >
+          <mat-icon>cloud_upload</mat-icon>
+          Upload
+        </button>
+
         <div class="thumbnails" #scrollContainerThumbnails>
           <img
             *ngFor="let img of _roomDetail.urlRoomImages"
@@ -37,26 +57,6 @@
             delete
           </mat-icon>
         </div>
-
-        <input
-          type="file"
-          #fileInput
-          (change)="onFileSelected($event)"
-          multiple
-          accept="image/*"
-          style="display: none"
-        />
-
-        <button
-          class="upload-btn"
-          type="button"
-          mat-raised-button
-          color="primary"
-          (click)="fileInput.click()"
-        >
-          <mat-icon>cloud_upload</mat-icon>
-          Upload
-        </button>
       </div>
 
       <div class="info">
@@ -133,6 +133,16 @@
                     [(ngModel)]="_roomDetail.price"
                   />
                 </div>
+
+                <div>
+                  <label for="roomMaxGuests">Max Guests</label>
+                  <input
+                    id="roomMaxGuests"
+                    type="number"
+                    placeholder="0"
+                    [(ngModel)]="_roomDetail.maxGuests"
+                  />
+                </div>
               </div>
 
               <!-- description -->
@@ -156,12 +166,20 @@
             <mat-card-header class="card-header members-header">
               <mat-card-title class="card-header-title members-title">
                 <mat-icon>group</mat-icon>
-                Members
+                Members [
+                {{_roomDetail?.members?.length}}/{{_roomDetail?.maxGuests}} ]
               </mat-card-title>
               <div class="add-container">
                 <ng-container
-                  *ngIf="_roomDetail?.members?.length !== 0; else addContract"
+                  *ngIf="_roomDetail?.members?.length === 0 && _deleteMembers.length === 0; else addContract"
                 >
+                  <button mat-button class="btn-add" (click)="onAddContract()">
+                    <mat-icon>add</mat-icon>
+                    Create contract
+                  </button>
+                </ng-container>
+
+                <ng-template #addContract>
                   <mat-form-field appearance="outline" class="search-field">
                     <mat-label>Search to add</mat-label>
                     <input
@@ -178,13 +196,6 @@
                       <mat-icon>add</mat-icon>
                     </button>
                   </mat-form-field>
-                </ng-container>
-
-                <ng-template #addContract>
-                  <button mat-button class="btn-add" (click)="onAddContract()">
-                    <mat-icon>add</mat-icon>
-                    Create contract
-                  </button>
                 </ng-template>
               </div>
             </mat-card-header>
@@ -309,7 +320,8 @@
 
   <div mat-mat-dialog-actions class="dialog-actions">
     <div class="btn-container">
-      <button id="btnApply" (click)="onUpdateRoom()">Apply</button>
+      <button id="btnCancel" (click)="OnCancel()">Cancel</button>
+      <button id="btnApply" (click)="onUpdateRoom()">Save</button>
     </div>
   </div>
 </div>

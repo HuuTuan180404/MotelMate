@@ -1,0 +1,125 @@
+<div class="tenant-request-dialog">
+  <h2 mat-dialog-title class="dialog-title">
+    <mat-icon>mail_outline</mat-icon>
+    Gửi yêu cầu đến chủ nhà
+  </h2>
+
+  <mat-dialog-content class="dialog-content">
+    <form [formGroup]="requestForm" class="request-form">
+      <!-- Title Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Tiêu đề yêu cầu</mat-label>
+        <input
+          matInput
+          formControlName="title"
+          placeholder="Nhập tiêu đề yêu cầu..."
+          maxlength="100"
+        />
+        <mat-hint align="end">
+          {{requestForm.get('title')?.value?.length || 0}}/100
+        </mat-hint>
+        <mat-error *ngIf="requestForm.get('title')?.hasError('required')">
+          Tiêu đề là bắt buộc
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Request Type -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Loại yêu cầu</mat-label>
+        <mat-select formControlName="requestType">
+          <mat-option *ngFor="let type of requestTypes" [value]="type.value">
+            {{type.name}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="requestForm.get('requestType')?.hasError('required')">
+          Vui lòng chọn loại yêu cầu
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Content Field -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nội dung chi tiết</mat-label>
+        <textarea
+          matInput
+          formControlName="content"
+          placeholder="Mô tả chi tiết yêu cầu của bạn..."
+          rows="4"
+          maxlength="1000"
+        ></textarea>
+        <mat-hint align="end"
+          >{{requestForm.get('content')?.value?.length || 0}}/1000</mat-hint
+        >
+        <mat-error *ngIf="requestForm.get('content')?.hasError('required')">
+          Nội dung là bắt buộc
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Image Upload Section -->
+      <div class="image-upload-section">
+        <div class="upload-header">
+          <mat-icon>photo_camera</mat-icon>
+          <span>Hình ảnh minh họa (tối đa {{maxImages}} ảnh)</span>
+        </div>
+
+        <div class="upload-area" *ngIf="images.length < maxImages">
+          <input
+            type="file"
+            #fileInput
+            (change)="onFileSelected($event)"
+            accept="image/*"
+            multiple
+            style="display: none"
+          />
+
+          <button
+            type="button"
+            mat-raised-button
+            color="primary"
+            (click)="fileInput.click()"
+            class="upload-button"
+          >
+            <mat-icon>add_photo_alternate</mat-icon>
+            Chọn ảnh
+          </button>
+        </div>
+
+        <!-- Image Preview -->
+        <div class="image-preview-container" *ngIf="images.length > 0">
+          <div
+            class="image-preview"
+            *ngFor="let image of images; let i = index"
+          >
+            <img aria-label="Preview" [src]="image.url" [alt]="image.name" />
+            <button
+              type="button"
+              mat-icon-button
+              color="warn"
+              class="remove-image-btn"
+              (click)="removeImage(i)"
+            >
+              <mat-icon>close</mat-icon>
+            </button>
+            <div class="image-name">{{image.name}}</div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </mat-dialog-content>
+
+  <mat-dialog-actions class="dialog-actions">
+    <button mat-button type="button" (click)="onCancel()" class="cancel-button">
+      Hủy
+    </button>
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      (click)="onSubmit()"
+      [disabled]="requestForm.invalid"
+      class="submit-button"
+    >
+      <mat-icon>send</mat-icon>
+      Gửi yêu cầu
+    </button>
+  </mat-dialog-actions>
+</div>

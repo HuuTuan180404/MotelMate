@@ -24,6 +24,7 @@ namespace BACKEND.RoomDTO.DTOs
         public decimal Area { get; set; }
         public decimal Price { get; set; }
         public string? Status { get; set; }
+        public int MaxGuests { get; set; }
         public string? Description { get; set; }
 
         public Nullable<int> BuildingID { get; set; }
@@ -36,7 +37,6 @@ namespace BACKEND.RoomDTO.DTOs
 
         public List<string>? UrlRoomImages { get; set; }
         public List<ReadTenantDTO>? Members { get; set; }
-
         public List<object> AssetData { get; set; }
     }
 }

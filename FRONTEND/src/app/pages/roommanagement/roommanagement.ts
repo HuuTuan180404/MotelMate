@@ -266,18 +266,18 @@ export class RoomManagement implements OnInit, AfterViewInit {
       data: id,
     });
 
-    if (result) {
-      // const index = this.allRooms.findIndex((x) => x.roomID === id);
-      // this.allRooms.splice(index, 1);
-      this.loadAllRooms();
-    }
+    result.afterClosed().subscribe((result: RoomModel | undefined) => {
+      if (result) {
+        const index = this.displayedRooms.findIndex(
+          (room) => room.roomID === id
+        );
 
-    // this.roomService.getRoomById(id).subscribe({
-    //   next: (data) => {},
-    //   error: (error) => {
-    //     console.error('Error loading room detail:', error);
-    //   },
-    // });
+        if (index !== -1) {
+          this.displayedRooms[index] = result;
+          this.cdr.detectChanges();
+        }
+      }
+    });
   }
 
   onClick_btnCreate(): void {

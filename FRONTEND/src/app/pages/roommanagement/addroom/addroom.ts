@@ -103,6 +103,10 @@ export class AddRoom {
         '',
         [Validators.required, Validators.min(1), Validators.max(1000)],
       ],
+      maxGuests: [
+        '',
+        [Validators.required, Validators.min(1), Validators.max(30)],
+      ],
       price: ['', [Validators.required, Validators.min(0)]],
       description: ['', [Validators.maxLength(1000)]],
     });
