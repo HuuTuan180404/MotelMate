@@ -119,8 +119,12 @@ export class RoomManagement implements OnInit, AfterViewInit {
             roomNumber: x.roomNumber,
             price: x.price,
             status: x.status,
+            area: x.area,
+            maxGuests: x.maxGuests,
+            description: x.description,
             buildingID: x.buildingID,
             buildingName: x.buildingName,
+            buildingAddress: x.address,
             urlImage: x.roomImageUrl,
             urlAvatars: x.urlAvatars ?? [],
           })
