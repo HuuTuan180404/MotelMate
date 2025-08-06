@@ -37,7 +37,6 @@ namespace BACKEND.Models
 
         [ForeignKey(nameof(Building))]
         public Nullable<int> BuildingID { get; set; }
-
         public virtual ICollection<RoomAsset> RoomAssets { get; set; }
         public required virtual Building Building { get; set; }
         public virtual ICollection<Contract> Contracts { get; set; }

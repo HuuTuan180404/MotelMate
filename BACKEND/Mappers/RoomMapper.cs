@@ -18,7 +18,6 @@ namespace BACKEND.Mappers
                                                                             .SelectMany(c => c.ContractDetail)
                                                                             .Where(cd => cd.Tenant != null && !string.IsNullOrEmpty(cd.Tenant.URLAvatar))
                                                                             .Select(cd => cd.Tenant.URLAvatar)
-                                                                            .Distinct()
                                                                             .ToList()));
 
             CreateMap<Room, ReadRoomDetailDTO>()

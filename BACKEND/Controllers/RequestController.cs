@@ -270,7 +270,7 @@ namespace BACKEND.Controllers
 
         // ===============TENANT=================
         [HttpPost("create-request")]
-        public async Task<IActionResult> CreateRequest([FromForm] CreateRequestDTO request, [FromForm] IFormFile? images)
+        public async Task<IActionResult> CreateRequest([FromForm] CreateRequestDTO request)
         {
             // Validate request
             if (!ModelState.IsValid)
@@ -313,14 +313,14 @@ namespace BACKEND.Controllers
 
 
             // Xử lý dữ liệu & lưu ảnh nếu cần
-            if (images != null && images.Length > 0)
+            if (request.images != null && request.images.Length > 0)
             {
                 // Save image logic here
-                if (images.Length > 0)
+                if (request.images.Length > 0)
                 {
                     var uploadParams = new ImageUploadParams
                     {
-                        File = new FileDescription(images.FileName, images.OpenReadStream()),
+                        File = new FileDescription(request.images.FileName, request.images.OpenReadStream()),
                         Folder = "intern_motel_mate" // bạn có thể đổi tên folder trên Cloudinary
                     };
 
@@ -333,7 +333,7 @@ namespace BACKEND.Controllers
                     }
                     else
                     {
-                        return StatusCode(500, new { Message = $"Upload failed for file {images.FileName}" });
+                        return StatusCode(500, new { Message = $"Upload failed for file {request.images.FileName}" });
                     }
                 }
 
