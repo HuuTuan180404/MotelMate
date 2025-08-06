@@ -40,4 +40,10 @@ export class RoomService {
   getRoom_Tenant(): Observable<RoomDetailModel> {
     return this.http.get<RoomDetailModel>(`${this.apiUrl}/room/by-tenant-id`);
   }
+
+  getAllRooms_Tenant(): Observable<RoomModel[]> {
+    return this.http.get<RoomModel[]>(
+      `${this.apiUrl}/room/get-all-room-for-tenant`
+    );
+  }
 }

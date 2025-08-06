@@ -18,6 +18,7 @@ import { OwnerRegister } from './auth/register/owner-register/owner-register';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
 import { LayoutTenant } from './layout-tenant/layout';
 import { RoomManagementTenant } from './pages-tenant/room-management-tenant/room-management-tenant';
+import { DashboardTenant } from './pages-tenant/dashboard-tenant/dashboard-tenant';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -56,6 +57,10 @@ export const routes: Routes = [
       {
         path: 'room-tenant',
         component: RoomManagementTenant,
+      },
+      {
+        path: 'dashboard-tenant',
+        component: DashboardTenant,
       },
     ],
   },
