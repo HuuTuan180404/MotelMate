@@ -58,6 +58,10 @@ export const routes: Routes = [
         path: 'room-tenant',
         component: RoomManagementTenant,
       },
+      { path: 'requests/payment', component: Requests },
+      { path: 'requests/room-registration', component: Requests },
+      { path: 'requests/feedbackorissue', component: Requests },
+      { path: 'requests/extend-contract', component: Requests },
     ],
   },
 ];
