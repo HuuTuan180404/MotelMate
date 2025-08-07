@@ -32,14 +32,14 @@ namespace BACKEND.Controllers
         [HttpGet("with-rooms")]
         public async Task<ActionResult<IEnumerable<object>>> GetBuildingsWithRooms()
         {
-            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (!long.TryParse(userIdStr, out var ownerId))
-            {
-                return Unauthorized("User ID not found or invalid");
-            }
+            // var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // if (!long.TryParse(userIdStr, out var ownerId))
+            // {
+            //     return Unauthorized("User ID not found or invalid");
+            // }
             var buildingRooms = await _context.Building
                                                 .Include(r => r.Rooms)
-                                                .Where(b => b.OwnerID == ownerId)
+                                                // .Where(b => b.OwnerID == ownerId)
                                                 .Select(b => new
                                                 {
                                                     BuildingID = b.BuildingID,
