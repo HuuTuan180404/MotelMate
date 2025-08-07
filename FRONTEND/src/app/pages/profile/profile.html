@@ -1,5 +1,5 @@
 <div class="dialog-header">
-  <h2>Profile</h2>
+  <span>Profile</span>
 </div>
 
 <!-- Body -->
@@ -156,9 +156,9 @@
 
 <!-- Footer -->
 <div class="dialog-footer">
-  <button mat-stroked-button (click)="dialogRef.close()">Close</button>
-  <button mat-stroked-button color="warn" *ngIf="editMode()" (click)="cancelEdit()">Cancel</button>
-  <button mat-stroked-button color="primary" *ngIf="!editMode()" (click)="enableEdit()">Edit</button>
+  <button mat-button (click)="dialogRef.close()">Close</button>
+  <button mat-raised-button color="warn" *ngIf="editMode()" (click)="cancelEdit()">Cancel</button>
+  <button mat-raised-button color="primary" *ngIf="!editMode()" (click)="enableEdit()">Edit</button>
   <button mat-flat-button color="primary" *ngIf="editMode()" (click)="accept()"
     [disabled]="form.invalid || !editMode() || !hasChanges()">
     Accept
