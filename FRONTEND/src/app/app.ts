@@ -8,7 +8,12 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NgIf, AsyncPipe, MatProgressSpinnerModule],
+  imports: [
+    RouterOutlet,
+    NgIf,
+    AsyncPipe,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
