@@ -31,7 +31,6 @@ namespace BACKEND.Service
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName)
             };
             claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
