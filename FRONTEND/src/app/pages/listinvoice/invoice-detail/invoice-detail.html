@@ -49,7 +49,7 @@
           <th>Description</th>
           <th>Quantity</th>
           <th>Unit</th>
-          <th>Initial Price</th>
+          <th *ngIf="role === 'owner'">Initial Price</th>
           <th>Price</th>
         </tr>
       </thead>
@@ -63,7 +63,7 @@
             <ng-template #readonlyQuantity>{{ s.quantity }}</ng-template>
           </td>
           <td>{{ s.unit }}</td>
-          <td>{{ s.initialPrice | number }}</td>
+          <td *ngIf="role === 'owner'">{{ s.initialPrice | number }}</td>
           <td>{{ s.price | number }}</td>
         </tr>
 
@@ -76,21 +76,27 @@
             <span class="extra-cost-tag">(Extra Cost)</span>
           </td>
           <td colspan="2"></td>
-          <td colspan="2">
+          <!-- <td *ngIf="role === 'owner'" ></td> Empty Initial Price column if Owner -->
+          <td *ngIf="role === 'owner'"  colspan="2" >
             <ng-container *ngIf="editing; else readonlyCostAmount">
               <input type="number" [(ngModel)]="cost.amount" min="0" />
             </ng-container>
             <ng-template #readonlyCostAmount>{{ cost.amount | number }}</ng-template>
           </td>
+          <td *ngIf="role === 'tenant'">{{ cost.amount | number }}</td>
         </tr>
+  
+
          <tr>
           <td>Room Price</td>
           <td colspan="2"></td>
-          <td colspan="2">{{ data.roomPrice | number }}</td>
+          <td *ngIf="role === 'owner'" colspan="2" >{{ data.roomPrice | number }}</td> <!-- Empty Initial Price column if Owner -->
+          <td *ngIf="role === 'tenant'">{{ data.roomPrice | number }}</td>
         </tr>
+
         <tr class="total-row">
           <td colspan="3"><strong>Total</strong></td>
-          <td>{{ data.totalInitialAmount | number }}</td>
+          <td *ngIf="role === 'owner'">{{ data.totalInitialAmount | number }}</td>
           <td>{{ data.total | number }}</td>
         </tr>
       </tbody>
@@ -101,12 +107,22 @@
 <!-- Actions -->
 <div mat-dialog-actions align="end">
   <ng-container *ngIf="!editing">
-    <button mat-icon-button color="primary" matTooltip="Edit" (click)="editing = true">
-      <mat-icon style="color: #45a9ea;">edit</mat-icon>
-    </button>
-    <button mat-icon-button color="warn" matTooltip="Delete" (click)="delete()">
-      <mat-icon style="color: #f44336;">delete</mat-icon>
-    </button>
+    <!-- EDIT & DELETE only for Owner -->
+    <ng-container *ngIf="role === 'owner'&& (data.status === 'Unpaid' || data.status === 'Overdue')">
+      <button mat-icon-button color="primary" matTooltip="Edit" (click)="startEdit()">
+        <mat-icon style="color: #45a9ea;">edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" matTooltip="Delete" (click)="delete()">
+        <mat-icon style="color: #f44336;">delete</mat-icon>
+      </button>
+    </ng-container>
+
+    <!-- PAY button for Tenant when Unpaid -->
+    <ng-container *ngIf="role === 'tenant' && data.status === 'Unpaid'">
+      <button mat-raised-button color="primary" (click)="payInvoice()">
+        Pay Now
+      </button>
+    </ng-container>
   </ng-container>
 
   <ng-container *ngIf="editing">
@@ -118,3 +134,4 @@
     </button>
   </ng-container>
 </div>
+

@@ -1,4 +1,4 @@
-<div class="notification-dialog">
+<div class="notification-dialog" *ngIf="notifications.length !== 0">
   <div class="dialog-header">
     <h2>Thông báo</h2>
     <div class="header-actions">
@@ -32,12 +32,12 @@
             <span class="unread-dot" *ngIf="!notification.isRead"></span>
           </div>
           <div class="notification-actions">
-            <span class="notification-time"
-              >{{formatTimeAgo(notification.sentDate)}}</span
-            >
+            <span class="notification-time">
+              {{formatTimeAgo(notification.createAt)}}
+            </span>
             <button
               class="btn-delete"
-              (click)="deleteNotification(notification.id); $event.stopPropagation()"
+              (click)="deleteNotification(notification.notiID); $event.stopPropagation()"
               title="Xóa thông báo"
             >
               🗑️
@@ -48,9 +48,9 @@
         <div class="notification-content">{{notification.content}}</div>
 
         <div class="notification-footer">
-          <span class="full-datetime"
-            >📅 {{formatDateTime(notification.sentDate)}}</span
-          >
+          <span class="full-datetime">
+            📅 {{formatDateTime(notification.createAt)}}
+          </span>
         </div>
       </div>
 
@@ -60,4 +60,9 @@
       </div>
     </div>
   </div>
+</div>
+
+<div *ngIf="notifications.length === 0" class="empty-state">
+  <div class="empty-icon">📭</div>
+  <p>Chưa có thông báo nào</p>
 </div>

@@ -7,7 +7,7 @@ using BACKEND.Data;
 using AutoMapper.QueryableExtensions;
 using BACKEND.Enums;
 using System.Security.Claims;
-
+using Microsoft.AspNetCore.Authorization;
 
 namespace BACKEND.Controllers
 {
@@ -19,6 +19,7 @@ namespace BACKEND.Controllers
         private readonly IMapper _mapper = mapper;
 
         // GET: api/Invoice
+        [Authorize(Policy = "Owner")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReadInvoiceDTO>>> GetInvoices()
         {
@@ -31,6 +32,34 @@ namespace BACKEND.Controllers
 
             return Ok(invoices);
         }
+
+        //
+        [Authorize(Policy = "Tenant")]
+        [HttpGet("fortenant")]
+        public async Task<ActionResult<IEnumerable<ReadInvoiceDTO>>> GetInvoicesForTenant()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Unauthorized("User not authenticated.");
+            }
+
+            var tenantId = int.Parse(userId);
+
+            var invoices = await _context.Invoice
+                .Include(i => i.Contract)
+                    .ThenInclude(c => c.Room)
+                        .ThenInclude(r => r.Building)
+                .Include(i => i.Contract)
+                    .ThenInclude(c => c.ContractDetail)
+                .Where(i => i.Contract.ContractDetail.Any(cd => cd.TenantID == tenantId && cd.EndDate == null))
+                .ProjectTo<ReadInvoiceDTO>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+            return Ok(invoices);
+        }
+
+
 
         // GET: api/Invoice/{id}
         [HttpGet("{id}")]
@@ -175,7 +204,7 @@ namespace BACKEND.Controllers
 
             return NoContent();
         }
-        
+
         [HttpGet("Draft")]
         public async Task<IActionResult> GetInvoiceDrafts([FromQuery] int buildingId, [FromQuery] DateOnly periodStart, [FromQuery] DateOnly periodEnd, [FromQuery] DateOnly dueDate)
         {
@@ -286,17 +315,17 @@ namespace BACKEND.Controllers
                 }
 
                 foreach (var extra in dto.ExtraCosts)
+                {
+                    var extraCost = new ExtraCost
                     {
-                        var extraCost = new ExtraCost
-                        {
-                            Invoice = invoice,
-                            Description = extra.Description,
-                            Amount = extra.Amount
-                        };
+                        Invoice = invoice,
+                        Description = extra.Description,
+                        Amount = extra.Amount
+                    };
 
-                        invoice.TotalAmount += extra.Amount;
-                        _context.ExtraCosts.Add(extraCost);
-                    }
+                    invoice.TotalAmount += extra.Amount;
+                    _context.ExtraCosts.Add(extraCost);
+                }
 
                 _context.Invoice.Update(invoice);
 
@@ -328,6 +357,82 @@ namespace BACKEND.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "Invoices created and notifications sent." });
+        }
+        
+        [HttpPost("{invoiceId}/create-payment-request")]
+        [Authorize(Policy = "Tenant")]
+        public async Task<IActionResult> CreatePaymentRequest(int invoiceId)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+
+            var tenantId = int.Parse(userIdStr);
+
+            var invoice = await _context.Invoice
+                .Include(i => i.Contract)
+                    .ThenInclude(c => c.Room)
+                        .ThenInclude(r => r.Building)
+                            .ThenInclude(b => b.Owner)
+                .FirstOrDefaultAsync(i => i.InvoiceID == invoiceId);
+
+            if (invoice == null)
+                return NotFound("Invoice not found.");
+
+            // Kiểm tra xem Tenant hiện tại có quyền với Invoice này (ContractDetail đang active)
+            var activeContractDetail = await _context.ContractDetail
+                .FirstOrDefaultAsync(cd => cd.ContractID == invoice.ContractID && cd.TenantID == tenantId && cd.EndDate == null);
+
+            if (activeContractDetail == null)
+                return Forbid("You are not allowed to create payment request for this invoice.");
+
+            // Kiểm tra đã có Request Payment chưa (tránh spam)
+            var existedRequest = await _context.Request
+                .FirstOrDefaultAsync(r => r.Type == ERequestType.Payment && r.Title == invoice.InvoiceCode && r.TenantID == tenantId && r.Status == ERequestStatus.Pending);
+
+            if (existedRequest != null)
+                return BadRequest("A payment request for this invoice is already pending approval.");
+
+            var request = new Request
+            {
+                TenantID = tenantId,
+                OwnerID = invoice.Contract.Room.Building.OwnerID,
+                Type = ERequestType.Payment,
+                Title = invoice.InvoiceCode,
+                Content = $"Tenant requests payment approval for invoice {invoice.InvoiceCode}.",
+                Status = ERequestStatus.Pending,
+                CreateAt = DateTime.Now
+            };
+
+            _context.Request.Add(request);
+            await _context.SaveChangesAsync();
+
+            return Ok("Payment request created successfully.");
+        }
+
+        [HttpGet("{invoiceId}/owner-bank-info")]
+        public async Task<ActionResult<GetBankDTO>> GetOwnerBankInfo(int invoiceId)
+        {
+            var invoice = await _context.Invoice
+                .Include(i => i.Contract)
+                    .ThenInclude(c => c.Room)
+                        .ThenInclude(r => r.Building)
+                            .ThenInclude(b => b.Owner)
+                .FirstOrDefaultAsync(i => i.InvoiceID == invoiceId);
+
+            if (invoice == null) return NotFound("Invoice not found.");
+
+            var owner = invoice.Contract?.Room?.Building?.Owner;
+
+            if (owner == null) return NotFound("Owner not found.");
+
+            var result = new GetBankDTO
+            {
+                AccountNo = owner.AccountNo,
+                AccountName = owner.AccountName,
+                BankCode = owner.BankCode
+            };
+
+            return Ok(result);
         }
 
     }

@@ -27,7 +27,7 @@ import { MatInputModule } from '@angular/material/input';
 import { BuildingWithRoomsModel } from '../../models/Building.model';
 import { BuildingService } from '../../services/building-service';
 import { NotificationService } from '../../services/notification-service';
-import { CreateNotificationDTO } from '../../models/SendNotification.model';
+import { CreateNotificationDTO } from '../../models/Notification.model';
 import { DialogAction, ReusableDialog } from '../dialog/dialog';
 
 @Component({

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { ReadInvoice, ReadInvoiceDetail, UpdateInvoice, BatchInvoiceDto, InvoiceDraftDto } from '../models/Invoice.model';
+import { ReadInvoice, ReadInvoiceDetail, UpdateInvoice, BatchInvoiceDto, InvoiceDraftDto, OwnerBankInfo } from '../models/Invoice.model';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +14,10 @@ export class InvoiceService {
 
   getInvoices(): Observable<ReadInvoice[]> {
     return this.http.get<ReadInvoice[]>(this.apiUrl);
+  }
+
+  getInvoicesForTenant(): Observable<ReadInvoice[]> {
+    return this.http.get<ReadInvoice[]>(`${this.apiUrl}/fortenant`);
   }
 
   getInvoiceDetail(id: number): Observable<ReadInvoiceDetail> {
@@ -41,5 +45,14 @@ export class InvoiceService {
   batchCreateWithNotification(data: BatchInvoiceDto[]): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/BatchCreateWithNotification`, data);
   }
+
+  createPaymentRequest(invoiceId: number): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${invoiceId}/create-payment-request`, {});
+  }
+
+  getOwnerBankInfo(invoiceId: number): Observable<OwnerBankInfo> {
+    return this.http.get<OwnerBankInfo>(`${this.apiUrl}/${invoiceId}/owner-bank-info`);
+  }
+
 
 }

@@ -259,6 +259,24 @@
   border-left: 4px solid #6e9ec5;
 }
 
+.no-room-message {
+  text-align: center;
+  padding: 2rem;
+  background-color: var(--bg-color);
+  border-radius: 8px;
+  color: #444;
+  margin-top: 2rem;
+}
+
+.icon-container {
+  margin-bottom: 1rem;
+}
+
+.no-room-icon {
+  /* font-size: 86px; */
+  color: #f44336; /* Red (warn) */
+}
+
 /* Responsive design */
 @media (max-width: 768px) {
   .room-detail-container {

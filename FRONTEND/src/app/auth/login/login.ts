@@ -57,7 +57,7 @@ export class Login {
 
   async ngOnInit() {
     if (!this.authService.hasToken()) this.authService.refreshToken();
-    if (this.authService.hasToken()){
+    if (this.authService.hasToken()) {
       if (this.authService.getRole() === 'Tenant') {
         this.router.navigate(['/tenant']);
       } else {
@@ -73,7 +73,7 @@ export class Login {
     this.authService.login({ username, password }).subscribe({
       next: () => {
         if (this.authService.getRole() === 'Tenant') {
-          this.router.navigate(['/tenant']);
+          this.router.navigate(['/tenant/dashboard']);
         } else {
           this.router.navigate(['/dashboard']);
         }

@@ -36,9 +36,9 @@ import { MatButtonModule } from '@angular/material/button';
   templateUrl: './dashboard-tenant.html',
   styleUrl: './dashboard-tenant.css',
 })
-export class DashboardTenant implements AfterViewInit, OnInit {
+export class DashboardTenant implements AfterViewInit {
   searchText: string = '';
-  _allRoom: RoomModel[] = [];
+  _allRoom!: RoomModel[];
 
   dataSource: MatTableDataSource<RoomModel> = new MatTableDataSource(
     this._allRoom
@@ -58,9 +58,7 @@ export class DashboardTenant implements AfterViewInit, OnInit {
     private dialog: MatDialog,
     private roomService: RoomService,
     private cdr: ChangeDetectorRef
-  ) {}
-
-  ngOnInit(): void {
+  ) {
     this.roomService.getAllRooms_Tenant().subscribe({
       next: (data) => {
         this._allRoom = data;

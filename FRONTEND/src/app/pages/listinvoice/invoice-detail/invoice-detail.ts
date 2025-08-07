@@ -14,6 +14,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { UpdateInvoice, UpdateExtraCost, UpdateInvoiceDetail } from '../../../models/Invoice.model';
+import { Payment } from '../payment/payment';
 
 @Component({
   selector: 'app-invoice-detail',
@@ -36,6 +37,7 @@ export class InvoiceDetail {
   editing = false;
   originalData: any;
   statuses = ['Paid', 'Unpaid', 'Overdue'];
+  role: string = '';
 
   constructor(
     public dialogRef: MatDialogRef<InvoiceDetail>,
@@ -46,6 +48,7 @@ export class InvoiceDetail {
   ) {}
 
   ngOnInit() {
+    this.role = this.data.role;
     this.originalData = JSON.parse(JSON.stringify(this.data));
   }
 
@@ -54,6 +57,7 @@ export class InvoiceDetail {
   }
 
   startEdit() {
+    if (this.role !== 'owner') return;
     this.editing = true;
   }
 
@@ -99,6 +103,8 @@ export class InvoiceDetail {
   }
 
   delete() {
+    if (this.role !== 'owner') return;
+
     const dialogRef = this.dialog.open(ConfirmDialog, {
       data: {
         title: 'Confirm Delete',
@@ -139,4 +145,24 @@ export class InvoiceDetail {
       this.data.due = `${year}-${month}-${day}`;
     }
   }
+
+  payInvoice() {
+    const dialogRef = this.dialog.open(Payment, {
+      width: '400px',
+      data: {
+        invoiceID: this.data.invoiceID,
+        invoiceCode: this.data.invoiceCode,
+        total: this.data.total
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result?.paid) {
+        // Call API update status -> 'Paid' here
+        this.data.status = 'Paid';
+      }
+    });
+  }
+
+
 }

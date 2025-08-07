@@ -235,6 +235,19 @@
     gap: 8px;
   }
 }
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #888;
+  font-style: italic;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
 /* 
 // notification.service.ts (Optional service để quản lý thông báo)
 import { Injectable } from '@angular/core';

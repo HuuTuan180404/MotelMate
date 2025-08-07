@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RoomService } from '../../services/roomservice';
 import { RoomDetailModel } from '../../models/RoomDetail.model';
+import { MatIconModule } from '@angular/material/icon';
 interface Room {
   roomID: number;
   currentOccupants: number;
@@ -25,7 +26,7 @@ interface Building {
 
 @Component({
   selector: 'app-room-management-tenant',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, MatIconModule],
   templateUrl: './room-management-tenant.html',
   styleUrl: './room-management-tenant.css',
 })
