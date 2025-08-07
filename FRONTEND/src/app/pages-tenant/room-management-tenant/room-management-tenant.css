@@ -13,14 +13,24 @@
   margin: 0 auto;
 }
 
-.main-container .header{
+.main-container .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
+  transition: box-shadow 0.3s ease;
+  border-radius: 10px;
+  height: 60px;
+  box-shadow: 4px 4px 4px 4px rgba(0, 0, 0, 0.1);
+}
+.header h2{
+  margin-left: 2%;
+}
+.header .action-container{
+  margin-right: 1%;
 }
 
-.action-container{
+.action-container {
   display: flex;
   gap: 1rem;
 }
