@@ -26,7 +26,6 @@ namespace BACKEND.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<DashboardInfoDTO>>> GetDashboardInfo()
         {
-            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var buildings = _context.Building
                 .Include(b => b.Owner)
                 .Include(b => b.Rooms)
@@ -35,7 +34,7 @@ namespace BACKEND.Controllers
                 .Include(b => b.Rooms)
                     .ThenInclude(r => r.Contracts)
                         .ThenInclude(c => c.Invoice)
-                .Where(b => b.Owner.Id == int.Parse(userIdStr));
+                .Include(b => b.Rooms);
             var buildingList = await buildings.ToListAsync();
             if (buildingList.Count == 0)
             {

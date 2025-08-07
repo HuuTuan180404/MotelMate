@@ -15,8 +15,7 @@
       {{ showPasswordSection() ? 'Cancel Password Change' : 'Change Password' }}
     </button>
 
-    <div class="password-section" [@slideToggle]="showPasswordSection() ? 'open' : 'closed'"
-      *ngIf="showPasswordSection()">
+    <div class="password-section" [@slideToggle]="showPasswordSection() ? 'open' : 'closed'">
       <form [formGroup]="changePasswordForm">
         <mat-form-field class="hihi change-password-element" appearance="outline">
           <mat-label>Old Password</mat-label>
@@ -65,7 +64,9 @@
       </form>
 
       <button class="change-password-btn" mat-flat-button color="accent" (click)="changePassword()"
-        [disabled]="changePasswordForm.invalid">Submit</button>
+        [disabled]="changePasswordForm.invalid">
+        Submit
+      </button>
     </div>
   </div>
 

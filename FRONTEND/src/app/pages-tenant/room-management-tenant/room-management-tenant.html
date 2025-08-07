@@ -2,8 +2,19 @@
   <ng-container *ngIf="room; else noRoom">
     <div class="room-detail-container">
       <div class="main-content">
-        <h2>Thông tin chi tiết phòng {{room?.roomNumber}}</h2>
-
+        <div class="header">
+          <h2>Thông tin chi tiết phòng {{room?.roomNumber}}</h2>
+          <div class="action-container">
+            <button class="action-btn" mat-icon-button matTooltip="Sign contract" color="primary"
+              *ngIf="!_isContractSigned" (click)="signContract()">
+              <mat-icon>draw</mat-icon>
+            </button>
+            <button class="action-btn" mat-icon-button matTooltip="Download contract" color="primary"
+              (click)="downloadContract()">
+              <mat-icon>download</mat-icon>
+            </button>
+          </div>
+        </div>
         <!-- Gallery ảnh phòng -->
         <div class="card image-gallery">
           <div class="card-header">
@@ -12,23 +23,12 @@
           <div class="card-body" *ngIf="hasImages">
             <div class="gallery-container">
               <div class="main-image">
-                <img
-                  [src]="_currentImage"
-                  alt="Ảnh phòng {{selectedImageIndex + 1}}"
-                  class="main-img"
-                />
+                <img [src]="_currentImage" alt="Ảnh phòng {{selectedImageIndex + 1}}" class="main-img" />
               </div>
               <div class="thumbnail-list">
-                <div
-                  *ngFor="let image of room?.urlRoomImages; let i = index"
-                  class="thumbnail-item"
-                  (click)="selectImage(image)"
-                >
-                  <img
-                    [src]="image"
-                    alt="Thumbnail {{i + 1}}"
-                    class="thumbnail-img"
-                  />
+                <div *ngFor="let image of room?.urlRoomImages; let i = index" class="thumbnail-item"
+                  (click)="selectImage(image)">
+                  <img [src]="image" alt="Thumbnail {{i + 1}}" class="thumbnail-img" />
                 </div>
               </div>
             </div>
@@ -54,9 +54,7 @@
             <div class="info-grid">
               <div class="info-item">
                 <span class="label">Số người hiện tại:</span>
-                <span class="value"
-                  >{{room?.members?.length}}/{{room?.maxGuests}} người</span
-                >
+                <span class="value">{{room?.members?.length}}/{{room?.maxGuests}} người</span>
               </div>
               <div class="info-item">
                 <span class="label">Số phòng:</span>
@@ -76,20 +74,14 @@
             <div class="assets-section">
               <h4>Tài sản hiện có trong phòng:</h4>
               <div class="assets-list">
-                <span *ngFor="let asset of room?.assetData" class="asset-tag"
-                  >{{asset.assetName}}</span
-                >
+                <span *ngFor="let asset of room?.assetData" class="asset-tag">{{asset.assetName}}</span>
               </div>
             </div>
 
             <!-- Checkbox tìm người ở ghép -->
             <div class="roommate-section">
               <label class="checkbox-container">
-                <input
-                  type="checkbox"
-                  [checked]="_isNeedRoommate"
-                  (change)="onRoommateToggle()"
-                />
+                <input type="checkbox" [checked]="_isNeedRoommate" (change)="onRoommateToggle()" />
                 <span class="checkmark"></span>
                 <span class="checkbox-label">Cần tìm người ở ghép</span>
               </label>

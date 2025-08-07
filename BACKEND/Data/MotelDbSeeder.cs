@@ -168,8 +168,6 @@ namespace BACKEND.Data
                     Password = "123456aA@"
                 };
 
-                var result = await _accountService.Register(registerDto);
-
             }
         }
 

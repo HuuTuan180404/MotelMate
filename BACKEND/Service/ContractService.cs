@@ -129,5 +129,34 @@ namespace BACKEND.Service
                 RoomID = roomID
             });
         }
+        public async Task<IActionResult> GetContractUnsignedByRoomID(int roomID)
+        {
+            var contract = await _context.Contract
+                .Where(c => c.RoomID == roomID && c.Status == EContractStatus.Unsigned)
+                .FirstOrDefaultAsync();
+
+            if (contract == null)
+            {
+                return new NotFoundObjectResult(new { Message = "contract not found" });
+            }
+
+            return new OkObjectResult(new { Message = "contract found" });
+        }
+        public async Task<IActionResult> SignContractAsync()
+        {
+            var contract = await _context.Contract
+                .Where(c => c.Status == EContractStatus.Unsigned)
+                .FirstOrDefaultAsync();
+
+            if (contract == null)
+            {
+                return new NotFoundObjectResult(new { Message = "contract not found" });
+            }
+
+            contract.Status = EContractStatus.Active;
+            await _context.SaveChangesAsync();
+
+            return new OkObjectResult(new { Message = "contract signed" });
+        }
     }
 }
