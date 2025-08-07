@@ -37,7 +37,7 @@
 .card-header {
   background: var(--primary-color);
   padding: 20px;
-  color: rgb(14, 10, 10);
+  color: rgb(255, 255, 255);
 }
 
 .card-header h3 {

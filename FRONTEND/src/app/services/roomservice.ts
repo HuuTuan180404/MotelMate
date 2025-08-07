@@ -46,4 +46,11 @@ export class RoomService {
       `${this.apiUrl}/room/get-all-room-for-tenant`
     );
   }
+
+  setLookingForRoommate(roomID: number): Observable<any> {
+    return this.http.patch(
+      `${this.apiUrl}/room/set-looking-for-roommate`,
+      roomID
+    );
+  }
 }
