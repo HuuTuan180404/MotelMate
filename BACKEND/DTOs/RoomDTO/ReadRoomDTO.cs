@@ -15,6 +15,7 @@ namespace BACKEND.RoomDTO.DTOs
         public int MaxGuests { get; set; }
         public Nullable<int> BuildingID { get; set; }
         public required string BuildingName { get; set; }
+        public required string BuildingAddress { get; set; }
         public string RoomImageUrl { get; set; }
         public List<string> UrlAvatars { get; set; }
     }

@@ -22,3 +22,16 @@ mat-dialog-content {
   color: #333;
 }
 
+::ng-deep .mat-mdc-snack-bar-container.custom-snackbar .mdc-snackbar__surface {
+  background-color: #f44336 !important;
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 8px !important;
+}
+
+::ng-deep .mat-mdc-snack-bar-container.custom-snackbar-success .mdc-snackbar__surface {
+  background-color: var(--primary-color) !important;
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 8px !important;
+}

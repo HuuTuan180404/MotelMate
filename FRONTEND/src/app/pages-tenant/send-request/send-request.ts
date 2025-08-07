@@ -58,7 +58,6 @@ export class SendRequest {
     this.requestForm = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(100)]],
       content: ['', [Validators.required, Validators.maxLength(1000)]],
-      requestType: ['', Validators.required],
     });
   }
 
@@ -145,7 +144,6 @@ export class SendRequest {
       // Thêm dữ liệu form cơ bản
       formDataToSend.append('title', formValue.title);
       formDataToSend.append('content', formValue.content);
-      formDataToSend.append('type', formValue.requestType); // hoặc .type nếu bạn sửa tên form control
       if (this.data?.buildingID) {
         formDataToSend.append('buildingID', this.data.buildingID.toString());
       }
@@ -156,16 +154,18 @@ export class SendRequest {
       }
 
       // Gửi API
-      this.requestService.createRequest(formDataToSend).subscribe({
-        next: (res) => {
-          alert('Gửi yêu cầu thành công!');
-          this.dialogRef.close(true);
-        },
-        error: (err) => {
-          console.error(err);
-          alert('Gửi yêu cầu thất bại!');
-        },
-      });
+      this.requestService
+        .createRequestFeedbackOrIssue(formDataToSend)
+        .subscribe({
+          next: (res) => {
+            alert('Gửi yêu cầu thành công!');
+            this.dialogRef.close(true);
+          },
+          error: (err) => {
+            console.error(err);
+            alert(err.message);
+          },
+        });
     } else {
       this.markFormGroupTouched();
     }

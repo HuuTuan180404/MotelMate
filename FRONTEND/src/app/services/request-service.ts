@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { EnumModel } from '../models/Enum.model';
+import { RegisterRoomRequest } from '../models/Request.model';
 
 @Injectable({
   providedIn: 'root',
@@ -30,7 +31,15 @@ export class RequestService {
     return this.http.get<EnumModel[]>(`${this.api}/enum/request-types`);
   }
 
-  createRequest(formData: FormData): Observable<any> {
-    return this.http.post(`${this.api}/request/create-request`, formData);
+  createRequestFeedbackOrIssue(formData: FormData): Observable<any> {
+    return this.http.post(
+      `${this.api}/request/create-feedback-issue`,
+      formData
+    );
   }
+
+  registerRoom(request: RegisterRoomRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register-room`, request);
+  }
+
 }

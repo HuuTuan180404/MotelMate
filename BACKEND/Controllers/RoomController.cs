@@ -444,7 +444,20 @@ namespace BACKEND.Controllers
 
 
 
-        // 
+        // ====================TENANT=========================
+        [HttpGet("get-all-room-for-tenant")]
+        public async Task<ActionResult<IEnumerable<ReadRoomDTO>>> GetRoomsForTenant()
+        {
+            var rooms = await _context.Room
+                               .Where(r => r.Status == ERoomStatus.Available || r.Status == ERoomStatus.LookingForRoommate)
+                               .Include(r => r.Building)
+                               .Include(r => r.RoomImages)
+                               .Include(r => r.Contracts.Where(c => c.Status != EContractStatus.Terminated)) // hợp đồng active
+                                   .ThenInclude(c => c.ContractDetail.Where(cd => cd.EndDate == null))
+                                       .ThenInclude(cd => cd.Tenant)
+                               .ToListAsync();
 
+            return Ok(_mapper.Map<List<ReadRoomDTO>>(rooms));
+        }
     }
 }

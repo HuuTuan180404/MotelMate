@@ -1,0 +1,277 @@
+.notification-dialog {
+  width: 100%;
+  max-width: 600px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dialog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 8px 8px 0 0;
+}
+
+.dialog-header h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.unread-count {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.btn-mark-all {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-mark-all:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-close {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.btn-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.close-icon {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.dialog-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+.notifications-list {
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.notification-item {
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  background: white;
+}
+
+.notification-item:hover {
+  background: #fff5f5;
+}
+
+.notification-item.unread {
+  background: #fff8f8;
+  border-left: 4px solid #ff7b7b;
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.notification-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.title-text {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.unread-dot {
+  width: 8px;
+  height: 8px;
+  background: #ff7b7b;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.notification-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notification-time {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.btn-delete:hover {
+  opacity: 1;
+  background: #ffe6e6;
+}
+
+.notification-content {
+  color: #555;
+  line-height: 1.5;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.notification-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.full-datetime {
+  font-size: 11px;
+  color: #888;
+  font-style: italic;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #999;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+/* Scrollbar Styling */
+.notifications-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.notifications-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.notifications-list::-webkit-scrollbar-thumb {
+  background: #ff9a9e;
+  border-radius: 3px;
+}
+
+.notifications-list::-webkit-scrollbar-thumb:hover {
+  background: #ff7b7b;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .notification-dialog {
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .dialog-header {
+    padding: 16px 20px;
+  }
+
+  .dialog-header h2 {
+    font-size: 18px;
+  }
+
+  .notification-item {
+    padding: 12px 20px;
+  }
+
+  .notification-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .notification-actions {
+    justify-content: space-between;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+  }
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #888;
+  font-style: italic;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+/* 
+// notification.service.ts (Optional service để quản lý thông báo)
+import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
+import { NotificationDialogComponent } from './notification-dialog.component';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class NotificationService {
+  constructor(private dialog: MatDialog) {}
+
+  openNotificationDialog(): void {
+    const dialogRef = this.dialog.open(NotificationDialogComponent, {
+      width: '600px',
+      maxWidth: '90vw',
+      maxHeight: '80vh',
+      disableClose: false,
+      autoFocus: false,
+      panelClass: 'notification-dialog-panel'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('Dialog was closed');
+    });
+  }
+} */

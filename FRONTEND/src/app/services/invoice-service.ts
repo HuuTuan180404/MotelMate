@@ -46,9 +46,12 @@ export class InvoiceService {
     return this.http.post<void>(`${this.apiUrl}/BatchCreateWithNotification`, data);
   }
 
-  createPaymentRequest(invoiceId: number): Observable<void> {
-    return this.http.post<void>(`${this.apiUrl}/${invoiceId}/create-payment-request`, {});
+  createPaymentRequest(invoiceId: number, imageUrl: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/${invoiceId}/create-payment-request`, {
+      imageUrl: imageUrl
+    });
   }
+
 
   getOwnerBankInfo(invoiceId: number): Observable<OwnerBankInfo> {
     return this.http.get<OwnerBankInfo>(`${this.apiUrl}/${invoiceId}/owner-bank-info`);

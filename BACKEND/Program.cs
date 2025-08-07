@@ -115,7 +115,8 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
-
+builder.Services.AddScoped<IContractService, ContractService>();
+builder.Services.AddScoped<MotelDbSeeder>();
 
 
 // Cloudinary
@@ -147,8 +148,8 @@ if (app.Environment.IsDevelopment())
 
     using (var scope = app.Services.CreateScope())
     {
-        var services = scope.ServiceProvider;
-        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
+        // var services = scope.ServiceProvider;
+        // var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole<int>>>();
         // string[] roleNames = { "Owner", "Tenant" };
 
         // foreach (var role in roleNames)
@@ -160,6 +161,8 @@ if (app.Environment.IsDevelopment())
         // }
         // var context = services.GetRequiredService<MotelMateDbContext>();
         // MotelDbSeeder.Seed(context);
+        var seeder = scope.ServiceProvider.GetRequiredService<MotelDbSeeder>();
+        await seeder.SeedAllAsync();
     }
 }
 

@@ -18,6 +18,7 @@ import { OwnerRegister } from './auth/register/owner-register/owner-register';
 import { ForgotPasswordComponent } from './auth/forgot-password/forgot-password';
 import { LayoutTenant } from './layout-tenant/layout';
 import { RoomManagementTenant } from './pages-tenant/room-management-tenant/room-management-tenant';
+import { DashboardTenant } from './pages-tenant/dashboard-tenant/dashboard-tenant';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -38,10 +39,10 @@ export const routes: Routes = [
       { path: 'buildings', component: Buildingmanagement },
       { path: 'contracts', component: ContractComponent },
       { path: 'tenants', component: TenantManagement },
-      { path: 'requests/payment', component: Requests },
-      { path: 'requests/room-registration', component: Requests },
-      { path: 'requests/feedbackorissue', component: Requests },
-      { path: 'requests/extend-contract', component: Requests },
+      { path: 'requests/payment', component: Requests, data: { role: 'owner' } },
+      { path: 'requests/room-registration', component: Requests, data: { role: 'owner' } },
+      { path: 'requests/feedbackorissue', component: Requests, data: { role: 'owner' } },
+      { path: 'requests/extend-contract', component: Requests, data: { role: 'owner' } },
       { path: 'dashboard', component: Dashboard },
       { path: 'assets', component: AssetManagement },
       { path: 'services', component: Service },
@@ -55,13 +56,17 @@ export const routes: Routes = [
     children: [
       { path: 'invoices', component: Listinvoice, data: { role: 'tenant' } },
       {
-        path: 'room-tenant',
+        path: 'room',
         component: RoomManagementTenant,
       },
-      { path: 'requests/payment', component: Requests },
-      { path: 'requests/room-registration', component: Requests },
-      { path: 'requests/feedbackorissue', component: Requests },
-      { path: 'requests/extend-contract', component: Requests },
+      { path: 'requests/payment', component: Requests, data: { role: 'tenant' } },
+      { path: 'requests/room-registration', component: Requests, data: { role: 'tenant' } },
+      { path: 'requests/feedbackorissue', component: Requests, data: { role: 'tenant' } },
+      { path: 'requests/extend-contract', component: Requests, data: { role: 'tenant' } },
+      {
+        path: 'dashboard',
+        component: DashboardTenant,
+      },
     ],
   },
 ];
