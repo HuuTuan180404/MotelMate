@@ -93,7 +93,8 @@
               [ngClass]="{
               'status-Available': room.status === 'Available',
               'status-Occupied': room.status === 'Occupied',
-              'status-Maintenance': room.status === 'Maintenance'
+              'status-Maintenance': room.status === 'Maintenance',
+              'status-LookingForRoommate': room.status === 'LookingForRoommate',
             }"
             ></span>
             <label>{{ room.status }}</label>
