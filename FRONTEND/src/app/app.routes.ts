@@ -59,6 +59,10 @@ export const routes: Routes = [
         path: 'room',
         component: RoomManagementTenant,
       },
+      {
+        path: 'dashboard',
+        component: DashboardTenant,
+      },
       { path: 'requests/payment', component: Requests },
       { path: 'requests/room-registration', component: Requests },
       { path: 'requests/feedbackorissue', component: Requests },
