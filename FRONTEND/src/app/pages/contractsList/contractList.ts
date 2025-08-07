@@ -1,3 +1,4 @@
+import { saveAs } from 'file-saver';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -17,6 +18,7 @@ import { AddContractDialogComponent } from './contractDialog/contractDialog';
 import { ContractDTO, ContractService } from '../../services/contractservice';
 
 interface Contract {
+  contractID: number;
   contractcode: string;
   contractholder: string;
   building: string;
@@ -65,6 +67,7 @@ export class ContractComponent implements OnInit, AfterViewInit {
     'start',
     'end',
     'status',
+    'actions'
   ];
   dataSource = new MatTableDataSource<Contract>();
 
@@ -95,6 +98,7 @@ export class ContractComponent implements OnInit, AfterViewInit {
     this.contractService.getAllContracts().subscribe((data: ContractDTO[]) => {
       this.contracts = data.map(
         (item): Contract => ({
+          contractID: item.contractID,
           contractcode: item.contractCode,
           contractholder: item.contractHolder,
           building: item.buildingName,
@@ -204,6 +208,7 @@ export class ContractComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.contracts.push({
+          contractID: 0,
           contractcode: '',
           contractholder: result.cccd,
           building: result.building,
@@ -225,5 +230,19 @@ export class ContractComponent implements OnInit, AfterViewInit {
 
   statusToString(status: any): string {
     return typeof status === 'string' ? status : 'Unknown';
+  }
+  downloadContract(contractID: number, roomName: string): void {
+    this.contractService.downloadInvoicePdfByContractId(contractID).subscribe({
+      next: (data: Blob) => {
+        const fileName = `contract_${roomName}_${new Date()
+          .toISOString()
+          .slice(0, 19)
+          .replace(/[-:T]/g, '')}.pdf`;
+        saveAs(data, fileName);
+      },
+      error: (err) => {
+        console.error('Failed to download contract', err);
+      },
+    });
   }
 }

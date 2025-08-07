@@ -163,7 +163,7 @@ export class RoomManagementTenant implements OnInit {
   downloadContract() {
     this.contractService.downloadContractPdf(this.room!.roomID).subscribe({
       next: (data: Blob) => {
-        const fileName = `contract_${this.room!.roomID}_${new Date()
+        const fileName = `contract_${this.room!.roomNumber}_${new Date()
           .toISOString()
           .slice(0, 19)
           .replace(/[-:T]/g, '')}.pdf`;

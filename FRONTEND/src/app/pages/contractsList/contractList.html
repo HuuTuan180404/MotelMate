@@ -99,7 +99,16 @@
         </span>
       </td>
     </ng-container>
-
+    <!-- Actions -->
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Download</th>
+      <td mat-cell *matCellDef="let inv">
+        <button mat-icon-button color="primary" matTooltip="Download Contract PDF"
+          (click)="downloadContract(inv.contractID, inv.room)" *ngIf="inv.status === 'Active'">
+          <mat-icon>download</mat-icon>
+        </button>
+      </td>
+    </ng-container>
     <!-- Table Rows -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns" class="sticky-header"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
@@ -109,10 +118,7 @@
   </table>
 
   <!-- Paginator -->
-  <mat-paginator
-    [pageSizeOptions]="[5, 10, 20]"
-    [pageSize]="5"
-    showFirstLastButtons
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" [pageSize]="5" showFirstLastButtons
     [length]="dataSource.filteredData.length">
   </mat-paginator>
 </div>

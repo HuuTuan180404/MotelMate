@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 
 export interface ContractDTO {
+  contractID: number;
   contractCode: string;
   contractHolder: string;
   buildingName: string;
@@ -49,11 +50,21 @@ export class ContractService {
       }
     );
   }
+  downloadInvoicePdfByContractId(contractId: number): Observable<Blob> {
+    return this.http.get(
+      `${this.api}/PDF/download-contract-pdf-by-contractid`,
+      {
+        params: { ContractID: contractId },
+        responseType: 'blob', 
+      }
+    );
+  }
   getContractUnsignedByRoomID(roomId: number): Observable<any> {
     return this.http.get(`${this.api}/Contract/get-contract-unsigned `, {
       params: { roomID: roomId },
     });
   }
+
   signContract(): Observable<any> {
     return this.http.patch(`${this.api}/Contract/sign-contract`, {});
   }
