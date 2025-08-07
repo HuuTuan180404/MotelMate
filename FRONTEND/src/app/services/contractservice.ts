@@ -40,4 +40,21 @@ export class ContractService {
   terminateContractByRoomID(roomID: number): Observable<any> {
     return this.http.post(`${this.api}/Contract/terminate-by-room`, roomID);
   }
+  downloadContractPdf(roomId: number): Observable<Blob> {
+    return this.http.get(
+      `${this.api}/PDF/download-contract-pdf`,
+      {
+        params: { RoomID: roomId },
+        responseType: 'blob', 
+      }
+    );
+  }
+  getContractUnsignedByRoomID(roomId: number): Observable<any> {
+    return this.http.get(`${this.api}/Contract/get-contract-unsigned `, {
+      params: { roomID: roomId },
+    });
+  }
+  signContract(): Observable<any> {
+    return this.http.patch(`${this.api}/Contract/sign-contract`, {});
+  }
 }

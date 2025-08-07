@@ -13,6 +13,7 @@ namespace BACKEND.Interfaces
         Task<List<ContractDTOs>> GetAllContractsAsync();
         Task<IActionResult> CreateContractAsync(CreateContractDTO request);
         Task<IActionResult> TerminateContractByRoomAsync(int roomID);
-
+        Task<IActionResult> GetContractUnsignedByRoomID(int roomID);
+        Task<IActionResult> SignContractAsync();
     }
 }

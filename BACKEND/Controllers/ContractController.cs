@@ -35,5 +35,16 @@ namespace BACKEND.Controllers
 
             return await _contractService.TerminateContractByRoomAsync(roomID);
         }
+
+        [HttpGet("get-contract-unsigned ")]
+        public async Task<IActionResult> GetContractUnsignedByRoomID([FromQuery] int roomID)
+        {
+            return await _contractService.GetContractUnsignedByRoomID(roomID);
+        }
+        [HttpPatch("sign-contract")]
+        public async Task<IActionResult> SignContract()
+        {
+            return await _contractService.SignContractAsync();
+        }
     }
 }

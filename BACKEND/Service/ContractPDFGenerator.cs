@@ -92,7 +92,7 @@ namespace BACKEND.Service
                     });
                 })
             );
-            document.ShowInCompanion();
+            // document.ShowInCompanion();
             return document.GeneratePdf();
         }
     }

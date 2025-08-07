@@ -20,7 +20,6 @@ export class Sidebar {
   mainMenu = [
     { icon: 'dashboard', label: 'Dashboard', route: 'dashboard' },
     { icon: 'bed', label: 'Room', route: 'room' },
-    { icon: 'contract', label: 'Contract', route: '' },
     { icon: 'receipt', label: 'Invoice', route: 'invoices' },
     {
       icon: 'request_page',

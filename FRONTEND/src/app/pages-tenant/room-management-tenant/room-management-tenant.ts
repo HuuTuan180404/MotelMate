@@ -6,6 +6,12 @@ import { RoomDetailModel } from '../../models/RoomDetail.model';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogAction, ReusableDialog } from '../../pages/dialog/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTooltip } from '@angular/material/tooltip';
+import { ContractService } from '../../services/contractservice';
+import { saveAs } from 'file-saver';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 interface Room {
   roomID: number;
   currentOccupants: number;
@@ -28,12 +34,20 @@ interface Building {
 
 @Component({
   selector: 'app-room-management-tenant',
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, MatIconModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    MatIconModule,
+    MatButtonModule,
+    MatTooltip,
+  ],
   templateUrl: './room-management-tenant.html',
   styleUrl: './room-management-tenant.css',
 })
 export class RoomManagementTenant implements OnInit {
   room?: RoomDetailModel;
+  _isContractSigned: boolean = true;
   _isNeedRoommate: boolean = false;
 
   selectedImageIndex: number = 0;
@@ -42,7 +56,9 @@ export class RoomManagementTenant implements OnInit {
   constructor(
     private roomService: RoomService,
     private cdr: ChangeDetectorRef,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private contractService: ContractService,
+    private _snackBar: MatSnackBar
   ) {
     this.roomService.getRoom_Tenant().subscribe({
       next: (room) => {
@@ -50,6 +66,17 @@ export class RoomManagementTenant implements OnInit {
         this._currentImage = this.room.urlRoomImages[0];
         this._isNeedRoommate = this.room.status === 'LookingForRoommate';
         this.cdr.detectChanges();
+        this.contractService
+          .getContractUnsignedByRoomID(this.room!.roomID)
+          .subscribe({
+            next: (message) => {
+              console.log(message);
+              this._isContractSigned = false;
+            },
+            error: (error) => { 
+              this._isContractSigned = true;
+            },
+          });
       },
       error: (error) => {
         console.error('Lỗi khi lấy thông tin phòng:', error);
@@ -115,5 +142,36 @@ export class RoomManagementTenant implements OnInit {
       style: 'currency',
       currency: 'VND',
     }).format(amount);
+  }
+
+  signContract() {
+    this.contractService.signContract().subscribe({
+      next: (message) => {
+        this._isContractSigned = true;
+        this._snackBar.open('Sign contract successful!', 'Close', {
+          duration: 4000,
+          panelClass: ['snackbar-success'],
+          verticalPosition: 'top',
+        });
+      },
+      error: (error) => {
+        console.error('Lỗi khi ký hợp đồng:', error);
+      },
+    });
+  }
+
+  downloadContract() {
+    this.contractService.downloadContractPdf(this.room!.roomID).subscribe({
+      next: (data: Blob) => {
+        const fileName = `contract_${this.room!.roomID}_${new Date()
+          .toISOString()
+          .slice(0, 19)
+          .replace(/[-:T]/g, '')}.pdf`;
+        saveAs(data, fileName);
+      },
+      error: (err) => {
+        console.error('Lỗi tải hợp đồng:', err);
+      },
+    });
   }
 }
