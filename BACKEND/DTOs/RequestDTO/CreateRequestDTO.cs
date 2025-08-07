@@ -14,4 +14,20 @@ namespace BACKEND.DTOs.RequestDTO
             return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
     }
+
+    public class RegisterRoomRequestDto
+    {
+        public int RoomID { get; set; }
+        public DateOnly StartDate { get; set; }
+        public DateOnly EndDate { get; set; }
+    }
+
+    public class RoomRegistrationContentDto
+    {
+        public DateOnly StartDate { get; set; }
+        public DateOnly EndDate { get; set; }
+    }
+
+
+
 }

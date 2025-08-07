@@ -40,10 +40,7 @@ namespace BACKEND.Controllers
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("User not authenticated.");
-            }
+            if (string.IsNullOrEmpty(userId)) return Unauthorized(new { message = "User not authenticated." });
 
             var tenantId = int.Parse(userId);
 
@@ -76,7 +73,7 @@ namespace BACKEND.Controllers
 
             if (invoice == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Invoice not found." });
             }
 
             var invoiceDetailDTO = _mapper.Map<ReadInvoiceDetailDTO>(invoice);
@@ -92,7 +89,7 @@ namespace BACKEND.Controllers
 
             if (invoice == null)
             {
-                return NotFound();
+                return NotFound(new { message = "Invoice not found." });
             }
 
             _context.InvoiceDetails.RemoveRange(invoice.InvoiceDetail);
@@ -124,7 +121,7 @@ namespace BACKEND.Controllers
             // Update Status (Validate Enum)
             if (!Enum.TryParse<EInvoiceStatus>(dto.Status, out var statusEnum))
             {
-                return BadRequest("Invalid status value.");
+                return BadRequest(new { message = "Invalid status value." });
             }
             invoice.Status = statusEnum;
 
@@ -361,7 +358,7 @@ namespace BACKEND.Controllers
         
         [HttpPost("{invoiceId}/create-payment-request")]
         [Authorize(Policy = "Tenant")]
-        public async Task<IActionResult> CreatePaymentRequest(int invoiceId)
+        public async Task<IActionResult> CreatePaymentRequest(int invoiceId, [FromBody] CreatePaymentRequestDTO dto)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
@@ -376,21 +373,21 @@ namespace BACKEND.Controllers
                 .FirstOrDefaultAsync(i => i.InvoiceID == invoiceId);
 
             if (invoice == null)
-                return NotFound("Invoice not found.");
+                return NotFound(new { message = "Invoice not found." });
 
             // Kiểm tra xem Tenant hiện tại có quyền với Invoice này (ContractDetail đang active)
             var activeContractDetail = await _context.ContractDetail
                 .FirstOrDefaultAsync(cd => cd.ContractID == invoice.ContractID && cd.TenantID == tenantId && cd.EndDate == null);
 
             if (activeContractDetail == null)
-                return Forbid("You are not allowed to create payment request for this invoice.");
+                return StatusCode(StatusCodes.Status403Forbidden, new { message = "You are not allowed to create payment request for this invoice." });
 
             // Kiểm tra đã có Request Payment chưa (tránh spam)
             var existedRequest = await _context.Request
                 .FirstOrDefaultAsync(r => r.Type == ERequestType.Payment && r.Title == invoice.InvoiceCode && r.TenantID == tenantId && r.Status == ERequestStatus.Pending);
 
             if (existedRequest != null)
-                return BadRequest("A payment request for this invoice is already pending approval.");
+                return BadRequest(new { message = "A payment request for this invoice is already pending approval." });
 
             var request = new Request
             {
@@ -400,13 +397,14 @@ namespace BACKEND.Controllers
                 Title = invoice.InvoiceCode,
                 Content = $"Tenant requests payment approval for invoice {invoice.InvoiceCode}.",
                 Status = ERequestStatus.Pending,
-                CreateAt = DateTime.Now
+                CreateAt = DateTime.Now,
+                Image = dto.ImageUrl
             };
 
             _context.Request.Add(request);
             await _context.SaveChangesAsync();
 
-            return Ok("Payment request created successfully.");
+            return Ok(new { message = "Payment request created successfully." });
         }
 
         [HttpGet("{invoiceId}/owner-bank-info")]
@@ -419,11 +417,11 @@ namespace BACKEND.Controllers
                             .ThenInclude(b => b.Owner)
                 .FirstOrDefaultAsync(i => i.InvoiceID == invoiceId);
 
-            if (invoice == null) return NotFound("Invoice not found.");
+            if (invoice == null) return NotFound(new { message = "Invoice not found." });
 
             var owner = invoice.Contract?.Room?.Building?.Owner;
 
-            if (owner == null) return NotFound("Owner not found.");
+            if (owner == null) return NotFound(new { message = "Owner not found." });
 
             var result = new GetBankDTO
             {

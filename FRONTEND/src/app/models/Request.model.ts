@@ -11,6 +11,12 @@ export interface RequestModel {
   ownerID?: number;
   roomName: string;
   buildingName: string;
+  roomID: number; 
+}
+export interface RegisterRoomRequest {
+  roomID: number;
+  startDate: string;  // yyyy-MM-dd
+  endDate: string;    // yyyy-MM-dd
 }
 
 

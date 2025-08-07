@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { EnumModel } from '../models/Enum.model';
+import { RegisterRoomRequest } from '../models/Request.model';
 
 @Injectable({
   providedIn: 'root',
@@ -36,4 +37,9 @@ export class RequestService {
       formData
     );
   }
+
+  registerRoom(request: RegisterRoomRequest): Observable<any> {
+    return this.http.post(`${this.apiUrl}/register-room`, request);
+  }
+
 }

@@ -5,6 +5,29 @@
   <div class="qr-container">
     <img [src]="qrUrl" alt="Payment QR" />
   </div>
+
+  <!-- Hidden file input -->
+  <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*" hidden />
+
+  <!-- Upload Button -->
+  <button mat-stroked-button color="primary" (click)="fileInput.click()">
+    <mat-icon>cloud_upload</mat-icon> Upload Payment Proof
+  </button>
+
+  <!-- Required error -->
+  <mat-error *ngIf="formSubmitted && !imageURL">
+    Image is required
+  </mat-error>
+
+  <!-- File name -->
+  <div *ngIf="selectedFile" class="file-name">
+    Selected File: {{ selectedFile?.name }}
+  </div>
+
+  <!-- Preview -->
+  <div *ngIf="previewURL" class="image-preview">
+    <img [src]="previewURL" alt="Preview" style="max-width: 100%; height: auto;" />
+  </div>
 </div>
 
 <div mat-dialog-actions align="end">
