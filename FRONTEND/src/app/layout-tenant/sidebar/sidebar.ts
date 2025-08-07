@@ -21,10 +21,28 @@ export class Sidebar {
     { icon: 'dashboard', label: 'Dashboard', route: 'dashboard' },
     { icon: 'bed', label: 'Room', route: 'room' },
     { icon: 'receipt', label: 'Invoice', route: 'invoices' },
-    {
+     {
       icon: 'request_page',
       label: 'Requests',
-      route: 'requests',
+      isDropdown: true,
+      children: [
+        {
+          icon: 'app_registration',
+          label: 'Room Registration',
+          route: 'requests/room-registration',
+        },
+        {
+          icon: 'update',
+          label: 'Extend Contract',
+          route: 'requests/extend-contract',
+        },
+        { icon: 'payment', label: 'Payment', route: 'requests/payment' },
+        {
+          icon: 'feedback',
+          label: 'Feedback/Issue',
+          route: 'requests/feedbackorissue',
+        },
+      ],
     },
   ];
 
