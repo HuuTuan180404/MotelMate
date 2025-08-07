@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Threading.Tasks;
@@ -21,17 +22,17 @@ namespace BACKEND.Service
             _context = context;
             QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
         }
-        public byte[] GeneratePDF( int RoomID)
+        public async Task<byte[]> GeneratePDF( int RoomID)
         {
-            var room = _context.Room
+            var room = await _context.Room
                 .Include(r => r.Building)
                     .ThenInclude(b => b.Owner)
                 .Include(r => r.Contracts)
                     .ThenInclude(c => c.ContractDetail)
                         .ThenInclude(cd => cd.Tenant)
-                .FirstOrDefault(r => r.RoomID == RoomID);
-            var tenant = room.Contracts.FirstOrDefault().ContractDetail.FirstOrDefault(cd => cd.IsRoomRepresentative == true).Tenant;
+                .FirstOrDefaultAsync(r => r.RoomID == RoomID);
             if (room == null) return null;
+            var tenant = room.Contracts.FirstOrDefault().ContractDetail.FirstOrDefault(cd => cd.IsRoomRepresentative == true).Tenant;
             var time = DateTime.Now;
             var document = Document.Create(container =>
                 container.Page(page =>
@@ -64,25 +65,25 @@ namespace BACKEND.Service
                         column.Item().Text("Sau khi thỏa thuận, hai bên thống nhất như sau:");
 
                         column.Item().Text("1. Nội dung thuê phòng trọ").Bold();
-                        column.Item().Text($"Bên A cho Bên B thuê 01 phòng trọ số {room.RoomNumber} tại căn nhà {room.Building.Name}. Với thời hạn từ ngày{room.Contracts.FirstOrDefault().StartDate}. tới ngày {room.Contracts.FirstOrDefault().EndDate}, giá thuê:{(int)room.Contracts.FirstOrDefault().Price} đồng/tháng. Chưa bao gồm chi phí: điện sinh hoạt, nước.").Justify();
+                        column.Item().Text($"Bên A cho Bên B thuê 01 phòng trọ số {room.RoomNumber} tại căn nhà {room.Building.Name}. Với thời hạn từ ngày {room.Contracts.FirstOrDefault().StartDate}. tới ngày {room.Contracts.FirstOrDefault().EndDate}, giá thuê: {((int)room.Contracts.FirstOrDefault().Price).ToString("N0", new CultureInfo("vi-VN"))} đồng/tháng. Chưa bao gồm chi phí: điện sinh hoạt, nước.").Justify();
 
                         column.Item().Text("2. Trách nhiệm Bên A").Bold();
                         column.Item().Text("Đảm bảo căn nhà cho thuê không có tranh chấp, khiếu kiện. Đăng ký với chính quyền địa phương về thủ tục cho thuê phòng trọ.").Justify();
 
                         column.Item().Text("3. Trách nhiệm Bên B").Bold();
-                        column.Item().Text($"Đặt cọc với số tiền là {(int)room.Contracts.FirstOrDefault().Deposit} đồng, thanh toán tiền thuê phòng hàng tháng là {(int)room.Contracts.FirstOrDefault().Price}. + tiền điện + nước + dịch vụ phát sinh(nếu có).").Justify();
+                        column.Item().Text($"Đặt cọc với số tiền là {((int)room.Contracts.FirstOrDefault().Deposit).ToString("N0", new CultureInfo("vi-VN"))} đồng, thanh toán tiền thuê phòng hàng tháng là {((int)room.Contracts.FirstOrDefault().Price).ToString("N0", new CultureInfo("vi-VN"))} đồng + tiền điện + nước + dịch vụ phát sinh (nếu có).").Justify();
                         column.Item().Text("Đảm bảo các thiết bị và sửa chữa các hư hỏng trong phòng trong khi sử dụng. Nếu không sửa chữa thì khi trả phòng, bên A sẽ trừ vào tiền đặt cọc, giá trị cụ thể được tính theo giá thị trường.").Justify();
                         column.Item().Text($"Chỉ sử dụng phòng trọ vào mục đích ở, với số lượng tối đa không quá {room.MaxGuests} người (kể cả trẻ em); không chứa các thiết bị gây cháy nổ, hàng cấm... cung cấp giấy tờ tùy thân để đăng ký tạm trú theo quy định, giữ gìn an ninh trật tự, nếp sống văn hóa đô thị.").Justify();
 
                         column.Item().Text("4. Điều khoản thực hiện").Bold();
                         column.Item().Text("Hai bên nghiêm túc thực hiện những quy định trên trong thời hạn cho thuê, nếu bên A lấy phòng phải báo cho bên B ít nhất 01 tháng, hoặc ngược lại.").Justify();
 
-                        column.Item().Row(row =>
+                        column.Item().PaddingBottom(50).Row(row =>
                         {
                             row.RelativeItem().Text("Bên B\n(Ký, ghi rõ họ tên)").AlignCenter();
                             row.RelativeItem().Text("Bên A\n(Ký, ghi rõ họ tên)").AlignCenter();
                         });
-                        column.Item().Row(row =>
+                        column.Item().PaddingBottom(30).Row(row =>
                         {
                             var tenantName = room.Contracts.FirstOrDefault().Status == EContractStatus.Unsigned ? "" : tenant.FullName;
                             row.RelativeItem().Text($"{tenantName}").AlignCenter();
@@ -91,7 +92,7 @@ namespace BACKEND.Service
                     });
                 })
             );
-            // document.ShowInCompanion();
+            document.ShowInCompanion();
             return document.GeneratePdf();
         }
     }

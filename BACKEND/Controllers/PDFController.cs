@@ -14,14 +14,16 @@ namespace BACKEND.Controllers
         private readonly ContractPDFGenerator _contractPDFGenerator;
         public PDFController(ContractPDFGenerator contractPDFGenerator)
         {
-            this._contractPDFGenerator = contractPDFGenerator;
+            _contractPDFGenerator = contractPDFGenerator;
         }
         [HttpGet("download-contract-pdf")]
         public async Task<IActionResult> GenerateContractPDF([FromQuery] int RoomID)
         {
-            var contractPDF =  _contractPDFGenerator.GeneratePDF(RoomID);
+            var contractPDF =  await _contractPDFGenerator.GeneratePDF(RoomID);
+            var fileName = $"contract_{DateTime.Now:yyyyMMddHHmmss}.pdf";
+
             if (contractPDF == null) return NotFound(new { message = "Not found contract" });
-            return File(contractPDF, "application/pdf", "contract/pdf");
+            return File(contractPDF, "application/pdf", fileName);
         }
     }
 }
