@@ -1,7 +1,7 @@
 :host {
   display: flex;
   flex-direction: column;
-  height: 90vh;
+  height: 92vh;
   background-color: var(--bg-color);
 }
 
@@ -28,7 +28,7 @@
   justify-content: space-between;
   margin: var(--padding-margin);
   gap: 1rem;
-  height: 20%;
+  height: 25%;
 }
 
 .stat-box {
@@ -37,10 +37,14 @@
   border-radius: var(--border-radius);
   padding: 1rem;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
   display: flex;
   justify-content: center;
   align-items: center;
   gap:1rem
+}
+.stat-box:hover {
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
 }
 .stat-content{
   display: flex;
@@ -71,7 +75,7 @@
   display: flex;
   gap: 1rem;
   margin: var(--padding-margin);
-  height: 65%;
+  height: 75%;
 }
 
 .pie-container, .bar-container {
