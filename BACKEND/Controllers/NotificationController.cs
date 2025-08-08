@@ -5,9 +5,11 @@ using BACKEND.DTOs.RoomDTO;
 using BACKEND.Enums;
 using BACKEND.Models;
 using BACKEND.RoomDTO.DTOs;
+using BACKEND.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace BACKEND.Controllers
@@ -19,11 +21,13 @@ namespace BACKEND.Controllers
     {
         private readonly MotelMateDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IHubContext<NotificationHub> _hubContext;
 
-        public NotificationController(MotelMateDbContext context, IMapper mapper)
+        public NotificationController(MotelMateDbContext context, IMapper mapper, IHubContext<NotificationHub> hubContext)
         {
             _context = context;
             _mapper = mapper;
+            _hubContext = hubContext;
         }
 
 
@@ -89,6 +93,12 @@ namespace BACKEND.Controllers
 
             _context.NotiRecipient.AddRange(notiRecipients);
             await _context.SaveChangesAsync();
+
+            foreach (var tenantId in tenantIds)
+            {
+                await _hubContext.Clients.Group($"tenant_{tenantId}")
+                    .SendAsync("NewNotification", new { hasNewNotification = true });
+            }
 
             return Ok(new { message = "Thông báo đã được gửi thành công!" });
         }

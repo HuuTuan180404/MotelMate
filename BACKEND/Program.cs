@@ -14,6 +14,8 @@ using Microsoft.IdentityModel.Logging;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.Extensions.Options;
 using DotNetEnv;
+using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 DotNetEnv.Env.Load();
 var builder = WebApplication.CreateBuilder(args);
@@ -48,6 +50,7 @@ builder.Services.AddSwaggerGen(option =>
         }
     });
 });
+
 builder.Services.AddMemoryCache();
 
 builder.Services.AddDbContext<MotelMateDbContext>
@@ -90,6 +93,21 @@ builder.Services.AddAuthentication(options =>
         ValidateLifetime = true,
         ClockSkew = TimeSpan.Zero
     };
+
+
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notificationHub"))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 // builder.Services.AddAuthentication(options =>
 // {
@@ -131,12 +149,8 @@ builder.Services.AddSingleton<CloudinaryDotNet.Cloudinary>(provider =>
     return new CloudinaryDotNet.Cloudinary(account);
 });
 
-// builder.Services.AddSingleton<Cloudinary>(provider =>
-// {
-//     var config = provider.GetRequiredService<IOptions<CloudinarySettingsAccount>>().Value;
-//     var account = new CloudinarySettingsAccount(config.CloudName, config.ApiKey, config.ApiSecret);
-//     return new Cloudinary(account);
-// });
+
+builder.Services.AddSignalR();
 
 
 var app = builder.Build();
@@ -178,6 +192,8 @@ app.UseCors(x => x
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapHub<NotificationHub>("/notificationHub");
 
 app.MapControllers();
 

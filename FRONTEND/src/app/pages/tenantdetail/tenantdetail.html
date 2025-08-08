@@ -1,6 +1,6 @@
 <div class="tenant-detail-container">
   <mat-card class="tenant-card" *ngIf="_tenantDetail">
-    <!-- Header với avatar và thông tin cơ bản -->
+    <!-- Header with avatar and basic info -->
     <mat-card-header class="tenant-header">
       <div mat-card-avatar class="tenant-avatar">
         <img
@@ -15,7 +15,7 @@
     </mat-card-header>
 
     <mat-card-content class="tenant-content">
-      <!-- Thông tin chi tiết -->
+      <!-- Personal Information -->
       <div class="info-section">
         <h3 class="section-title">
           <mat-icon>person</mat-icon>
@@ -34,7 +34,7 @@
           <div class="info-item">
             <mat-icon class="info-icon">person_outline</mat-icon>
             <div class="info-details">
-              <span class="info-label">Full name:</span>
+              <span class="info-label">Full Name:</span>
               <span class="info-value">{{ _tenantDetail?.fullName }}</span>
             </div>
           </div>
@@ -42,7 +42,7 @@
           <div class="info-item">
             <mat-icon class="info-icon">phone</mat-icon>
             <div class="info-details">
-              <span class="info-label">Phone number:</span>
+              <span class="info-label">Phone Number:</span>
               <span class="info-value">0364626275</span>
             </div>
           </div>
@@ -50,24 +50,22 @@
           <div class="info-item">
             <mat-icon class="info-icon">cake</mat-icon>
             <div class="info-details">
-              <span class="info-label">Date of birth:</span>
-              <span class="info-value"
-                >{{ _tenantDetail?.bdate | date: 'dd/MM/yyyy' }}</span
-              >
+              <span class="info-label">Date of Birth:</span>
+              <span class="info-value">
+                {{ _tenantDetail?.bdate | date: 'dd/MM/yyyy' }}
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Lịch sử thuê trọ -->
+      <!-- Rental History -->
       <div class="history-section">
         <h3 class="section-title">
           <mat-icon>history</mat-icon>
           Rental History [ {{ _tenantDetail?.contractDetails?.length }}
           Contract(s) ]
         </h3>
-
-        <!--  -->
 
         <div class="history-list">
           <mat-card
@@ -90,7 +88,8 @@
                   <mat-icon>
                     {{ history.endDate === null ? 'home' : 'check_circle' }}
                   </mat-icon>
-                  {{ history.endDate === null ? 'Renting' : 'Terminated'}}
+                  {{ history.endDate === null ? 'Currently Renting' :
+                  'Terminated'}}
                 </mat-chip>
               </div>
             </mat-card-header>
@@ -102,7 +101,7 @@
                   <div class="date-details">
                     <span class="date-label">Move-in Date:</span>
                     <span class="date-value">
-                      {{ history.startDate | date}}
+                      {{ history.startDate | date }}
                     </span>
                   </div>
                 </div>
@@ -111,8 +110,8 @@
                   <div class="date-details">
                     <span class="date-label">Move-out Date:</span>
                     <span class="date-value">
-                      {{ history.endDate === null ? 'Đang ở':(history.endDate
-                      |date:'dd/MM/yyyy') }}
+                      {{ history.endDate === null ? 'Currently Staying' :
+                      (history.endDate | date:'dd/MM/yyyy') }}
                     </span>
                   </div>
                 </div>
@@ -138,8 +137,8 @@
             class="empty-history"
           >
             <mat-icon class="empty-icon">history_toggle_off</mat-icon>
-            <h4>Chưa có lịch sử thuê trọ</h4>
-            <p>Khách hàng này chưa có hợp đồng thuê trọ nào.</p>
+            <h4>No Rental History</h4>
+            <p>This tenant does not have any rental contracts yet.</p>
           </div>
         </div>
       </div>

@@ -1,5 +1,5 @@
 import { ProfileService } from './../../services/profileservice';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { SendNotification } from '../../pages/send-notification/sendnotification';
 import { Observable } from 'rxjs';
@@ -8,10 +8,14 @@ import { Profile } from '../../pages/profile/profile';
 import { ProfileTenant } from '../../pages-tenant/profile-tenant/profile-tenant';
 import { SendRequest } from '../../pages-tenant/send-request/send-request';
 import { Notifications } from '../../pages-tenant/notifications/notifications';
+import { NotificationService } from '../../services/notification-service';
+import { CommonModule } from '@angular/common';
+import * as signalR from '@microsoft/signalr';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-header',
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './header.html',
   styleUrl: './header.css',
 })
@@ -19,13 +23,34 @@ export class Header implements OnInit {
   lastNotification: any = null;
   profileImage = '../../assets/images/avatar_error.png';
   profileName = '';
+  _hasNewNotification: boolean = true;
   constructor(
     private dialog: MatDialog,
+    private cdr: ChangeDetectorRef,
     private dialogProfile: MatDialog,
-    private profileService: ProfileService
+    private profileService: ProfileService,
+    private notificationService: NotificationService
   ) {}
   ngOnInit(): void {
     this.refreshProfile();
+
+    this.notificationService.hasNewNotification$.subscribe((hasNew) => {
+      this._hasNewNotification = hasNew;
+      this.cdr.detectChanges();
+    });
+
+    this.notificationService.startConnection();
+  }
+
+  private checkInitialNotificationState() {
+    this.notificationService.checkNewNotification().subscribe((hasNew) => {
+      this._hasNewNotification = hasNew;
+      this.cdr.detectChanges();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.notificationService.stopConnection();
   }
 
   openProfileDialog(): void {
@@ -69,17 +94,37 @@ export class Header implements OnInit {
   }
 
   openNotificationDialog(): void {
-    const dialogRef = this.dialog.open(Notifications, {
-      width: '600px',
-      maxWidth: '90vw',
-      maxHeight: '80vh',
-      disableClose: false,
-      autoFocus: false,
-      // panelClass: 'notification-dialog-panel',
-    });
+    this.notificationService.tenantGetNotification().subscribe({
+      next: (data) => {
+        this._hasNewNotification = data.some((item) => item.isRead === false);
+        this.cdr.detectChanges();
 
-    dialogRef.afterClosed().subscribe((result) => {
-      console.log('Dialog was closed');
+        const dialogRef = this.dialog.open(Notifications, {
+          width: '600px',
+          maxWidth: '90vw',
+          maxHeight: '80vh',
+          disableClose: false,
+          autoFocus: false,
+          data: data.sort(
+            (a: any, b: any) =>
+              new Date(b.createAt).getTime() - new Date(a.createAt).getTime()
+          ),
+        });
+
+        dialogRef.componentInstance.dataEmitter.subscribe((result: boolean) => {
+          if (result) {
+            this._hasNewNotification = false;
+          } else {
+            this._hasNewNotification = data.some(
+              (item) => item.isRead === false
+            );
+          }
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err) => {
+        console.log(err);
+      },
     });
   }
 }
