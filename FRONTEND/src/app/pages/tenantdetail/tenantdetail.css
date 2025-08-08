@@ -21,19 +21,20 @@
 }
 
 .tenant-header {
-  padding: 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  padding: 16px 24px;
+  background: #f7f7f7;
+  color: var(--primary-color);
   border-radius: 12px 12px 0 0;
+  border-bottom: 1px solid #f1bcbc;
 
   .mat-card-title {
-    color: white;
+    color: var(--primary-color);
     font-size: 24px;
     font-weight: 600;
   }
 
   .mat-card-subtitle {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(12, 0, 0, 0.8);
   }
 }
 
@@ -304,7 +305,7 @@
 
 .card-actions {
   padding: 16px 24px;
-  border-top: 1px solid #e0e0e0;
+  /* border-top: 1px solid #e0e0e0; */
   display: flex;
   gap: 12px;
   flex-direction: row-reverse;
@@ -315,7 +316,9 @@
     gap: 8px;
     padding: var(--padding-margin);
     border-radius: 999px;
-    border: 1px solid #000;
+    border: none;
+    background: var(--primary-color);
+    color: white;
   }
 }
 

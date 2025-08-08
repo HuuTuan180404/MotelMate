@@ -11,7 +11,7 @@
         />
       </div>
       <mat-card-title>{{ _tenantDetail?.fullName }}</mat-card-title>
-      <mat-card-subtitle>Khách thuê trọ</mat-card-subtitle>
+      <mat-card-subtitle>Tenant</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content class="tenant-content">
@@ -19,7 +19,7 @@
       <div class="info-section">
         <h3 class="section-title">
           <mat-icon>person</mat-icon>
-          Thông tin cá nhân
+          Personal Information
         </h3>
 
         <div class="info-grid">
@@ -90,7 +90,7 @@
                   <mat-icon>
                     {{ history.endDate === null ? 'home' : 'check_circle' }}
                   </mat-icon>
-                  {{ history.endDate === null ? 'Đang thuê' : 'Đã kết thúc'}}
+                  {{ history.endDate === null ? 'Renting' : 'Terminated'}}
                 </mat-chip>
               </div>
             </mat-card-header>
@@ -145,11 +145,11 @@
       </div>
     </mat-card-content>
 
-    <mat-card-actions class="card-actions">
+    <div class="card-actions">
       <button mat-raised-button (click)="onClickDone()">
-        <mat-icon>done_outline</mat-icon>
+        <mat-icon>done</mat-icon>
         Done
       </button>
-    </mat-card-actions>
+    </div>
   </mat-card>
 </div>
