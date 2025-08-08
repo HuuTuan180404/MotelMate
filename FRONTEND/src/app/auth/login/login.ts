@@ -56,7 +56,14 @@ export class Login {
   }
 
   async ngOnInit() {
-    if (!this.authService.hasToken()) this.authService.refreshToken();
+    if (!this.authService.hasToken()) {
+      try {
+        await firstValueFrom(this.authService.refreshToken());
+      } catch (err) {
+        console.error('Refresh token failed', err);
+      }
+    }
+
     if (this.authService.hasToken()) {
       if (this.authService.getRole() === 'Tenant') {
         this.router.navigate(['/tenant']);
