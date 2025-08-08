@@ -9,6 +9,7 @@
   color: var(--primary-color);
   height: 5rem;
   font-size: x-large;
+  gap: 8px;
 }
 
 .dialog-header h2 {

@@ -7,8 +7,9 @@
   border-bottom: 1px solid #eee;
   background: #f7f7f7;
   color: var(--primary-color);
-  height: 5rem;
+  height: 3rem;
   font-size: x-large;
+  gap: 8px;
 }
 
 .dialog-header h2 {

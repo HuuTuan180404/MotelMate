@@ -1,5 +1,8 @@
 <div class="dialog-container">
-  <div class="dialog-header">Add Contract</div>
+  <div class="dialog-header">
+    <mat-icon style="color: var(--primary-color)">post_add</mat-icon>
+    Add Contract
+  </div>
 
   <div class="dialog-body">
     <!-- Building + Room -->
@@ -10,9 +13,7 @@
           <mat-label>Building</mat-label>
           <mat-select [(ngModel)]="formData.buildingID">
             <mat-option [value]="null">-- None --</mat-option>
-            <mat-option *ngFor="let b of buildings" [value]="b.buildingID"
-              >{{ b.name }}</mat-option
-            >
+            <mat-option *ngFor="let b of buildings" [value]="b.buildingID">{{ b.name }}</mat-option>
           </mat-select>
           <mat-icon matSuffix>apartment</mat-icon>
         </mat-form-field>
@@ -21,9 +22,7 @@
           <mat-label>Room</mat-label>
           <input matInput [formControl]="roomCtrl" placeholder="101" />
           <mat-icon matSuffix>meeting_room</mat-icon>
-          <mat-error *ngIf="roomCtrl.touched && roomCtrl.hasError('required')"
-            >Room is required.</mat-error
-          >
+          <mat-error *ngIf="roomCtrl.touched && roomCtrl.hasError('required')">Room is required.</mat-error>
         </mat-form-field>
       </div>
     </div>
@@ -34,38 +33,18 @@
       <div class="dialog-element-container">
         <mat-form-field appearance="outline">
           <mat-label>Start Date</mat-label>
-          <input
-            aria-label="Start Date"
-            matInput
-            [matDatepicker]="startPicker"
-            [formControl]="startCtrl"
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="startPicker"
-          ></mat-datepicker-toggle>
+          <input aria-label="Start Date" matInput [matDatepicker]="startPicker" [formControl]="startCtrl" />
+          <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
           <mat-datepicker #startPicker></mat-datepicker>
-          <mat-error *ngIf="startCtrl.touched && startCtrl.hasError('required')"
-            >Start date is required.</mat-error
-          >
+          <mat-error *ngIf="startCtrl.touched && startCtrl.hasError('required')">Start date is required.</mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>End Date</mat-label>
-          <input
-            aria-label="End Date"
-            matInput
-            [matDatepicker]="endPicker"
-            [formControl]="endCtrl"
-          />
-          <mat-datepicker-toggle
-            matSuffix
-            [for]="endPicker"
-          ></mat-datepicker-toggle>
+          <input aria-label="End Date" matInput [matDatepicker]="endPicker" [formControl]="endCtrl" />
+          <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
           <mat-datepicker #endPicker></mat-datepicker>
-          <mat-error *ngIf="endCtrl.touched && endCtrl.hasError('required')"
-            >End date is required.</mat-error
-          >
+          <mat-error *ngIf="endCtrl.touched && endCtrl.hasError('required')">End date is required.</mat-error>
         </mat-form-field>
       </div>
     </div>
@@ -76,41 +55,21 @@
       <div class="dialog-element-container">
         <mat-form-field appearance="outline">
           <mat-label>Deposit</mat-label>
-          <input
-            aria-label="Deposit"
-            matInput
-            type="number"
-            [formControl]="depositCtrl"
-            step="1000"
-          />
+          <input aria-label="Deposit" matInput type="number" [formControl]="depositCtrl" step="1000" />
           <mat-icon matSuffix>savings</mat-icon>
           <mat-error *ngIf="depositCtrl.touched && depositCtrl.invalid">
-            <ng-container *ngIf="depositCtrl.hasError('required')"
-              >Deposit is required.</ng-container
-            >
-            <ng-container *ngIf="depositCtrl.hasError('min')"
-              >Must be ≥ 0.</ng-container
-            >
+            <ng-container *ngIf="depositCtrl.hasError('required')">Deposit is required.</ng-container>
+            <ng-container *ngIf="depositCtrl.hasError('min')">Must be ≥ 0.</ng-container>
           </mat-error>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
           <mat-label>Total Price</mat-label>
-          <input
-            aria-label="Total Price"
-            matInput
-            type="number"
-            [formControl]="totalCtrl"
-            step="1000"
-          />
+          <input aria-label="Total Price" matInput type="number" [formControl]="totalCtrl" step="1000" />
           <mat-icon matSuffix>attach_money</mat-icon>
           <mat-error *ngIf="totalCtrl.touched && totalCtrl.invalid">
-            <ng-container *ngIf="totalCtrl.hasError('required')"
-              >Total is required.</ng-container
-            >
-            <ng-container *ngIf="totalCtrl.hasError('min')"
-              >Must be ≥ 0.</ng-container
-            >
+            <ng-container *ngIf="totalCtrl.hasError('required')">Total is required.</ng-container>
+            <ng-container *ngIf="totalCtrl.hasError('min')">Must be ≥ 0.</ng-container>
           </mat-error>
         </mat-form-field>
       </div>
@@ -122,21 +81,12 @@
       <div class="dialog-element-container">
         <mat-form-field appearance="outline">
           <mat-label>CCCD</mat-label>
-          <input
-            matInput
-            type="text"
-            [formControl]="cccdCtrl"
-            placeholder="0522..."
-            (blur)="cccdCtrl.markAsTouched()"
-          />
+          <input matInput type="text" [formControl]="cccdCtrl" placeholder="0522..."
+            (blur)="cccdCtrl.markAsTouched()" />
           <mat-icon matSuffix>badge</mat-icon>
           <mat-error *ngIf="cccdCtrl.touched && cccdCtrl.invalid">
-            <ng-container *ngIf="cccdCtrl.hasError('required')"
-              >CCCD is required.</ng-container
-            >
-            <ng-container *ngIf="cccdCtrl.hasError('pattern')"
-              >Invalid CCCD format.</ng-container
-            >
+            <ng-container *ngIf="cccdCtrl.hasError('required')">CCCD is required.</ng-container>
+            <ng-container *ngIf="cccdCtrl.hasError('pattern')">Invalid CCCD format.</ng-container>
           </mat-error>
         </mat-form-field>
       </div>

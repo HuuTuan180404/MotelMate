@@ -34,15 +34,15 @@
 </div>
 
 <div class="chart-container" *ngIf="isBrowser">
-  <div class="bar-container">
+  <div class="bar-container chart">
     <div class="bar-chart">
       <canvas baseChart [data]="barChartData" [labels]="barChartLabels" [options]="barChartOptions"
         [type]="barChartType">
       </canvas>
     </div>
   </div>
-  <div class="pie-container">
-    <div class="pie-chart">
+  <div class="pie-container chart">
+    <div class="pie-chart" >
       <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [options]="pieChartOptions"
         [type]="pieChartType">
       </canvas>

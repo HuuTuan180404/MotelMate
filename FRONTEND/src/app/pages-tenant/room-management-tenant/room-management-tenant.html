@@ -5,24 +5,14 @@
         <div class="header">
           <h2>Room Details {{room?.roomNumber}}</h2>
           <div class="action-container">
-            <button
-              class="action-btn"
-              mat-icon-button
-              matTooltip="Sign contract"
-              color="primary"
-              *ngIf="!_isContractSigned"
-              (click)="signContract()"
-            >
-              <mat-icon>draw</mat-icon>
+            <button class="action-btn" mat-icon-button matTooltip="Sign contract" color="primary"
+              *ngIf="!_isContractSigned" (click)="signContract()">
+              <mat-icon style="color: var(--primary-color)">draw</mat-icon>
             </button>
-            <button
-              class="action-btn"
-              mat-icon-button
-              matTooltip="Download contract"
-              color="primary"
-              (click)="downloadContract()"
-            >
-              <mat-icon>download</mat-icon>
+
+            <button class="action-btn" mat-icon-button matTooltip="Download contract" color="primary"
+              (click)="downloadContract()">
+              <mat-icon style="color: var(--primary-color)">download</mat-icon>
             </button>
           </div>
         </div>
