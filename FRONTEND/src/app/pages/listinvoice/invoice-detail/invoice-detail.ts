@@ -15,6 +15,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDatepickerInputEvent } from '@angular/material/datepicker';
 import { UpdateInvoice, UpdateExtraCost, UpdateInvoiceDetail } from '../../../models/Invoice.model';
 import { Payment } from '../payment/payment';
+import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-invoice-detail',
@@ -28,7 +30,9 @@ import { Payment } from '../payment/payment';
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatIconModule,
+    MatButtonModule
   ],
   templateUrl: './invoice-detail.html',
   styleUrl: './invoice-detail.css'
@@ -59,6 +63,7 @@ export class InvoiceDetail {
   startEdit() {
     if (this.role !== 'owner') return;
     this.editing = true;
+    this.originalData = JSON.parse(JSON.stringify(this.data));
   }
 
   cancelEdit() {
@@ -74,33 +79,69 @@ export class InvoiceDetail {
         extraCostID: e.extraCostID,
         description: e.description,
         amount: e.amount
-      })) as UpdateExtraCost[],
+      })),
       invoiceDetails: this.data.services.map((s: any) => ({
         serviceID: s.serviceID,
         quantity: s.quantity
-      })) as UpdateInvoiceDetail[]
+      }))
     };
-    console.log('Update Invoice Payload:', updateData); // <== LOG NÀY
+
+    // So sánh trước khi gọi API
+    const originalUpdateData: UpdateInvoice = {
+      dueDate: this.originalData.due,
+      status: this.originalData.status,
+      extraCosts: this.originalData.extraCosts.map((e: any) => ({
+        extraCostID: e.extraCostID,
+        description: e.description,
+        amount: e.amount
+      })),
+      invoiceDetails: this.originalData.services.map((s: any) => ({
+        serviceID: s.serviceID,
+        quantity: s.quantity
+      }))
+    };
+
+    if (JSON.stringify(updateData) === JSON.stringify(originalUpdateData)) {
+      this.snackBar.open('No changes detected.', 'Close', {
+        duration: 2000,
+        verticalPosition: 'top',
+        panelClass: 'custom-snackbar-success'
+      });
+      this.editing = false;
+      return;
+    }
+
+    // Nếu có thay đổi -> gọi API
     this.invoiceService.updateInvoice(this.data.invoiceID, updateData).subscribe({
       next: () => {
-        this.snackBar.open('Invoice updated successfully.', 'Close', {
-          duration: 2000,
-          verticalPosition: 'top',
-          panelClass: 'custom-snackbar-success'
+        this.invoiceService.getInvoiceDetail(this.data.invoiceID).subscribe({
+          next: (updatedInvoice) => {
+            this.snackBar.open('Invoice updated successfully.', 'Close', {
+              duration: 2000,
+              verticalPosition: 'top',
+              panelClass: 'custom-snackbar-success'
+            });
+
+            this.data = updatedInvoice;
+            this.originalData = JSON.parse(JSON.stringify(updatedInvoice));
+            this.editing = false;
+            this.dialogRef.close({ action: 'edit', invoice: updatedInvoice });
+          },
+          error: () => {
+            // fallback nếu get thất bại
+            this.snackBar.open('Invoice updated but failed to reload.', 'Close', {
+              duration: 3000,
+              verticalPosition: 'top',
+              panelClass: 'custom-snackbar'
+            });
+            this.editing = false;
+          }
         });
-        this.originalData = JSON.parse(JSON.stringify(this.data));
-        this.editing = false;
       },
-      error: (err) => {
-        console.error('Failed to update invoice', err);
-        this.snackBar.open('Failed to update invoice.', 'Close', {
-          duration: 3000,
-          verticalPosition: 'top',
-          panelClass: 'custom-snackbar'
-        });
-      }
+
     });
   }
+
 
   delete() {
     if (this.role !== 'owner') return;

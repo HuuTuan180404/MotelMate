@@ -134,7 +134,10 @@ namespace BACKEND.Controllers
 
             else if (request.Type == ERequestType.RoomRegistration)
             {
-                var parts = request.Title.Split(" - ");
+                // Tách title theo định dạng: "RoomNumber - BuildingName (Room transfer)"
+                var titleMainPart = request.Title.Split(" (")[0]; // loại bỏ phần hậu tố
+                var parts = titleMainPart.Split(" - ");
+
                 if (parts.Length != 2)
                     return BadRequest(new { message = "Invalid request title format." });
 
@@ -143,9 +146,7 @@ namespace BACKEND.Controllers
 
                 var room = await _context.Room
                     .Include(r => r.Building)
-                    .FirstOrDefaultAsync(r =>
-                        r.RoomNumber == roomNumber &&
-                        r.Building.Name == buildingName);
+                    .FirstOrDefaultAsync(r => r.RoomNumber == roomNumber && r.Building.Name == buildingName);
 
                 if (room == null)
                     return NotFound(new { message = "Room not found." });
@@ -175,21 +176,51 @@ namespace BACKEND.Controllers
                     return BadRequest(new { message = "Failed to parse registration content.", error = ex.Message });
                 }
 
+                // Nếu tenant đã có hợp đồng đang hoạt động => chuyển phòng => set EndDate
+                var currentContractDetail = await _context.ContractDetail
+                    .Include(cd => cd.Contract)
+                    .Where(cd => cd.TenantID == request.TenantID && cd.EndDate == null)
+                    .FirstOrDefaultAsync();
+
+                if (currentContractDetail != null)
+                {
+                    // 1. Set EndDate khi chuyển phòng
+                    currentContractDetail.EndDate = startDate;
+
+                    await _context.SaveChangesAsync();
+
+                    // 2. Kiểm tra nếu là người cuối cùng trong hợp đồng → kết thúc hợp đồng
+                    var contractId = currentContractDetail.ContractID;
+
+                    var otherActiveMembers = await _context.ContractDetail
+                        .Where(cd => cd.ContractID == contractId && cd.EndDate == null)
+                        .CountAsync();
+
+                    if (otherActiveMembers == 0)
+                    {
+                        var contract = await _context.Contract.FindAsync(contractId);
+                        if (contract != null)
+                        {
+                            contract.Status = EContractStatus.Expired;
+                        }
+                    }
+                }
+
+                // BẮT ĐẦU XỬ LÝ THÊM MỚI CONTRACT/CONTRACTDETAIL
                 if (room.Status == ERoomStatus.Available)
                 {
-                    
                     var contract = new Contract
                     {
                         RoomID = room.RoomID,
                         Status = EContractStatus.Unsigned,
                         StartDate = startDate,
-                        EndDate = endDate, // now safe
+                        EndDate = endDate,
                         Price = room.Price,
                         Deposit = 1000000,
                         ContractCode = "C" + room.RoomNumber + DateTime.Now.ToString("yyyyMMddHHmmss")
                     };
                     _context.Contract.Add(contract);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(); // Lưu để có ContractID
 
                     var contractDetail = new ContractDetail
                     {
@@ -231,6 +262,8 @@ namespace BACKEND.Controllers
                     if (currentTenants + 1 == room.MaxGuests)
                         room.Status = ERoomStatus.Occupied;
                 }
+
+                await _context.SaveChangesAsync(); 
             }
 
             // Gửi Notification theo Type
@@ -539,13 +572,21 @@ namespace BACKEND.Controllers
             };
             var contentJson = JsonSerializer.Serialize(contentObj);
 
-            // 5. Tạo request mới
+            // 👉 5. Kiểm tra tenant có hợp đồng nào chưa kết thúc không (EndDate == null)
+            bool hasActiveContract = await _context.ContractDetail
+                .AnyAsync(cd => cd.TenantID == tenantId && cd.EndDate == null);
+
+            // 👉 6. Tạo tiêu đề với thông điệp phù hợp
+            var actionLabel = hasActiveContract ? "(Room transfer)" : "(New room registration)";
+            var title = $"{room.RoomNumber} - {room.Building.Name} {actionLabel}";
+
+            // 👉 7. Tạo request mới
             var request = new Request
             {
                 TenantID = tenantId,
                 OwnerID = room.Building.OwnerID,
                 Type = ERequestType.RoomRegistration,
-                Title = $"{room.RoomNumber} - {room.Building.Name}",
+                Title = title,
                 Content = contentJson,
                 Image = null,
                 Status = ERequestStatus.Pending,

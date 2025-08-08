@@ -1,0 +1,14 @@
+.dialog-title {
+  color: var(--primary-color);
+}
+
+.date-range-row {
+  display: flex;
+  gap: 16px;
+  padding: 0 1rem;
+}
+
+.flex-item {
+  flex: 1;
+  min-width: 0;
+}

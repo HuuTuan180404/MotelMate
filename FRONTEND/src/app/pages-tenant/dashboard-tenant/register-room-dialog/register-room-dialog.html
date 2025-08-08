@@ -1,20 +1,24 @@
-<h2 mat-dialog-title>Register Room</h2>
+<h2 mat-dialog-title class="dialog-title">Register Room</h2>
 
-<mat-dialog-content [formGroup]="form" class="p-4">
-  <mat-form-field appearance="outline" floatLabel="auto" class="w-full mb-4">
-    <mat-label>Start Date</mat-label>
-    <input matInput [matDatepicker]="startPicker" formControlName="startDate">
-    <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
-    <mat-datepicker #startPicker></mat-datepicker>
-  </mat-form-field>
+<div class="dialog-body">
+  <mat-dialog-content [formGroup]="form" class="p-4">
+    <div class="date-range-row">
+      <mat-form-field appearance="outline" floatLabel="auto" class="flex-item">
+        <mat-label>Start Date</mat-label>
+        <input matInput [matDatepicker]="startPicker" formControlName="startDate">
+        <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+        <mat-datepicker #startPicker></mat-datepicker>
+      </mat-form-field>
 
-  <mat-form-field appearance="outline" floatLabel="auto" class="w-full">
-    <mat-label>End Date</mat-label>
-    <input matInput [matDatepicker]="endPicker" formControlName="endDate">
-    <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
-    <mat-datepicker #endPicker></mat-datepicker>
-  </mat-form-field>
-</mat-dialog-content>
+      <mat-form-field appearance="outline" floatLabel="auto" class="flex-item">
+        <mat-label>End Date</mat-label>
+        <input matInput [matDatepicker]="endPicker" formControlName="endDate">
+        <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+        <mat-datepicker #endPicker></mat-datepicker>
+      </mat-form-field>
+    </div>
+  </mat-dialog-content>
+</div>
 
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">Cancel</button>

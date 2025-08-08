@@ -207,7 +207,18 @@ export class Listinvoice {
             this.invoices = this.invoices.filter(i => i.invoiceID !== result.invoiceID);
             this.applyFilters();
           } else if (result?.action === 'edit') {
-            // Handle edit logic here
+            const updated = result.invoice;
+            const index = this.invoices.findIndex(i => i.invoiceID === updated.invoiceID);
+            if (index !== -1) {
+              this.invoices[index] = {
+                ...this.invoices[index],
+                total: updated.total,
+                status: updated.status,
+                due: updated.due
+                // ✅ Nếu bạn cần update thêm trường nào thì thêm ở đây
+              };
+              this.applyFilters();
+            }
           }
         });
       },

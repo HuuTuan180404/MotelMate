@@ -128,7 +128,7 @@ export class DashboardTenant implements AfterViewInit {
 
   onRegisterRoom(roomID: number) {
     const dialogRef = this.dialog.open(RegisterRoomDialog, {
-      width: '1000px',
+      width: '700px',
       data: { roomID },
     });
 

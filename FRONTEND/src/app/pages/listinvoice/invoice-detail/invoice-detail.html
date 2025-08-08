@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>
+<h2 mat-dialog-title class="dialog-title">
   Invoice Detail
   <button mat-icon-button class="close-btn" (click)="close()">
     <mat-icon>close</mat-icon>
@@ -29,7 +29,7 @@
     <div>
       <strong>Status:</strong>
       <ng-container *ngIf="editing; else viewStatus">
-        <mat-form-field appearance="fill" class="status-field">
+        <mat-form-field appearance="outline" floatLabel="auto" class="status-field">
           <mat-label>Status</mat-label>
           <mat-select [(ngModel)]="data.status">
             <mat-option *ngFor="let status of statuses" [value]="status">{{ status }}</mat-option>
@@ -109,10 +109,10 @@
   <ng-container *ngIf="!editing">
     <!-- EDIT & DELETE only for Owner -->
     <ng-container *ngIf="role === 'owner'&& (data.status === 'Unpaid' || data.status === 'Overdue')">
-      <button mat-icon-button color="primary" matTooltip="Edit" (click)="startEdit()">
+      <button mat-icon-button class="edit-btn" color="primary" matTooltip="Edit" (click)="startEdit()">
         <mat-icon style="color: #45a9ea;">edit</mat-icon>
       </button>
-      <button mat-icon-button color="warn" matTooltip="Delete" (click)="delete()">
+      <button mat-icon-button class="delete-btn" color="warn" matTooltip="Delete" (click)="delete()">
         <mat-icon style="color: #f44336;">delete</mat-icon>
       </button>
     </ng-container>

@@ -11,6 +11,9 @@
   grid-template-columns: 1fr 1fr;
   gap: 8px 16px;
 }
+.dialog-title {
+  color: var(--primary-color);
+}
 
 .section h4 {
   margin: 8px 0;
