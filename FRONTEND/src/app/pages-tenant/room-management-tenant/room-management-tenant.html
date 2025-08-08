@@ -7,11 +7,11 @@
           <div class="action-container">
             <button class="action-btn" mat-icon-button matTooltip="Sign contract" color="primary"
               *ngIf="!_isContractSigned" (click)="signContract()">
-              <mat-icon>draw</mat-icon>
+              <mat-icon style="color: var(--primary-color)">draw</mat-icon>
             </button>
             <button class="action-btn" mat-icon-button matTooltip="Download contract" color="primary"
               (click)="downloadContract()">
-              <mat-icon>download</mat-icon>
+              <mat-icon style="color: var(--primary-color)">download</mat-icon>
             </button>
           </div>
         </div>

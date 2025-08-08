@@ -18,6 +18,7 @@ import { RoomService } from '../../services/roomservice';
 import { error } from 'console';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-dashboard-tenant',
@@ -32,6 +33,7 @@ import { MatButtonModule } from '@angular/material/button';
     MatSortModule,
     MatPaginatorModule,
     MatButtonModule,
+    MatTooltipModule,
   ],
   templateUrl: './dashboard-tenant.html',
   styleUrl: './dashboard-tenant.css',

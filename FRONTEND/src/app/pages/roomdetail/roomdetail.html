@@ -1,9 +1,6 @@
 <div class="room-detail">
-  <div mat-mat-dialog-title class="dialog-title">
-    <button mat-icon-button aria-label="Close" title="Back" mat-dialog-close>
-      <mat-icon>keyboard_arrow_left</mat-icon>
-    </button>
-    <h2>Room detail</h2>
+  <div class="dialog-title">
+    <span>Room detail</span>
   </div>
 
   <div class="content">
@@ -11,52 +8,27 @@
     <div class="room-info">
       <!-- /* images */ -->
       <div class="gallery">
-        <input
-          type="file"
-          #fileInput
-          (change)="onFileSelected($event)"
-          multiple
-          accept="image/*"
-          style="display: none"
-        />
+        <input type="file" #fileInput (change)="onFileSelected($event)" multiple accept="image/*"
+          style="display: none" />
 
-        <button
-          class="upload-btn"
-          type="button"
-          mat-raised-button
-          color="primary"
-          (click)="fileInput.click()"
-        >
+        <button class="upload-btn" type="button" mat-raised-button color="primary" (click)="fileInput.click()">
           <mat-icon>cloud_upload</mat-icon>
           Upload
         </button>
 
         <div class="thumbnails" #scrollContainerThumbnails>
-          <img
-            *ngFor="let img of _roomDetail.urlRoomImages"
-            [src]="img"
-            alt="thumbnail"
-            (click)="changeImage(img)"
-            class="thumb"
-          />
+          <img *ngFor="let img of _roomDetail.urlRoomImages" [src]="img" alt="thumbnail" (click)="changeImage(img)"
+            class="thumb" />
 
-          <img
-            *ngFor="let img of _addedImages"
-            [src]="img.url"
-            alt="thumbnail"
-            (click)="changeImage(img.url)"
-            class="thumb"
-          />
+          <img *ngFor="let img of _addedImages" [src]="img.url" alt="thumbnail" (click)="changeImage(img.url)"
+            class="thumb" />
         </div>
         <div class="main-image">
           <img [src]="_currentImage" alt="Ảnh chính" class="main-photo" />
-          <mat-icon
-            *ngIf="_roomDetail.urlRoomImages.length > 0"
-            (click)="onDeleteImage()"
-          >
+          <mat-icon *ngIf="_roomDetail.urlRoomImages.length > 0" (click)="onDeleteImage()">
             delete
           </mat-icon>
-        </div>
+        </div>  
       </div>
 
       <div class="info">
@@ -104,56 +76,31 @@
                 <!-- mã phòng -->
                 <div>
                   <label for="roomCode">Room code</label>
-                  <input
-                    id="roomCode"
-                    type="text"
-                    placeholder="d"
-                    [(ngModel)]="_roomDetail.roomNumber"
-                  />
+                  <input id="roomCode" type="text" placeholder="d" [(ngModel)]="_roomDetail.roomNumber" />
                 </div>
 
                 <!-- diện tích -->
                 <div>
                   <label for="roomArea">Area</label>
-                  <input
-                    id="roomArea"
-                    type="text"
-                    placeholder="20m2"
-                    [(ngModel)]="_roomDetail.area"
-                  />
+                  <input id="roomArea" type="text" placeholder="20m2" [(ngModel)]="_roomDetail.area" />
                 </div>
 
                 <!-- tiền -->
                 <div>
                   <label for="roomPricePerMonth">Price per month</label>
-                  <input
-                    id="roomPricePerMonth"
-                    type="text"
-                    placeholder="13000000"
-                    [(ngModel)]="_roomDetail.price"
-                  />
+                  <input id="roomPricePerMonth" type="text" placeholder="13000000" [(ngModel)]="_roomDetail.price" />
                 </div>
 
                 <div>
                   <label for="roomMaxGuests">Max Guests</label>
-                  <input
-                    id="roomMaxGuests"
-                    type="number"
-                    placeholder="0"
-                    [(ngModel)]="_roomDetail.maxGuests"
-                  />
+                  <input id="roomMaxGuests" type="number" placeholder="0" [(ngModel)]="_roomDetail.maxGuests" />
                 </div>
               </div>
 
               <!-- description -->
               <div class="room-info-description">
                 <label for="roomDescription">Description</label>
-                <textarea
-                  name="roomDescription"
-                  id="roomDescription"
-                  rows="3"
-                  [(ngModel)]="_roomDetail.description"
-                >
+                <textarea name="roomDescription" id="roomDescription" rows="3" [(ngModel)]="_roomDetail.description">
               <!-- Phòng có ma -->
                 </textarea>
               </div>
@@ -171,8 +118,7 @@
               </mat-card-title>
               <div class="add-container">
                 <ng-container
-                  *ngIf="_roomDetail?.members?.length === 0 && _deleteMembers.length === 0; else addContract"
-                >
+                  *ngIf="_roomDetail?.members?.length === 0 && _deleteMembers.length === 0; else addContract">
                   <button mat-button class="btn-add" (click)="onAddContract()">
                     <mat-icon>add</mat-icon>
                     Create contract
@@ -182,17 +128,9 @@
                 <ng-template #addContract>
                   <mat-form-field appearance="outline" class="search-field">
                     <mat-label>Search to add</mat-label>
-                    <input
-                      matInput
-                      placeholder="Member ID..."
-                      #inputAddMemberID
-                    />
-                    <button
-                      mat-icon-button
-                      matSuffix
-                      matTooltip="Add member"
-                      (click)="onAddMember(inputAddMemberID.value)"
-                    >
+                    <input matInput placeholder="Member ID..." #inputAddMemberID />
+                    <button mat-icon-button matSuffix matTooltip="Add member"
+                      (click)="onAddMember(inputAddMemberID.value)">
                       <mat-icon>add</mat-icon>
                     </button>
                   </mat-form-field>
@@ -201,15 +139,9 @@
             </mat-card-header>
 
             <mat-card-content class="card-content members-content">
-              <ng-container
-                *ngIf="_roomDetail.members.length > 0; else noMembers"
-              >
-                <div
-                  class="member"
-                  *ngFor="let member of _roomDetail.members"
-                  [class.memberIsSelected]="member.id === _selectedMember"
-                  (click)="defSelectedMember(member.id)"
-                >
+              <ng-container *ngIf="_roomDetail.members.length > 0; else noMembers">
+                <div class="member" *ngFor="let member of _roomDetail.members"
+                  [class.memberIsSelected]="member.id === _selectedMember" (click)="defSelectedMember(member.id)">
                   <img [src]="member.urlAvatar" alt="" />
                   <div class="row-info-container">
                     <div class="row-info fullName">
@@ -257,17 +189,10 @@
               <div class="add-container">
                 <mat-form-field appearance="outline" class="full-width">
                   <mat-label>Select Assets</mat-label>
-                  <mat-select
-                    [formControl]="selectedAssetsID"
-                    multiple
-                    placeholder="Choose your assets..."
-                    panelClass="professional-panel"
-                  >
-                    <mat-option
-                      *ngFor="let asset of _assetsData; trackBy: trackByAssetID"
-                      [value]="asset.assetID"
-                      (onSelectionChange)="onOptionChange($event, asset.assetID)"
-                    >
+                  <mat-select [formControl]="selectedAssetsID" multiple placeholder="Choose your assets..."
+                    panelClass="professional-panel">
+                    <mat-option *ngFor="let asset of _assetsData; trackBy: trackByAssetID" [value]="asset.assetID"
+                      (onSelectionChange)="onOptionChange($event, asset.assetID)">
                       {{ asset.name }}
                     </mat-option>
                   </mat-select>
@@ -293,17 +218,13 @@
                     <div *ngFor="let asset of getAssetData" class="asset-item">
                       <span class="asset-name">{{ asset.assetName }}</span>
                       <div>
-                        <mat-icon
-                          (click)="onSelectedAssetChangeQuantity(asset.assetID,-1)"
-                        >
+                        <mat-icon (click)="onSelectedAssetChangeQuantity(asset.assetID,-1)">
                           remove
                         </mat-icon>
                         <mat-chip class="quantity-chip">
                           <label>x{{ asset.quantity }}</label>
                         </mat-chip>
-                        <mat-icon
-                          (click)="onSelectedAssetChangeQuantity(asset.assetID,1)"
-                        >
+                        <mat-icon (click)="onSelectedAssetChangeQuantity(asset.assetID,1)">
                           add
                         </mat-icon>
                       </div>
@@ -320,8 +241,8 @@
 
   <div mat-mat-dialog-actions class="dialog-actions">
     <div class="btn-container">
-      <button id="btnCancel" (click)="OnCancel()">Cancel</button>
-      <button id="btnApply" (click)="onUpdateRoom()">Save</button>
+      <button mat-button color="primary" (click)="OnCancel()">Cancel</button>
+      <button mat-raised-button (click)="onUpdateRoom()">Save</button>
     </div>
   </div>
 </div>
