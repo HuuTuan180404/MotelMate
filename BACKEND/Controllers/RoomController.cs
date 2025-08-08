@@ -459,5 +459,36 @@ namespace BACKEND.Controllers
 
             return Ok(_mapper.Map<List<ReadRoomDTO>>(rooms));
         }
+
+
+        [HttpPatch("set-looking-for-roommate")]
+        public async Task<IActionResult> SetLookingForRoommate([FromBody] int roomID)
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!int.TryParse(userIdStr, out var tenantId))
+                return Unauthorized("Invalid user ID.");
+
+            var room = await _context.ContractDetail
+                                    .Include(cd => cd.Contract)
+                                        .ThenInclude(c => c.Room)
+                                    .Where(cd => cd.TenantID == tenantId && cd.EndDate == null && cd.Contract.Room.RoomID == roomID)
+                                    .Select(cd => cd.Contract.Room)
+                                    .FirstOrDefaultAsync();
+
+            if (room == null)
+                return NotFound(new { message = "Room not found or not owned by the current user." });
+
+            // Toggle roommate status
+            room.Status = room.Status switch
+            {
+                ERoomStatus.LookingForRoommate => ERoomStatus.Occupied,
+                ERoomStatus.Occupied => ERoomStatus.LookingForRoommate,
+                _ => room.Status // Giữ nguyên nếu không nằm trong hai trạng thái trên
+            };
+
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Room status updated successfully." });
+        }
     }
 }

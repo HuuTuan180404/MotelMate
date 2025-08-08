@@ -4,6 +4,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RoomService } from '../../services/roomservice';
 import { RoomDetailModel } from '../../models/RoomDetail.model';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
+import { DialogAction, ReusableDialog } from '../../pages/dialog/dialog';
 interface Room {
   roomID: number;
   currentOccupants: number;
@@ -39,13 +41,14 @@ export class RoomManagementTenant implements OnInit {
 
   constructor(
     private roomService: RoomService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {
     this.roomService.getRoom_Tenant().subscribe({
       next: (room) => {
-        // console.log(room);
         this.room = room;
         this._currentImage = this.room.urlRoomImages[0];
+        this._isNeedRoommate = this.room.status === 'LookingForRoommate';
         this.cdr.detectChanges();
       },
       error: (error) => {
@@ -65,9 +68,43 @@ export class RoomManagementTenant implements OnInit {
   }
 
   onRoommateToggle(): void {
-    if (this.room?.status === 'LookingForRoommate') {
-      this._isNeedRoommate = true;
-    }
+    const actions: DialogAction[] = [
+      {
+        label: 'Ok',
+        bgColor: 'primary',
+        callback: () => {
+          return true;
+        },
+      },
+    ];
+
+    this.roomService.setLookingForRoommate(this.room!.roomID).subscribe({
+      next: (message) => {
+        const dialogResult = this.dialog.open(ReusableDialog, {
+          data: {
+            icon: 'check_circle',
+            title: 'Successfully',
+            message: message.message,
+            actions: actions,
+          },
+        });
+
+        dialogResult.afterClosed().subscribe((result) => {
+          this._isNeedRoommate = !this._isNeedRoommate;
+          this.cdr.detectChanges();
+        });
+      },
+      error: (error) => {
+        this.dialog.open(ReusableDialog, {
+          data: {
+            icon: 'error',
+            title: 'Error',
+            message: error.message,
+            actions: actions,
+          },
+        });
+      },
+    });
   }
 
   formatCurrency(amount: number | undefined): string {
