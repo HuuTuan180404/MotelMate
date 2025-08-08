@@ -83,7 +83,6 @@
   border-radius: var(--border-radius);
   flex: 1;
   padding: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .bar-chart{
@@ -106,4 +105,10 @@
 }
 ::ng-deep .snackbar-error .mat-mdc-snackbar-surface {
   background-color:#da3131  !important;
+}
+.chart{
+  transition: all 0.3s ease;
+}
+.chart:hover{
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
 }
