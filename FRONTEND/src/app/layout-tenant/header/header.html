@@ -7,7 +7,7 @@
   <div class="right-section">
     <div class="notification-icon" (click)="openNotificationDialog()">
       <i class="fa-regular fa-bell"></i>
-      <span class="badge"></span>
+      <span class="badge" *ngIf="_hasNewNotification"></span>
     </div>
 
     <button

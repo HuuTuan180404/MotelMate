@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { NotificationService } from '../../services/notification-service';
 import { ReadNotificationDTO } from '../../models/Notification.model';
+import { Subject } from 'rxjs';
 
 // export interface Notification {
 //   notiID: number;
@@ -29,24 +30,18 @@ import { ReadNotificationDTO } from '../../models/Notification.model';
 export class Notifications {
   // notifications!: ReadNotificationDTO[];
   notifications: ReadNotificationDTO[] = [];
-
+  dataEmitter = new Subject<boolean>();
   constructor(
     public dialogRef: MatDialogRef<Notifications>,
     private notificationService: NotificationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA) public data: ReadNotificationDTO[]
   ) {
-    this.notificationService.tenantGetNotification().subscribe({
-      next: (data) => {
-        this.notifications = data.sort(
-          (a: any, b: any) =>
-            new Date(b.createAt).getTime() - new Date(a.createAt).getTime()
-        );
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.log(err);
-      },
-    });
+    this.notifications = data;
+  }
+
+  ngAfterViewInit() {
+    this.cdr.detectChanges();
   }
 
   formatDateTime(date: Date | string): string {
@@ -90,6 +85,7 @@ export class Notifications {
       .subscribe({
         next: (data) => {
           notification.isRead = true;
+          this.dataEmitter.next(false);
           this.cdr.detectChanges();
         },
         error: (err) => {
@@ -103,12 +99,13 @@ export class Notifications {
     const notiIDs = unreadNotifications.map((n) => n.notiID);
 
     if (notiIDs.length === 0) {
-      return; // Không có gì để cập nhật
+      return;
     }
 
     this.notificationService.isReadNotification(notiIDs).subscribe({
       next: () => {
         unreadNotifications.forEach((n) => (n.isRead = true));
+        this.dataEmitter.next(true);
         this.cdr.detectChanges();
       },
       error: (err) => {

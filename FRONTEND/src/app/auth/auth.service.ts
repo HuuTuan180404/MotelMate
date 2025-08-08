@@ -146,6 +146,7 @@ export class AuthService {
       dto
     );
   }
+  
   storeToken(accessToken: string): void {
     if (this.isBrowser) {
       sessionStorage.setItem('accessToken', accessToken);

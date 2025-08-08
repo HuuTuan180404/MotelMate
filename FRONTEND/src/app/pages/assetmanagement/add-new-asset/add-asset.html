@@ -1,16 +1,16 @@
 <div class="asset-dialog">
-  <h2 mat-dialog-title class="dialog-title">
+  <h2 class="dialog-title">
     <mat-icon class="title-icon">add_business</mat-icon>
-    Tạo tài sản mới
+    Create New Asset
   </h2>
 
   <mat-dialog-content class="dialog-content">
     <form [formGroup]="assetForm" class="asset-form">
-      <!-- Loại tài sản -->
+      <!-- Asset Type -->
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Loại tài sản</mat-label>
+        <mat-label>Asset Type</mat-label>
         <mat-select formControlName="type" required>
-          <mat-option value="">-- Chọn loại tài sản --</mat-option>
+          <mat-option value="">-- Select Asset Type --</mat-option>
           <mat-option *ngFor="let type of _assetTypes" [value]="type.name">
             {{ type.name }}
           </mat-option>
@@ -22,13 +22,13 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Tên tài sản -->
+      <!-- Asset Name -->
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Tên tài sản</mat-label>
+        <mat-label>Asset Name</mat-label>
         <input
           matInput
           formControlName="name"
-          placeholder="Nhập tên tài sản"
+          placeholder="Enter asset name"
           required
         />
         <mat-icon matSuffix>label</mat-icon>
@@ -39,9 +39,9 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Giá -->
+      <!-- Price -->
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Giá (VNĐ)</mat-label>
+        <mat-label>Price (VND)</mat-label>
         <input
           matInput
           type="number"
@@ -58,17 +58,16 @@
         </mat-error>
       </mat-form-field>
 
-      <!-- Mô tả -->
+      <!-- Description -->
       <mat-form-field appearance="outline" class="full-width">
-        <mat-label>Mô tả</mat-label>
+        <mat-label>Description</mat-label>
         <textarea
           matInput
           formControlName="description"
-          placeholder="Nhập mô tả chi tiết về tài sản..."
+          placeholder="Enter detailed description of the asset..."
           rows="4"
           maxlength="500"
-        >
-        </textarea>
+        ></textarea>
         <mat-hint align="end">
           {{ assetForm.get('description')?.value?.length || 0 }}/500
         </mat-hint>
@@ -84,7 +83,7 @@
   <mat-dialog-actions class="dialog-actions">
     <button mat-button (click)="onCancel()" class="cancel-button">
       <mat-icon>close</mat-icon>
-      Hủy
+      Cancel
     </button>
     <button
       mat-raised-button
@@ -94,7 +93,7 @@
       class="save-button"
     >
       <mat-icon>save</mat-icon>
-      Lưu tài sản
+      Save Asset
     </button>
   </mat-dialog-actions>
 </div>
