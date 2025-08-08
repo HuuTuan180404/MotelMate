@@ -39,8 +39,8 @@ namespace BACKEND.Controllers
                             .ThenInclude(cd => cd.Contract)
                                 .ThenInclude(c => c.Room)
                                     .ThenInclude(r => r.Building)
-                        .Where(t => t.ContractDetails.Any(cd =>
-                            cd.Contract.Room.Building.OwnerID == ownerId))
+                        // .Where(t => t.ContractDetails.Any(cd =>
+                        //     cd.Contract.Room.Building.OwnerID == ownerId))
                         .ToListAsync();
 
             return Ok(_mapper.Map<List<ReadTenantDTO>>(tenants));
@@ -62,7 +62,7 @@ namespace BACKEND.Controllers
                                 .ThenInclude(c => c.Room)
                                     .ThenInclude(r => r.Building)
                         .Where(t => t.Id == id)
-                        .Where(t => t.ContractDetails.Any(cd => cd.Contract.Room.Building.OwnerID == ownerId))
+                        // .Where(t => t.ContractDetails.Any(cd => cd.Contract.Room.Building.OwnerID == ownerId))
                         .FirstOrDefaultAsync();
 
             return Ok(_mapper.Map<ReadTenantDTO>(tenants));
@@ -84,7 +84,7 @@ namespace BACKEND.Controllers
                                 .ThenInclude(c => c.Room)
                                     .ThenInclude(r => r.Building)
                         .Where(t => t.CCCD == cccd)
-                        .Where(t => t.ContractDetails.Any(cd => cd.Contract.Room.Building.OwnerID == ownerId))
+                        // .Where(t => t.ContractDetails.Any(cd => cd.Contract.Room.Building.OwnerID == ownerId))
                         .FirstOrDefaultAsync();
 
             return Ok(_mapper.Map<ReadTenantDTO>(tenants));

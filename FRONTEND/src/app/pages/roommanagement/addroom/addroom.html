@@ -1,12 +1,9 @@
 <div class="create-room-dialog">
   <div class="dialog-header">
-    <h2 mat-dialog-title>
+    <h2>
       <mat-icon>add_home</mat-icon>
       Create New Room
     </h2>
-    <button mat-icon-button mat-dialog-close>
-      <mat-icon>close</mat-icon>
-    </button>
   </div>
 
   <mat-dialog-content class="dialog-content">
@@ -99,7 +96,7 @@
             />
             <mat-hint>Monthly rental price</mat-hint>
             <mat-error *ngIf="roomForm.get('price')?.hasError('required')">
-              Giá thuê là bắt buộc
+              Rent is required
             </mat-error>
             <mat-error *ngIf="roomForm.get('price')?.hasError('min')">
               Rent must be greater than or equal to 0
@@ -110,22 +107,19 @@
         <div class="form-row">
           <!-- Max Guests -->
           <mat-form-field appearance="outline" class="form-field">
-            <mat-label>Max Guests (m²)</mat-label>
+            <mat-label>Max Guests</mat-label>
             <input
               matInput
               type="number"
-              formControlName="area"
+              formControlName="maxGuests"
               placeholder="25"
             />
             <mat-hint>Area in square meters</mat-hint>
-            <mat-error *ngIf="roomForm.get('area')?.hasError('required')">
-              Area is required
+            <mat-error *ngIf="roomForm.get('maxGuests')?.hasError('min')">
+              Must be greater than 0
             </mat-error>
-            <mat-error *ngIf="roomForm.get('area')?.hasError('min')">
-              Area must be greater than 0
-            </mat-error>
-            <mat-error *ngIf="roomForm.get('area')?.hasError('max')">
-              Area must not exceed 1000m²
+            <mat-error *ngIf="roomForm.get('maxGuests')?.hasError('max')">
+              Must not exceed 30
             </mat-error>
           </mat-form-field>
         </div>

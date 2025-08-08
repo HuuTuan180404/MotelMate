@@ -329,6 +329,7 @@ export class AddRoom {
       formDataToSend.append('roomNumber', formData.roomNumber);
       formDataToSend.append('area', formData.area);
       formDataToSend.append('price', formData.price);
+      formDataToSend.append('maxGuests', formData.maxGuests);
       formDataToSend.append('description', formData.description);
 
       this.roomImages.forEach((img, index) => {
@@ -339,18 +340,18 @@ export class AddRoom {
         formDataToSend.append('selectedAssetIDs', id.toString());
       });
 
+      const actions: DialogAction[] = [
+        {
+          label: 'Ok',
+          bgColor: 'primary',
+          callback: () => {
+            return true;
+          },
+        },
+      ];
+
       this.roomService.postNewRoom(formDataToSend).subscribe({
         next: (res: any) => {
-          const actions: DialogAction[] = [
-            {
-              label: 'Ok',
-              bgColor: 'primary',
-              callback: () => {
-                return true;
-              },
-            },
-          ];
-
           const dialogResult = this.matDialog.open(ReusableDialog, {
             data: {
               icon: 'done',
@@ -364,7 +365,17 @@ export class AddRoom {
             this.dialogRef.close(true);
           });
         },
-        error: (err: any) => console.error('Error adding room', err),
+        error: (err: any) => {
+          console.error('Error adding room', err);
+          this.matDialog.open(ReusableDialog, {
+            data: {
+              icon: 'error',
+              title: 'Error',
+              message: err,
+              actions: actions,
+            },
+          });
+        },
       });
     } else {
       this.markFormGroupTouched();

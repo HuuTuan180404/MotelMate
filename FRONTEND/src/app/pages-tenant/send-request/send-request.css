@@ -6,14 +6,16 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #1976d2;
+    color: var(--primary-color);
     font-weight: 600;
+    font-size: x-large;
     margin-bottom: 0;
     border-bottom: 1px solid #e0e0e0;
-
+    justify-content: center;
     mat-icon {
       font-size: 30x;
     }
+    height: 4rem;
   }
 
   .dialog-content {
@@ -47,7 +49,7 @@
       color: #666;
 
       mat-icon {
-        color: #1976d2;
+        color: var(--primary-color);
       }
     }
 
@@ -61,7 +63,7 @@
         gap: 8px;
         margin: 0 auto;
         color: white;
-        background-color: #1976d2;
+        background-color: var(--primary-color);
       }
     }
 

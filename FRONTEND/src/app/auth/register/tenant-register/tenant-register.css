@@ -30,7 +30,8 @@
   z-index: 1;
   box-sizing: border-box;
   max-height: 100vh;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .register-form .logo {
@@ -69,6 +70,7 @@
 .form-container{
   max-height: 20rem;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 .form-container::-webkit-scrollbar {
   display: none;
@@ -79,6 +81,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
+  width: auto;
 }
 
 .form-column {

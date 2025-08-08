@@ -117,6 +117,7 @@ builder.Services.AddScoped<IOtpService, OtpService>();
 builder.Services.AddScoped<IProfileService, ProfileService>();
 builder.Services.AddScoped<IContractService, ContractService>();
 builder.Services.AddScoped<MotelDbSeeder>();
+builder.Services.AddScoped<ContractPDFGenerator>();
 
 
 // Cloudinary
@@ -161,8 +162,8 @@ if (app.Environment.IsDevelopment())
         // }
         // var context = services.GetRequiredService<MotelMateDbContext>();
         // MotelDbSeeder.Seed(context);
-        var seeder = scope.ServiceProvider.GetRequiredService<MotelDbSeeder>();
-        await seeder.SeedAllAsync();
+        // var seeder = scope.ServiceProvider.GetRequiredService<MotelDbSeeder>();
+        // await seeder.SeedAllAsync();
     }
 }
 
