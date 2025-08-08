@@ -28,11 +28,24 @@ namespace BACKEND.Service
             var fromEmail = Environment.GetEnvironmentVariable("EMAIL_FROM");
             var fromPassword = Environment.GetEnvironmentVariable("EMAIL_PASSWORD");
 
-            string otp = _otpService.GenerateAndSaveOtp(toEmail); 
+            string otp = _otpService.GenerateAndSaveOtp(toEmail);
 
-            string subject = "Forgot Password";
-            string body = $"<p>Your OTP is: <strong>{otp}</strong></p><p>This OTP is valid for 5 minutes.</p>";
+            string subject = "Motel Mate - OTP for Password Reset";
 
+            string body = $@"
+            <div style='font-family: Arial, sans-serif; font-size: 14px; color: #333;'>
+                <h2 style='color: #007BFF;'>Motel Mate - Password Reset Request</h2>
+                <p>Dear user,</p>
+                <p>We received a request to reset your password. Please use the following One-Time Password (OTP) to proceed:</p>
+                <p style='font-size: 18px; font-weight: bold; color: #d90c0cff;'>Your OTP: <strong>{otp}</strong></p>
+                <p>This OTP is valid for <strong>5 minutes</strong>. Please do not share this code with anyone.</p>
+                <p>If you did not request a password reset, please ignore this email or contact support immediately.</p>
+                <br />
+                <p>Best regards,</p>
+                <p><strong>Motel Mate Team</strong></p>
+                <hr />
+                <p style='font-size: 12px; color: #888;'>This is an automated message. Please do not reply to this email.</p>
+            </div>";
             var message = new MailMessage
             {
                 From = new MailAddress(fromEmail),
