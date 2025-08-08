@@ -40,6 +40,7 @@ export class Requests implements OnInit {
   requestType: string = 'Payment';
   requests: RequestModel[] = [];
   filteredRequests: RequestModel[] = [];
+  role: string = '';
 
   constructor(
     private requestService: RequestService,
@@ -49,6 +50,8 @@ export class Requests implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.role = this.route.snapshot.data['role'];
+    
     this.route.url.subscribe(urlSegments => {
       const lastSegment = urlSegments[urlSegments.length - 1]?.path;
       if (lastSegment) {
@@ -99,20 +102,51 @@ export class Requests implements OnInit {
   }
 
   approveRequest(request: RequestModel) {
-    this.requestService.approveRequest(request.requestID).subscribe(() => {
-      request.status = 'Approved';
-      this.snackBar.open('Request Approved!', 'Close', { duration: 2000 });
-      this.applyFilters();
+    this.requestService.approveRequest(request.requestID).subscribe({
+      next: () => {
+        request.status = 'Approved';
+        this.snackBar.open('Request Approved!', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          panelClass: 'custom-snackbar-success'
+        });
+        this.applyFilters();
+      },
+      error: (err) => {
+        console.error('Failed to approve request:', err);
+        const message = err.error?.message || 'Failed to approve request.';
+        this.snackBar.open(message, 'Close', {
+          duration: 3000,
+          verticalPosition: 'top',
+          panelClass: 'custom-snackbar'
+        });
+      }
     });
   }
 
   rejectRequest(request: RequestModel) {
-    this.requestService.rejectRequest(request.requestID).subscribe(() => {
-      request.status = 'Rejected';
-      this.snackBar.open('Request Rejected!', 'Close', { duration: 2000 });
-      this.applyFilters();
+    this.requestService.rejectRequest(request.requestID).subscribe({
+      next: () => {
+        request.status = 'Rejected';
+        this.snackBar.open('Request Rejected!', 'Close', {
+          duration: 2000,
+          verticalPosition: 'top',
+          panelClass: 'custom-snackbar-success'
+        });
+        this.applyFilters();
+      },
+      error: (err) => {
+        console.error('Failed to reject request:', err);
+        const message = err.error?.message || 'Failed to reject request.';
+        this.snackBar.open(message, 'Close', {
+          duration: 3000,
+          verticalPosition: 'top',
+          panelClass: 'custom-snackbar'
+        });
+      }
     });
   }
+
   viewImage(imageUrl: string) {
   this.dialog.open(ImageDialogComponent, {
     data: imageUrl,

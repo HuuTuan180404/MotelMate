@@ -36,23 +36,25 @@
         <button mat-stroked-button color="primary" *ngIf="request.image" (click)="viewImage(request.image)">View Attachment</button>
       </div>
 
-      <div class="request-actions" *ngIf="request.status === 'Pending'; else statusChip">
+      <div class="request-actions" 
+          *ngIf="role === 'owner' && request.status === 'Pending'; else statusChip">
         <button mat-raised-button color="primary" (click)="approveRequest(request)">Approve</button>
         <button mat-raised-button color="warn" (click)="rejectRequest(request)">Reject</button>
       </div>
 
       <ng-template #statusChip>
-        <mat-chip [color]="request.status === 'Approved' ? 'primary' : 'warn'" selected>
-          {{ request.status }}
-        </mat-chip>
+        <!-- Owner chỉ thấy chip nếu status != Pending -->
+        <ng-container *ngIf="!(role === 'owner' && request.status === 'Pending')">
+          <mat-chip 
+            [color]="request.status === 'Approved' ? 'primary' : 'warn'" 
+            selected>
+            {{ request.status }}
+          </mat-chip>
+        </ng-container>
       </ng-template>
+
+
     </mat-card>
   </div>
 
-  <!-- Image Dialog -->
-  <ng-template #imageDialog let-data>
-    <div class="image-popup">
-      <img [src]="data" alt="Attachment" />
-    </div>
-  </ng-template>
 </div>

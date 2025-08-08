@@ -18,5 +18,6 @@ namespace BACKEND.DTOs.RequestDTO
         // Add thêm Room & Building Info
         public string? RoomName { get; set; }
         public string? BuildingName { get; set; }
+        public int? RoomID { get; set; }
     }
 }

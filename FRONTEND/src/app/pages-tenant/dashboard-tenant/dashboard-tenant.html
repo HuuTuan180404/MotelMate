@@ -66,13 +66,20 @@
       <ng-container matColumnDef="actions">
         <th mat-header-cell *matHeaderCellDef>Actions</th>
         <td mat-cell *matCellDef="let inv">
-          <span>
-            <button mat-raise-button color="primary" class="btnApply" matTooltip="Apply">
-              <mat-icon>person_add</mat-icon>
-            </button>
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="onRegisterRoom(inv.roomID)"
+            [disabled]="pendingRoomIDs.includes(inv.roomID)">
+            <mat-icon>person_add</mat-icon>
+          </button>
+
+          <span *ngIf="pendingRoomIDs.includes(inv.roomID)" class="pending-label">
+            Pending
           </span>
         </td>
       </ng-container>
+
 
       <tr
         mat-header-row

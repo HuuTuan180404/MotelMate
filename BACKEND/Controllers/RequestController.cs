@@ -10,6 +10,9 @@ using CloudinaryDotNet.Actions;
 using CloudinaryDotNet;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 
 namespace BACKEND.Controllers
 {
@@ -23,10 +26,14 @@ namespace BACKEND.Controllers
         private readonly Cloudinary _cloudinary = cloudinary;
 
 
-        // GET api/Request?type=Payment&status=Pending
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ReadRequestDTO>>> GetRequests([FromQuery] string? type, [FromQuery] string? status)
+        public async Task<ActionResult<IEnumerable<ReadRequestDTO>>> GetRequests(
+            [FromQuery] string? type, 
+            [FromQuery] string? status)
         {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = User.FindFirstValue(ClaimTypes.Role);
+
             var query = _context.Request
                 .Include(r => r.Tenant)
                     .ThenInclude(t => t.ContractDetails)
@@ -34,6 +41,14 @@ namespace BACKEND.Controllers
                             .ThenInclude(c => c.Room)
                                 .ThenInclude(room => room.Building)
                 .AsQueryable();
+
+            // Nếu role là Tenant → chỉ lấy request của chính mình
+            if (userRole == "Tenant")
+            {
+                int tenantIdInt = int.Parse(userIdStr);
+                query = query.Where(r => r.TenantID == tenantIdInt);
+            }
+            // Owner/Admin không filter TenantID
 
             // Filter by Type
             if (!string.IsNullOrEmpty(type))
@@ -44,7 +59,7 @@ namespace BACKEND.Controllers
                 }
                 else
                 {
-                    return BadRequest("Invalid request type.");
+                    return BadRequest(new { message = "Invalid request type." });
                 }
             }
 
@@ -57,61 +72,22 @@ namespace BACKEND.Controllers
                 }
                 else
                 {
-                    return BadRequest("Invalid request status.");
+                    return BadRequest(new { message = "Invalid request status." });
                 }
             }
 
-            var requests = await query.ToListAsync();
+            var requests = await query.OrderByDescending(r => r.CreateAt).ToListAsync();
 
             var result = requests.Select(r =>
             {
-                var contractDetail = _context.ContractDetail
-                    .Include(cd => cd.Contract)
-                        .ThenInclude(c => c.Room)
-                            .ThenInclude(room => room.Building)
-                    .FirstOrDefault(cd => cd.TenantID == r.TenantID);
-
-                var room = contractDetail?.Contract?.Room;
-                var building = room?.Building;
-
-                var dto = _mapper.Map<ReadRequestDTO>(r);
-                dto.RoomName = room?.RoomNumber;
-                dto.BuildingName = building?.Name;
-
-                return dto;
-            }).ToList();
-
-            return Ok(result);
-        }
-
-        [HttpGet("MyRequests")]
-        public async Task<ActionResult<IEnumerable<ReadRequestDTO>>> GetMyRequests()
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId)) return Unauthorized();
-
-            int tenantId = int.Parse(userId);
-
-            var requests = await _context.Request
-                .Where(r => r.TenantID == tenantId)
-                .Include(r => r.Tenant)
-                .Include(r => r.Tenant.ContractDetails)
-                    .ThenInclude(cd => cd.Contract)
-                        .ThenInclude(c => c.Room)
-                            .ThenInclude(rm => rm.Building)
-                .OrderByDescending(r => r.CreateAt)
-                .ToListAsync();
-
-            var result = requests.Select(r =>
-            {
-                var dto = _mapper.Map<ReadRequestDTO>(r);
-
                 var contractDetail = r.Tenant.ContractDetails.FirstOrDefault(cd => cd.EndDate == null);
                 var room = contractDetail?.Contract?.Room;
                 var building = room?.Building;
 
+                var dto = _mapper.Map<ReadRequestDTO>(r);
                 dto.RoomName = room?.RoomNumber;
                 dto.BuildingName = building?.Name;
+                dto.RoomID = room?.RoomID;
 
                 return dto;
             }).ToList();
@@ -119,45 +95,21 @@ namespace BACKEND.Controllers
             return Ok(result);
         }
 
-        // [HttpPost("SendFeedback")]
-        // public async Task<IActionResult> SendFeedback([FromBody] CreateRequestDTO requestDto)
-        // {
-        //     var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-        //     if (userIdClaim == null) return Unauthorized("Invalid Token");
 
-        //     int tenantId = int.Parse(userIdClaim.Value);
+        public class DateOnlyJsonConverter : JsonConverter<DateOnly>
+        {
+            private const string Format = "yyyy-MM-dd";
 
-        //     var tenant = await _context.Tenant.FindAsync(tenantId);
-        //     if (tenant == null) return NotFound("Tenant not found");
+            public override DateOnly Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                return DateOnly.ParseExact(reader.GetString() ?? throw new InvalidOperationException(), Format);
+            }
 
-        //     // Find Owner (Building Owner) via active ContractDetail
-        //     var activeContract = await _context.ContractDetail
-        //         .Include(cd => cd.Contract)
-        //             .ThenInclude(c => c.Room)
-        //                 .ThenInclude(r => r.Building)
-        //         .FirstOrDefaultAsync(cd => cd.TenantID == tenantId && cd.EndDate == null);
-
-        //     if (activeContract == null) return BadRequest("No active contract found");
-
-        //     var ownerId = activeContract.Contract.Room.Building.OwnerID;
-
-        //     var request = new Request
-        //     {
-        //         Title = requestDto.Title,
-        //         Content = requestDto.Content,
-        //         Image = requestDto.Image,
-        //         Type = ERequestType.FeedBackOrIssue,
-        //         Status = ERequestStatus.Pending,
-        //         TenantID = tenantId,
-        //         OwnerID = ownerId,
-        //         CreateAt = DateTime.Now
-        //     };
-
-        //     _context.Request.Add(request);
-        //     await _context.SaveChangesAsync();
-
-        //     return Ok("Feedback request sent successfully.");
-        // }
+            public override void Write(Utf8JsonWriter writer, DateOnly value, JsonSerializerOptions options)
+            {
+                writer.WriteStringValue(value.ToString(Format));
+            }
+        }
 
         [HttpPost("{id}/approve")]
         public async Task<IActionResult> ApproveRequest(int id)
@@ -166,7 +118,7 @@ namespace BACKEND.Controllers
                 .Include(r => r.Tenant)
                 .FirstOrDefaultAsync(r => r.RequestID == id);
 
-            if (request == null) return NotFound("Request not found");
+            if (request == null) return NotFound(new { message = "Request not found." });
 
             request.Status = ERequestStatus.Approved;
 
@@ -177,6 +129,107 @@ namespace BACKEND.Controllers
                 if (invoice != null)
                 {
                     invoice.Status = EInvoiceStatus.Paid;
+                }
+            }
+
+            else if (request.Type == ERequestType.RoomRegistration)
+            {
+                var parts = request.Title.Split(" - ");
+                if (parts.Length != 2)
+                    return BadRequest(new { message = "Invalid request title format." });
+
+                var roomNumber = parts[0].Trim();
+                var buildingName = parts[1].Trim();
+
+                var room = await _context.Room
+                    .Include(r => r.Building)
+                    .FirstOrDefaultAsync(r =>
+                        r.RoomNumber == roomNumber &&
+                        r.Building.Name == buildingName);
+
+                if (room == null)
+                    return NotFound(new { message = "Room not found." });
+
+                // Parse Content (StartDate & EndDate)
+                DateOnly startDate;
+                DateOnly endDate;
+
+                try
+                {
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true,
+                        Converters = { new DateOnlyJsonConverter() }
+                    };
+
+                    var contentObj = JsonSerializer.Deserialize<RoomRegistrationContentDto>(request.Content, options);
+
+                    if (contentObj == null)
+                        return BadRequest(new { message = "Invalid registration content." });
+
+                    startDate = contentObj.StartDate;
+                    endDate = contentObj.EndDate;
+                }
+                catch (Exception ex)
+                {
+                    return BadRequest(new { message = "Failed to parse registration content.", error = ex.Message });
+                }
+
+                if (room.Status == ERoomStatus.Available)
+                {
+                    
+                    var contract = new Contract
+                    {
+                        RoomID = room.RoomID,
+                        Status = EContractStatus.Unsigned,
+                        StartDate = startDate,
+                        EndDate = endDate, // now safe
+                        Price = room.Price,
+                        Deposit = 1000000,
+                        ContractCode = "C" + room.RoomNumber + DateTime.Now.ToString("yyyyMMddHHmmss")
+                    };
+                    _context.Contract.Add(contract);
+                    await _context.SaveChangesAsync();
+
+                    var contractDetail = new ContractDetail
+                    {
+                        ContractID = contract.ContractID,
+                        TenantID = request.TenantID ?? 0,
+                        StartDate = startDate,
+                        EndDate = null,
+                        IsRoomRepresentative = true
+                    };
+                    _context.ContractDetail.Add(contractDetail);
+
+                    room.Status = ERoomStatus.Occupied;
+                }
+                else if (room.Status == ERoomStatus.LookingForRoommate)
+                {
+                    var activeContract = await _context.Contract
+                        .Where(c => c.RoomID == room.RoomID && c.Status == EContractStatus.Active)
+                        .FirstOrDefaultAsync();
+
+                    if (activeContract == null)
+                        return BadRequest(new { message = "No active contract found for the room." });
+
+                    int currentTenants = await _context.ContractDetail
+                        .CountAsync(cd => cd.ContractID == activeContract.ContractID && cd.EndDate == null);
+
+                    if (currentTenants >= room.MaxGuests)
+                        return BadRequest(new { message = "Room already has maximum number of tenants." });
+
+                    var contractDetail = new ContractDetail
+                    {
+                        ContractID = activeContract.ContractID,
+                        TenantID = request.TenantID ?? 0,
+                        StartDate = startDate,
+                        EndDate = null,
+                        IsRoomRepresentative = false
+                    };
+                    _context.ContractDetail.Add(contractDetail);
+
+                    if (currentTenants + 1 == room.MaxGuests)
+                        room.Status = ERoomStatus.Occupied;
                 }
             }
 
@@ -193,11 +246,12 @@ namespace BACKEND.Controllers
             _context.NotiRecipient.Add(new NotiRecipient
             {
                 NotiID = noti.NotiID,
-                TenantID = request.TenantID
+                TenantID = request.TenantID,
+                IsRead = false
             });
 
             await _context.SaveChangesAsync();
-            return Ok("Request approved successfully.");
+            return Ok(new { message = "Request approved successfully." });
         }
 
         [HttpPost("{id}/reject")]
@@ -207,7 +261,7 @@ namespace BACKEND.Controllers
                 .Include(r => r.Tenant)
                 .FirstOrDefaultAsync(r => r.RequestID == id);
 
-            if (request == null) return NotFound("Request not found");
+            if (request == null) return NotFound(new { message = "Request not found." });
 
             request.Status = ERequestStatus.Rejected;
 
@@ -224,11 +278,13 @@ namespace BACKEND.Controllers
             _context.NotiRecipient.Add(new NotiRecipient
             {
                 NotiID = noti.NotiID,
-                TenantID = request.TenantID
+                TenantID = request.TenantID,
+                IsRead = false
             });
 
             await _context.SaveChangesAsync();
-            return Ok("Request rejected successfully.");
+            return Ok(new { message = "Request rejected successfully." });
+
         }
 
         // Helper Methods
@@ -445,6 +501,62 @@ namespace BACKEND.Controllers
             return Ok(new { message = "Request created successfully" });
         }
 
+        [HttpPost("register-room")]
+        [Authorize(Policy = "Tenant")]
+        public async Task<IActionResult> RegisterRoom([FromBody] RegisterRoomRequestDto dto)
+        {
+            // 1. Lấy TenantID từ claim
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr)) return Unauthorized();
+
+            var tenantId = int.Parse(userIdStr);
+
+            // 2. Lấy thông tin phòng
+            var room = await _context.Room
+                .Include(r => r.Building)
+                .Include(r => r.Building.Owner)
+                .FirstOrDefaultAsync(r => r.RoomID == dto.RoomID);
+
+            if (room == null)
+                return NotFound(new { message = "Room not found." });
+
+            // 3. Kiểm tra nếu đã có request pending tương tự
+            var existedRequest = await _context.Request
+                .FirstOrDefaultAsync(r =>
+                    r.Type == ERequestType.RoomRegistration &&
+                    r.TenantID == tenantId &&
+                    r.Title == $"{room.RoomNumber} - {room.Building.Name}" &&
+                    r.Status == ERequestStatus.Pending);
+
+            if (existedRequest != null)
+                return BadRequest(new { message = "You already have a pending registration request for this room." });
+
+            // 4. Serialize StartDate & EndDate vào Content
+            var contentObj = new
+            {
+                startDate = dto.StartDate,
+                endDate = dto.EndDate
+            };
+            var contentJson = JsonSerializer.Serialize(contentObj);
+
+            // 5. Tạo request mới
+            var request = new Request
+            {
+                TenantID = tenantId,
+                OwnerID = room.Building.OwnerID,
+                Type = ERequestType.RoomRegistration,
+                Title = $"{room.RoomNumber} - {room.Building.Name}",
+                Content = contentJson,
+                Image = null,
+                Status = ERequestStatus.Pending,
+                CreateAt = DateTime.Now
+            };
+
+            _context.Request.Add(request);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "Room registration request created successfully." });
+        }
 
 
 

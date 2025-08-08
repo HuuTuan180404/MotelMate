@@ -3,13 +3,19 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-image-dialog',
-  template: `<div class="image-popup"><img [src]="data" alt="Attachment" /></div>`,
+  template: `
+    <div class="image-popup">
+      <img [src]="data" alt="Attachment" />
+    </div>
+  `,
   styles: [`
+    .image-popup {
+      text-align: center;
+    }
     .image-popup img {
       max-width: 100%;
       max-height: 80vh;
-      display: block;
-      margin: auto;
+      object-fit: contain;
     }
   `]
 })
