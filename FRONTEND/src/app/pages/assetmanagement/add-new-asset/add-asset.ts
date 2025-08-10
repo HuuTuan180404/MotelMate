@@ -28,15 +28,6 @@ export interface AssetType {
   name: string;
 }
 
-// export interface Asset {
-//   assetID?: string;
-//   type: string;
-//   name: string;
-//   price: number;
-//   description: string;
-//   quantity: number;
-// }
-
 @Component({
   selector: 'app-add-asset',
   imports: [
@@ -58,6 +49,7 @@ export class AssetDialogComponent {
   assetForm: FormGroup;
 
   _assetTypes: EnumModel[] = [];
+  title = 'Create';
 
   constructor(
     private fb: FormBuilder,
@@ -67,6 +59,10 @@ export class AssetDialogComponent {
     private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: AssetModel
   ) {
+    if (data) {
+      this.title = 'Edit';
+    }
+
     this.assetForm = this.fb.group({
       type: [data?.type || '', Validators.required],
       name: [data?.name || '', [Validators.required, Validators.minLength(2)]],
