@@ -49,7 +49,7 @@ export class AssetDialogComponent {
   assetForm: FormGroup;
 
   _assetTypes: EnumModel[] = [];
-  title = 'Create';
+  title = 'Create New';
 
   constructor(
     private fb: FormBuilder,
