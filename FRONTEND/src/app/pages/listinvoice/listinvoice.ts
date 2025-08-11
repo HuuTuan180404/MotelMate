@@ -238,8 +238,14 @@ export class Listinvoice {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.invoices.push(result);
-        this.applyFilters();
+        // ✅ Load lại danh sách hóa đơn từ server
+        this.invoiceService.getInvoices().subscribe({
+          next: (data) => {
+            this.invoices = data;
+            this.applyFilters();
+          },
+          error: (err) => console.error('Failed to refresh invoices', err)
+        });
       }
     });
   }
