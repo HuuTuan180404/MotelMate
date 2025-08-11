@@ -1,16 +1,16 @@
 <div class="notification-dialog" *ngIf="notifications.length !== 0">
   <div class="dialog-header">
-    <h2>Thông báo</h2>
+    <h2>Notifications</h2>
     <div class="header-actions">
       <span class="unread-count" *ngIf="getUnreadCount() > 0">
-        {{getUnreadCount()}} chưa đọc
+        {{getUnreadCount()}} unread
       </span>
       <button
         class="btn-mark-all"
         *ngIf="getUnreadCount() > 0"
         (click)="markAllAsRead()"
       >
-        Đánh dấu tất cả đã đọc
+        Mark All as Read
       </button>
       <button class="btn-close" (click)="closeDialog()">
         <span class="close-icon">&times;</span>
@@ -38,7 +38,7 @@
             <button
               class="btn-delete"
               (click)="deleteNotification(notification.notiID); $event.stopPropagation()"
-              title="Xóa thông báo"
+              title="Detele"
             >
               🗑️
             </button>
@@ -56,7 +56,7 @@
 
       <div *ngIf="notifications.length === 0" class="empty-state">
         <div class="empty-icon">📭</div>
-        <p>Không có thông báo nào</p>
+        <p>No notifications</p>
       </div>
     </div>
   </div>
@@ -64,5 +64,5 @@
 
 <div *ngIf="notifications.length === 0" class="empty-state">
   <div class="empty-icon">📭</div>
-  <p>Chưa có thông báo nào</p>
+  <p>No notifications yet</p>
 </div>
