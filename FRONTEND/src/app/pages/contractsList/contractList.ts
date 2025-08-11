@@ -201,7 +201,7 @@ export class ContractComponent implements OnInit, AfterViewInit {
   openAddContractDialog(): void {
     const dialogRef = this.dialog.open(AddContractDialogComponent, {
       height: 'auto',
-      maxHeight: '90vh',
+      maxHeight: '700px',
       minWidth: '50vw',
     });
 
